@@ -14,10 +14,7 @@ const MemberTables = () => {
     });
     const [totalPages, setTotalPages] = useState(1);
 
-    useEffect(() => {
-        memberListAPI();
-    }, [pageInfo]);
-
+   
     const handlePageChange = (page) => {
         setPageInfo(prevInfo => ({
             ...prevInfo,
@@ -39,6 +36,10 @@ const MemberTables = () => {
             console.error(err);
         }
     };
+
+    useEffect(() => {
+        memberListAPI();
+    }, [pageInfo]);
 
     const handlePrev = () => {
         if (pageInfo.page > 1) {
