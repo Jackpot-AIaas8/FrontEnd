@@ -8,7 +8,7 @@ import Divider from "@mui/material/Divider";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Logout from "@mui/icons-material/Logout";
 import Button from "@mui/material/Button";
-import logo from "../../static/newLogoHorizontal.png";
+import logo from "../../static/newLogoHorizontalOrange.png";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../token/AuthContext";
 import styled from "styled-components";
@@ -100,7 +100,7 @@ export default function NavBar() {
         >
           <Button
             variant="text"
-            style={{ color: "gray" }}
+            style={{ color: "black", fontSize: "18px", right: '1rem', top: "0.2rem"}}
             onClick={() => {
               navigate("/dogList");
             }}
@@ -110,7 +110,7 @@ export default function NavBar() {
 
           <Button
             variant="text"
-            style={{ color: "gray" }}
+            style={{ color: "black", fontSize: "18px", right: '1rem', top: "0.2rem"}}
             onClick={() => {
               navigate("/shop");
             }}
@@ -120,7 +120,7 @@ export default function NavBar() {
 
           <Button
             variant="text"
-            style={{ color: "gray" }}
+            style={{ color: "black", fontSize: "18px", right: '1rem', top: "0.2rem"}}
             onClick={() => {
               navigate("/freeBoard");
             }}
@@ -146,7 +146,7 @@ export default function NavBar() {
               variant="contained"
               style={{
                 fontWeight: "bold",
-                backgroundColor: "skyblue",
+                backgroundColor: "#d64229",
               }}
               onClick={() => {
                 navigate("/signIn");
