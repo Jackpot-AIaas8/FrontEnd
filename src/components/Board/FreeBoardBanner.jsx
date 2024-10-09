@@ -1,6 +1,6 @@
 import React from "react";
 import BoardCustomerCenterMoveButton from "./BoardCustomerCenterMoveButton";
-import Banner1 from "../../static/Banner1.png";
+import Banner1 from "../../static/Banner1mod.png";
 import "../../config/Utility.css";
 import "./css/FreeBoardBanner.css";
 import Button from "@mui/material/Button";
@@ -25,10 +25,10 @@ const FreeBoardBanner = () => {
           alt="자유게시판 배너 이미지"
           className="banner-img"
         />
-        <h2 className="banner-text absolute">자유게시판</h2>
+        {/* <h2 className="banner-text absolute">자유게시판</h2>
         <span className="banner-description absolute">
           자유롭게 글을 쓰는 곳입니다.
-        </span>
+        </span> */}
         <section>
           <BoardCustomerCenterMoveButton />
         </section>
