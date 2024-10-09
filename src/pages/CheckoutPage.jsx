@@ -1,10 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 function CheckoutPage() {
   const location = useLocation();
-  const { name, quantity, totalPrice } = location.state || {};
+  const {
+    name,
+    userName,
+    userEmail,
+    userPhone,
+    userAddress,
+    quantity,
+    totalPrice,
+  } = location.state || {};
+
+  useEffect(() => {
+    console.log("Received location state:", location.state); // 데이터 확인용 로그
+    console.log("User Address:", userAddress);
+    console.log("User Name:", userName);
+    console.log("User Email:", userEmail);
+    console.log("User Phone:", userPhone);
+  }, [location.state]);
 
   return (
     <PageContainer>
@@ -23,16 +39,17 @@ function CheckoutPage() {
         <InfoBox>
           <InfoRow>
             <Label>이름</Label>
-            <Value>홍길동</Value>
+            <Value>{userName || "정보 없음"}</Value>
           </InfoRow>
           <InfoRow>
             <Label>이메일</Label>
-            <Value>sdsdsd@example.com</Value>
+            <Value>{userEmail || "정보 없음"}</Value>
           </InfoRow>
           <InfoRow>
             <Label>휴대폰 번호</Label>
-            <Value>010 - 23232 - 1232</Value>
+            <Value>{userPhone || "정보 없음"}</Value>
           </InfoRow>
+          
         </InfoBox>
       </Section>
 

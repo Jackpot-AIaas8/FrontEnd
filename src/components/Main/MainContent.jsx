@@ -23,7 +23,7 @@ function MainContent() {
                 style={{
                     width: "98%",
                     borderRadius: "10px",
-                    backgroundColor: "rgba(255, 255, 255, 0.9)",
+                    backgroundColor: "rgba(255, 255, 255, 0.98)",
                     marginTop: "-80px",
                     boxShadow:
                         "rgba(0, 0, 0, 0.1) 0rem 0.25rem 0.5rem -0.0625rem, rgba(0, 0, 0, 0.06) 0rem 0.125rem 0.25rem -0.0625rem",
@@ -31,7 +31,7 @@ function MainContent() {
                     zIndex: 500,
                 }}
             >
-                <Box sx={{padding: "2rem"}}>
+                <Box sx={{padding: "3.5rem"}}>
                     <Grid2 container spacing={20} justifyContent="center">
                         {/* 각 항목 */}
                         <Grid2 xs={12} md={4}>
@@ -39,12 +39,12 @@ function MainContent() {
                                 <Typography
                                     variant="h4"
                                     component="h1"
-                                    style={{color: "rgb(26, 115, 232)"}}
+                                    style={{color: "#f57e24"}}
                                     gutterBottom
                                 >
-                                    <span>80K+</span>
+                                    <span>100K+</span>
                                 </Typography>
-                                <Typography variant="body1" gutterBottom>
+                                <Typography variant="h6" gutterBottom>
                                     현재 국내 유기견 수
                                 </Typography>
                             </Box>
@@ -55,12 +55,12 @@ function MainContent() {
                                 <Typography
                                     variant="h4"
                                     component="h1"
-                                    style={{color: "rgb(26, 115, 232)"}}
+                                    style={{color: "#f57e24"}}
                                     gutterBottom
                                 >
                                     약<span>12만</span>마리
                                 </Typography>
-                                <Typography variant="body1" gutterBottom>
+                                <Typography variant="h6" gutterBottom>
                                     국내 유기견 안락사 수
                                 </Typography>
                             </Box>
@@ -71,7 +71,7 @@ function MainContent() {
                                 <Typography
                                     variant="h4"
                                     component="h1"
-                                    style={{color: "rgb(26, 115, 232)"}}
+                                    style={{color: "#f57e24"}}
                                     gutterBottom
                                 >
                                     <span>2000</span>만원
@@ -95,12 +95,12 @@ function MainContent() {
                     >
                         <Grid2 xs={12} lg={6}>
                             <Typography variant="h2" style={{textAlign: "center"}}>
-                                우리 페이지의 서비스를 소개합니다!
+                                PPyPPy의 서비스를 소개합니다!
                             </Typography>
-                            <Typography variant="body1" style={{textAlign: "center"}}>
-                                저희는 유기견 펀딩을 통해 안락사 위기의 강아지들을 더 보살필 수 있습니다.
+                            <Typography variant="body1" style={{fontSize: '20px', textAlign: "center", marginTop: "1rem"}}>
+                                저희는 유기견 펀딩을 통해 안락사 위기의 개들을 보살피고 있습니다.
                                 <br/>
-                                애견 쇼핑몰, 회원 등급에 따라 비싼 물건들을 더 저렴하게 구매하실 수 있도록 경매를 진행합니다.
+                                펀딩 금액에 따른 회원 등급 분류로 쇼핑몰의 제품들을 더 저렴하게 구매하실 수 있도록 경매를 진행합니다.
                             </Typography>
                         </Grid2>
                     </Grid2>
