@@ -1,6 +1,6 @@
 /* BoardList.css */
 .board-list {
-  width: 75%; /* 부모 컨테이너의 80%만 차지 */
+  width: 50%; /* 부모 컨테이너의 80%만 차지 */
   margin: 10px auto; /* 위아래 20px 간격, 좌우 자동으로 가운데 정렬 */
 }
 
@@ -12,17 +12,26 @@
 
 .board-table th,
 .board-table td {
-  border: 1px solid #ddd;
+  border-top: 1px solid #fef4e9; /* 가로줄 유지 */
+  border-bottom: 1px solid #fef4e9; /* 가로줄 유지 */
+  border-left: none; /* 세로줄 제거 */
+  border-right: none; /* 세로줄 제거 */
   padding: 8px;
 }
 
+.board-table th{
+  border-top: 1px solid #ffffff; /* 가로줄 유지 */
+  border-bottom: 1px solid #ff7600; /* 가로줄 유지 */
+}
+
 .board-table th {
-  background-color: #f2f2f2;
+  background-color: #ffffff;
   text-align: center;
+  
 }
 
 .board-table tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background-color: #ffffff;
 }
 
 .board-table tr:hover {

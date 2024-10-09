@@ -13,6 +13,7 @@ const FreeBoardBanner = () => {
       <Button
         className="oneOnOneButton fixed"
         variant="text"
+        style={{ color: '#ff7600' }}
         onClick={() => {
           navigate("/oneOnOneBoard");
         }}
