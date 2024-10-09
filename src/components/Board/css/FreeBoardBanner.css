@@ -24,8 +24,7 @@
 }
 
 /* 1:1 문의 게시판으로 가기*/
-.oneOnOneButton {
-  color: orange;
+.oneOnOneButton { 
   right: 20%;
   padding: 5px 10px; /* 위아래는 5px, 좌우는 10px의 여백 */
   width: 200px;
@@ -34,7 +33,7 @@
 
 /* 배너 이미지 크기 60%로 조정 */
 .banner-container {
-  width: 60%; /* 페이지 너비의 60%를 차지 */
+  width: 50%; /* 페이지 너비의 60%를 차지 */
   margin: 0 auto; /* 중앙 정렬 */
   position: relative; /* 배너 내 텍스트 배치를 위한 상대적 위치 */
 }
