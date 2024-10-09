@@ -1,82 +1,85 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
-// 스타일 컴포넌트 정의
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  padding: 20px;
-  background-color: #f5f5f5;
+// 스타일드 컴포넌트 정의
+const HeaderSubindex = styled.div`
+  /* 스타일 정의 */
 `;
 
-const Section = styled.div`
-  width: 80%;
-  background-color: #e0f7e0;
-  border: 1px solid #b2d8b2;
-  border-radius: 15px; /* 모든 섹션에 동일한 둥근 모서리 적용 */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 15px;
+const GnbArea = styled.div`
+  /* 네이버 로고와 ID 스타일 */
 `;
 
-const SectionHeader = styled.div`
-  background-color: #2e8b57;
-  color: white;
-  padding: 10px;
-  border-radius: 15px 15px 0 0; /* 상단 모서리만 둥글게 */
-  font-weight: bold;
+const LnbArea = styled.div`
+  /* Lnb 스타일 */
 `;
 
-const SectionContent = styled.div`
-  padding: 10px;
+const ProfileArea = styled.div`
+  /* 프로필 스타일 */
 `;
 
-const Button = styled.button`
-  background-color: #4caf50;
-  color: #ffffff;
-  border: none;
-  border-radius: 10px;
-  padding: 8px 16px;
-  cursor: pointer;
-  margin-top: 10px;
-
-  &:hover {
-    background-color: #45a049;
-  }
+const HeaderLeft = styled.div`
+  /* 왼쪽 메뉴 스타일 */
 `;
 
-// 리액트 컴포넌트
-const ProfilePage = () => {
+const FooterLogo = styled.div`
+  /* Footer 로고 스타일 */
+`;
+
+export default function NaverHeader() {
   return (
-    <Container>
-      <Section>
-        <SectionHeader>내 프로필</SectionHeader>
-        <SectionContent>
-          <p>사용자 이름: 전세계</p>
-          <p>전화번호: +82 10-3***-2***</p>
-          <Button>수정</Button>
-        </SectionContent>
-      </Section>
+    <HeaderSubindex>
+      <GnbArea>
+        <a
+          href="https://www.naver.com/"
+          className="logo"
+          onClick={(e) => console.log('gnb.naver')}
+        >
+          <span className="blind">네이버</span>
+        </a>
+        <a
+          href="/user2/help/myInfoV2?lang=ko_KR"
+          className="gnb_title"
+          onClick={(e) => console.log('gnb.naverID')}
+        >
+          <h1 className="text">
+            <span className="blind">네이버ID</span>
+          </h1>
+        </a>
+      </GnbArea>
 
-      <Section>
-        <SectionHeader>보안 설정</SectionHeader>
-        <SectionContent>
-          <p>비밀번호 변경</p>
-          <p>2단계 인증</p>
-          <Button>설정</Button>
-        </SectionContent>
-      </Section>
+      <LnbArea>
+        <ul className="lnb_list" role="menu">
+          <li>
+            <a href="/user2/help/myInfoV2?m=viewProfile&amp;lang=ko_KR" className="lnb_item" role="menuitem">
+              <div className="lnb_text">내프로필</div>
+            </a>
+          </li>
+          <li>
+            <a href="/user2/help/myInfoV2?m=viewSecurity&amp;lang=ko_KR" className="lnb_item" role="menuitem">
+              <div className="lnb_text on">보안설정</div>
+            </a>
+          </li>
+          <li>
+            <a href="/user2/help/myInfoV2?m=viewManageHistory&amp;lang=ko_KR" className="lnb_item" role="menuitem">
+              <div className="lnb_text">이력관리</div>
+            </a>
+          </li>
+        </ul>
+      </LnbArea>
 
-      <Section>
-        <SectionHeader>이력 관리</SectionHeader>
-        <SectionContent>
-          <p>로그인 목록 확인</p>
-          <p>내 활동 기록 보기</p>
-          <Button>확인</Button>
-        </SectionContent>
-      </Section>
-    </Container>
+      <ProfileArea>
+       
+      </ProfileArea>
+
+      <HeaderLeft>
+        <ul className="left_menu" role="menu">
+          <li><a href="/user2/help/myInfoV2?m=viewProfile&amp;lang=ko_KR">내프로필</a></li>
+          <li><a href="/user2/help/myInfoV2?m=viewSecurity&amp;lang=ko_KR">보안설정</a></li>
+          <li><a href="/user2/help/myInfoV2?m=viewManageHistory&amp;lang=ko_KR">이력관리</a></li>
+        </ul>
+        <FooterLogo><span className="logo">네이버</span></FooterLogo>
+      </HeaderLeft>
+    </HeaderSubindex>
   );
-};
-export default ProfilePage;
+}
