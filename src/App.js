@@ -56,8 +56,8 @@ function App() {
             <Route path="/board/remove/:boardId" element={<BoardRemove />} />
             <Route path="/signIn" element={<SignIn />} />
             <Route path="/signUp" element={<SignUp />} />
-            {/* <Route path="/myPage" element={<Mypage />} /> */}
-            <Route path="/myPage" element={<MypageDemo />} />
+            <Route path="/myPage" element={<Mypage />} />
+            {/* <Route path="/myPage" element={<MypageDemo />} /> */}
           </Routes>
         </ThemeProvider>
         {!isAdminRoute && <Button />}

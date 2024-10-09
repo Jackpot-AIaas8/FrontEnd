@@ -34,7 +34,7 @@ const SectionContent = styled.div`
 
 const Button = styled.button`
   background-color: #4caf50;
-  color: white;
+  color: #ffffff;
   border: none;
   border-radius: 10px;
   padding: 8px 16px;

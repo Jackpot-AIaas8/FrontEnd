@@ -41,9 +41,20 @@ export const NavBar = styled.div`
   padding: 10px;
   .nav-section {
     background-color: blue;
-    max-width: 300px;
-    width: 100%;
+    max-width:100%;
+    width:100%;
+
   }
+
+  .profile-area{
+    width: 100%;
+    height: 30%;
+    background-color : white;
+    margin : 20px 0 ;
+  } 
+
   .navList-section {
+
+
   }
 `;

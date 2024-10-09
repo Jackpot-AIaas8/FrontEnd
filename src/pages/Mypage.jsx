@@ -9,8 +9,9 @@ const Mypage = () => {
     <>
       <div className="container flex">
         <MypageWrapper className="flex flex-row w-full">
-          <NavBar className="left-section flex">
-            <div className="nav-section h-full">
+          <NavBar className="left-section flex align-center justify-center">
+            <div className="nav-section h-full flex flex-column">
+              <div className="profile-area w-full"></div>
               <div className="navList-section">
                 <ul className="nav-menu">
                   <li>
