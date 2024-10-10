@@ -15,13 +15,13 @@ const SignIn = () => {
   const { isAuthenticated } = useContext(AuthContext); // 로그인 상태 확인
   const navigate = useNavigate();
   const { login } = useContext(AuthContext); // 로그인 상태 및 토큰 전달
-
+  const from = location?.state?.redirectFrom || "/";
   // *** 로그인 상태일 경우 메인 페이지로 리다이렉트 ***
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/");
+      navigate(from);
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, from]);
   // ************************************************
 
   // *** 회원가입한 이메일 적용 하기 ***
@@ -41,7 +41,7 @@ const SignIn = () => {
 
   const signIn = async (event) => {
     event.preventDefault(); // 폼 제출 기본 동작 방지
-    console.log("Sending user data:", user);
+
     try {
       const response = await apiNoToken.post("member/signIn", user, {
         withCredentials: true, // 쿠키를 사용하려면 true로 설정
@@ -53,23 +53,13 @@ const SignIn = () => {
       } else {
         alert("로그인 실패");
       }
-      // if (accessToken) {
-      //   login(accessToken);
-      //   const decodeToken = jwtDecode(accessToken);
-      //   console.log(decodeToken.role);
-      //   if (decodeToken.role === "ROLE_ADMIN") {
-      //     navigate("/admin");
-      //   } else {
-      //     navigate("/");
-      //   }
-      // } else {
-      //   alert("로그인 실패");
-      // }
     } catch (err) {
       console.error(err);
       alert("로그인 중 오류가 발생했습니다");
     }
   };
+
+  console.log(location);
 
   return (
     <div className="wrapper">

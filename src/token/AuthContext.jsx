@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(true);
     setUserRole(decoded.role || "ROLE_USER");
     setIsAdmin(decoded.role === "ROLE_ADMIN");
-    setIsPremium(decoded.role === "premium");
+    setIsPremium(decoded.role === "ROLE_PREMIUM");
     navigate(decoded.role === "ROLE_ADMIN" ? "/admin" : "/");
   };
 
