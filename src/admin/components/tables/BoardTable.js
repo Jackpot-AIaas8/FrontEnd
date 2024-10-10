@@ -28,8 +28,8 @@ const BoardTables = () => {
             })
             .then((res) => {
                 if (Array.isArray(res.data.dtoList)) {
-                    console.log(res.data)
                     setBoards(res.data.dtoList);
+                    console.log(boards);
                 } else {
                     setBoards([]);
                 }
@@ -124,8 +124,10 @@ const BoardTables = () => {
                                     {board.type === 3 && '1대1 문의게시판'}
                                 </td>
                                 <td>{board.regdate}</td>
-                                <td onClick={() => navigate(`/admin/shopdetailform/${board.boardId}`)}>
-                                    상세<i className="bi bi-arrow-right-circle"></i>
+                                <td>
+                                <button onClick={() => navigate(`/admin/boarddetailform/${board.boardId}`)}
+                                            style={{border: "none", background: "white"}}>상세보기
+                                    </button>
                                 </td>
                             </tr>
                         ))}

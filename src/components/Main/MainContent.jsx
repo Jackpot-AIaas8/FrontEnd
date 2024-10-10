@@ -5,17 +5,33 @@ import "../../static/css/font.css";
 import Card from "../Card";
 // import styled from "styled-components";
 import {styled} from '@mui/material/styles';
-
+import { useState, useEffect } from "react";
+import apiClient from "../../token/AxiosConfig";
+import ProductInfo from "../Shop/ShopDetail/ProductInfo";
+import { useNavigate } from "react-router-dom";
 
 function MainContent() {
-    const cardData = [
-        {title: "Nav Tabs", examples: 2},
-        {title: "Nav Tabs", examples: 2},
-        {title: "Nav Tabs", examples: 2},
-        {title: "Nav Tabs", examples: 2},
-        {title: "Nav Tabs", examples: 2},
-        {title: "Nav Tabs", examples: 2},
-    ];
+    const navigate = useNavigate();
+    const [shops, setShops] = useState([]);
+
+    useEffect(() => {
+        apiClient.get(`shop/findList`,{
+            params : {
+                size: 9,
+                page: 1
+            }
+        })
+        .then((res) => {
+            console.log(res.data);
+            setShops(res.data.dtoList);
+        })
+        .catch((err) => {
+            console.log("error : ", err);
+        })
+    },[])
+
+
+    
     return (
         <>
             <Container
@@ -115,18 +131,17 @@ function MainContent() {
                         </StyledBox>
                     </FixedLeftSidebar>
 
-
                     <CardContainer container size={{xs: 6, md: 9}}>
-                        {cardData.map((card, index) => (
+                        {shops.map((shop, index) => (
                             <Grid2 key={index} size={{xs: 2, sm: 4, md: 4}}>
-                                <StyledCard component="a" href=".#/sections/navigation/nav-tabs">
+                                <StyledCard component="a" onClick={() => navigate(`/shop/${shop.shopId}`)}>
                                     <StyledBox>
                                         <StyledImg
-                                            src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/material-design-system/presentation/sections/nav-tabs.jpg"
-                                            alt="Nav Tabs"
+                                            src = "https://img.29cm.co.kr/item/202402/11eec0d158bd69388377bffeae35630c.jpg?width=700"
+                                            alt={shop.name}
                                         />
-                                        <Typography variant="h6">{card.title}</Typography>
-                                        <Typography variant="button">{card.examples} Examples</Typography>
+                                        <Typography variant="h6">{shop.name}</Typography>
+                                        <Typography variant="button">{shop.price}원</Typography>
                                     </StyledBox>
                                 </StyledCard>
                             </Grid2>
@@ -145,7 +160,7 @@ function MainContent() {
                     </FixedLeftSidebar>
 
 
-                    <CardContainer container size={{xs: 6, md: 9}}>
+                    {/* <CardContainer container size={{xs: 6, md: 9}}>
                         {cardData.map((card, index) => (
                             <Grid2 key={index} size={{xs: 2, sm: 4, md: 4}}>
                                 <StyledCard component="a" href=".#/sections/navigation/nav-tabs">
@@ -160,7 +175,7 @@ function MainContent() {
                                 </StyledCard>
                             </Grid2>
                         ))}
-                    </CardContainer>
+                    </CardContainer> */}
 
                 </Grid2>
             </Container>

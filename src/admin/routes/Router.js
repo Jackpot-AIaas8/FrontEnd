@@ -15,6 +15,7 @@ const ShopTables = lazy(() => import("../views/ui/ShopsTables"));
 const ShopDetailForm = lazy(() => import("../views/ui/ShopDetailForm.js"));
 const StockForm = lazy(() => import("../components/StockForm"));
 const BoardTables = lazy(() => import("../views/ui/BoardsTables"));
+const BoardDetailForm = lazy(() => import("../views/ui/BoardDetailForm.js"));
 
 /*****Routes******/
 
@@ -34,6 +35,7 @@ const ThemeRoutes = [
             {path: "/admin/shopdetailform/:shopId", exact: true, element: <ShopDetailForm/>},
             {path: "/admin/stockform/:shopId", exact: true, element: <StockForm/>},
             {path: "/admin/boardtable", exact: true, element: <BoardTables/>},
+            {path: "/admin/boarddetailform/:boardId", exact: true, element: <BoardDetailForm/>},
         ],
     },
 ];
