@@ -3,39 +3,16 @@ import styled from "styled-components";
 export const StyledMypageWrapper = styled.div`
   padding: 30px;
   gap: 100px;
-
-  .right-section {
-    flex: 1;
-    gap: 10%;
-  }
-
-  .membership-rank-section {
-    background-color: red;
-    flex: 1;
-    border-radius: 8px;
-    position: relative;
-  }
-
-  .funding-details-section {
-    background-color: green;
-    flex: 1;
-    border-radius: 8px;
-  }
-
-  .buying-details-section {
-    background-color: yellow;
-    flex: 1;
-    border-radius: 8px;
+  min-width:1200px;
   }
 `;
 
 export const StyledNavBar = styled.div`
   flex: 1;
   padding: 0 20px;
+  max-width: 400px;
 
-  .nav-section {
-    border-radius: 8px;
-    border: 2px solid #bbbbbb;
+  .section-nav {
     box-shadow: 10px 10px 5px rgb(0, 0, 0, 0.2);
     max-width: 100%;
     width: 100%;
@@ -96,11 +73,32 @@ export const StyledMypageMenu = styled.div`
   .menu_list {
     gap: 30px;
   }
+
   .menu_item {
     font-size: 20px;
     font-weight: 700;
     color: #1e1e23;
     letter-spacing: -1.18px;
     line-height: 26px;
+  }
+`;
+
+export const StyeldRightSection = styled.div`
+  flex: 1;
+  gap: 10%;
+
+  .section-mypage {
+    padding: 20px;
+    flex: 1;
+  }
+
+  .div-section {
+    gap: 15px;
+  }
+
+  li {
+    border-top: 1px solid rgba(220, 227, 233, 0.8);
+    width: 100%;
+    align-items: center;
   }
 `;
