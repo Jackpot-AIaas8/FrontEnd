@@ -2,12 +2,9 @@ import Container from "@mui/material/Container";
 import React from "react";
 import {Box, Typography, Grid2} from "@mui/material";
 import "../../static/css/font.css";
-import Card from "../Card";
-// import styled from "styled-components";
 import {styled} from '@mui/material/styles';
 import { useState, useEffect } from "react";
 import apiClient from "../../token/AxiosConfig";
-import ProductInfo from "../Shop/ShopDetail/ProductInfo";
 import { useNavigate } from "react-router-dom";
 
 function MainContent() {
@@ -121,7 +118,7 @@ function MainContent() {
                         </Grid2>
                     </Grid2>
                 </Container>
-
+                
                 {/*애완 용품*/}
                 <Grid2 container spacing={1} sx={{marginBottom: '150px'}}>
                     <FixedLeftSidebar size={{xs: 6, md: 3}}>
