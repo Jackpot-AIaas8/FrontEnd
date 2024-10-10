@@ -4,15 +4,15 @@
 }
 
 .board-search-form {
-  left: 67%;
-  
+  margin-top: 0.5rem;
+  right: 25%;
   display: flex; /* 추가: flexbox로 정렬 */
 }
 
 .board-search-input {
   padding: 8px;
   font-size: 16px;
-  border: 1px solid #ff6600;
+  border: 1px solid #000000;
   border-radius: 4px 0 0 4px;
   outline: none;
   width: 300px;

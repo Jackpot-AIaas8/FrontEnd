@@ -8,7 +8,7 @@ const BoardEditting = () => {
   return (
     <>
     <div className="banner-spacing-top">
-    <img src={Banner5} alt="글 조회하기 배너" style={{ width: '60%', margin:'0 auto', position: 'relative' }} /> 
+    <img src={Banner5} alt="글 조회하기 배너" style={{ width: '50%', margin:'0 auto', position: 'relative' }} /> 
     </div>
     <div className='register-spacing-top'>
       <BoardEdit /> 

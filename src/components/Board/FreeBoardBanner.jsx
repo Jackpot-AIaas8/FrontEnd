@@ -13,6 +13,7 @@ const FreeBoardBanner = () => {
       <Button
         className="oneOnOneButton fixed"
         variant="text"
+        style={{ color: '#ff7600' }}
         onClick={() => {
           navigate("/oneOnOneBoard");
         }}
@@ -20,11 +21,7 @@ const FreeBoardBanner = () => {
         1:1 문의 게시판으로 가기 →
       </Button>
       <div className="banner-container relative banner-margin-0">
-        <img
-          src={Banner1}
-          alt="자유게시판 배너 이미지"
-          className="banner-img"
-        />
+        <img src={Banner1} alt="자유게시판 배너 이미지" className="banner-img"/>
         {/* <h2 className="banner-text absolute">자유게시판</h2>
         <span className="banner-description absolute">
           자유롭게 글을 쓰는 곳입니다.

@@ -50,7 +50,7 @@ const BoardFindOne = () => {
   }
 
   if (!board) {
-    return <div>게시글을 찾을 수 없습니다.</div>;
+    return <div style={{marginTop: '140px', marginBottom: '140px'}}>게시글을 불러오는데 실패했습니다.<br/><br/> 혹은 로그인이 필요합니다.</div>;
   }
 
   return (
