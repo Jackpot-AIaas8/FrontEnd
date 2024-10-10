@@ -15,30 +15,29 @@ import DogListPage from "./pages/DogListPage";
 import ShopPage from "./pages/ShopPage";
 import ShopDetailPage from "./pages/ShopDetailPage";
 import CheckoutPage from "./pages/Checkout/CheckoutPage";
-import { Routes, Route, useRoutes, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import theme from "./config/theme";
 import "./config/Utility.css";
 import SignIn from "./pages/SignIn";
 import Button from "./components/Button";
 import SignUp from "./pages/SignUp";
-import routes from "./admin/routes/Router";
 
-import { AuthProvider } from "./token/AuthContext";
+import { AuthProvider, AuthContext } from "./token/AuthContext";
 import Mypage from "./pages/Mypage";
 import MypageDemo from "./pages/MypageDemo";
+import { useContext } from "react";
+import ProtectedRoute from "./token/ProtectedRoute";
+import ThemeRoutes from "./admin/routes/Router";
 
 function App() {
-  const routing = useRoutes(routes);
-  const location = useLocation();
-  const isAdminRoute = location.pathname.startsWith("/admin");
+  const { isAdmin, userRole } = useContext(AuthContext);
 
   return (
-    <AuthProvider>
-      {isAdminRoute && <div>{routing}</div>}
+    <>
       {/* 로그인 전역 상태 관리 */}
       <div className="App">
-        {!isAdminRoute && <NavBar />}
+        {!isAdmin && <NavBar />}
         <ThemeProvider theme={theme}>
           <Routes>
             <Route path="/" element={<Main />} />
@@ -58,12 +57,30 @@ function App() {
             <Route path="/signUp" element={<SignUp />} />
             <Route path="/myPage" element={<Mypage />} />
             {/* <Route path="/myPage" element={<MypageDemo />} /> */}
+            {/* 
+            <Route
+              path="/premium-content"
+              element={
+                <ProtectedRoute allowedRoles={["premium"]}>
+                  경매 페이지 들어올곳
+                </ProtectedRoute>
+              }
+            /> */}
+
+            <Route
+              path="/admin/*"
+              element={
+                <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
+                  <ThemeRoutes />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </ThemeProvider>
-        {!isAdminRoute && <Button />}
-        {!isAdminRoute && <Footer />}
+        {!isAdmin && <Button />}
+        {!isAdmin && <Footer />}
       </div>
-    </AuthProvider>
+    </>
   );
 }
 

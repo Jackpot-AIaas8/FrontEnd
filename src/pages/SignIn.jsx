@@ -48,19 +48,23 @@ const SignIn = () => {
       });
 
       const { access: accessToken } = response.data;
-
       if (accessToken) {
         login(accessToken);
-        const decodeToken = jwtDecode(accessToken);
-        console.log(decodeToken.role);
-        if (decodeToken.role === "ROLE_ADMIN") {
-          navigate("/admin");
-        } else {
-          navigate("/");
-        }
       } else {
         alert("로그인 실패");
       }
+      // if (accessToken) {
+      //   login(accessToken);
+      //   const decodeToken = jwtDecode(accessToken);
+      //   console.log(decodeToken.role);
+      //   if (decodeToken.role === "ROLE_ADMIN") {
+      //     navigate("/admin");
+      //   } else {
+      //     navigate("/");
+      //   }
+      // } else {
+      //   alert("로그인 실패");
+      // }
     } catch (err) {
       console.error(err);
       alert("로그인 중 오류가 발생했습니다");
