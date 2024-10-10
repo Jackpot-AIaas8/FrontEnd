@@ -26,6 +26,7 @@ import routes from "./admin/routes/Router";
 
 import { AuthProvider } from "./token/AuthContext";
 import Mypage from "./pages/Mypage";
+import MypageDemo from "./pages/MypageDemo";
 
 function App() {
   const routing = useRoutes(routes);
@@ -56,6 +57,7 @@ function App() {
             <Route path="/signIn" element={<SignIn />} />
             <Route path="/signUp" element={<SignUp />} />
             <Route path="/myPage" element={<Mypage />} />
+            {/* <Route path="/myPage" element={<MypageDemo />} /> */}
           </Routes>
         </ThemeProvider>
         {!isAdminRoute && <Button />}
