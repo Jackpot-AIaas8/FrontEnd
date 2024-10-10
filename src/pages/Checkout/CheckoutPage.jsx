@@ -1,6 +1,9 @@
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
+import { loadTossPayments } from "@tosspayments/payment-sdk";
+
+const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 
 function CheckoutPage() {
   const location = useLocation();
@@ -14,6 +17,8 @@ function CheckoutPage() {
     totalPrice,
   } = location.state || {};
 
+  const finalAmount = totalPrice ? totalPrice + 3000 : 0; // 총 결제 금액 (상품 가격 + 배송비)
+
   useEffect(() => {
     console.log("Received location state:", location.state); // 데이터 확인용 로그
     console.log("User Address:", userAddress);
@@ -21,6 +26,25 @@ function CheckoutPage() {
     console.log("User Email:", userEmail);
     console.log("User Phone:", userPhone);
   }, [location.state]);
+
+  const handlePayment = async () => {
+    try {
+      const tossPayments = await loadTossPayments(clientKey);
+
+      await tossPayments.requestPayment("카드", {
+        amount: finalAmount, // 결제할 총 금액
+        orderId: "unique-order-id", // 고유한 주문 ID
+        orderName: name || "상품명 없음", // 상품명
+        customerName: userName || "구매자", // 구매자 이름
+        successUrl: window.location.origin + "/success", // 결제 성공 시 리디렉션할 URL
+        failUrl: window.location.origin + "/fail", // 결제 실패 시 리디렉션할 URL
+        customerEmail: userEmail,
+        customerMobilePhone: userPhone,
+      });
+    } catch (error) {
+      console.error("결제 오류:", error);
+    }
+  };
 
   return (
     <PageContainer>
@@ -49,7 +73,6 @@ function CheckoutPage() {
             <Label>휴대폰 번호</Label>
             <Value>{userPhone || "정보 없음"}</Value>
           </InfoRow>
-          
         </InfoBox>
       </Section>
 
@@ -93,7 +116,7 @@ function CheckoutPage() {
           </InfoRow>
           <TotalRow>
             <Label>총 결제 금액</Label>
-            <Value>{totalPrice ? `${(totalPrice + 3000).toLocaleString()}원` : "가격 정보 없음"}</Value>
+            <Value>{finalAmount ? `${finalAmount.toLocaleString()}원` : "가격 정보 없음"}</Value>
           </TotalRow>
         </InfoBox>
       </Section>
@@ -101,7 +124,7 @@ function CheckoutPage() {
       {/* 결제 방법과 결제하기 버튼 */}
       <PaymentSection>
         <PaymentMethods>결제 방법: 네이버페이, 카카오페이 구현 예정</PaymentMethods>
-        <PayButton>결제하기</PayButton>
+        <PayButton onClick={handlePayment}>결제하기</PayButton>
       </PaymentSection>
     </PageContainer>
   );
