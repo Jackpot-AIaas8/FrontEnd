@@ -15,6 +15,7 @@ const ShopTables = lazy(() => import("../views/ui/ShopsTables"));
 const ShopDetailForm = lazy(() => import("../views/ui/ShopDetailForm.js"));
 const StockForm = lazy(() => import("../components/StockForm"));
 const BoardTables = lazy(() => import("../views/ui/BoardsTables"));
+const BoardDetailForm = lazy(() => import("../views/ui/BoardDetailForm.js"));
 
 /*****Routes******/
 const ThemeRoutes = () => {
@@ -23,6 +24,7 @@ const ThemeRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<FullLayout />}>
+    
         {/* /admin에 직접 접근 시 MemberTables로 이동 */}
         <Route index element={<MemberTables />} />
         <Route path="membertable" element={<MemberTables />} />
@@ -35,12 +37,13 @@ const ThemeRoutes = () => {
         <Route path="shopdetailform/:shopId" element={<ShopDetailForm />} />
         <Route path="stockform/:shopId" element={<StockForm />} />
         <Route path="boardtable" element={<BoardTables />} />
-
+          
         {/* /admin 경로가 아닌 경우, /admin으로 리디렉션 */}
         <Route path="*" element={<Navigate to="/admin" replace />} />
       </Route>
     </Routes>
   );
 };
+
 
 export default ThemeRoutes;
