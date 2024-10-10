@@ -13,6 +13,22 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../token/AuthContext";
 import styled from "styled-components";
 
+const LogoButton = styled.button`
+background-color: transparent;
+border: none;
+left: 200px;
+z-index: 100;
+align-self: center;
+width: 150px;
+margin: 10px;
+
+img {
+  width: 100%;
+  height: 4%;
+  background-color: transparent;
+}
+`;
+
 export default function NavBar() {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -21,26 +37,14 @@ export default function NavBar() {
   // const handleClick = (event) => {
   //     setAnchorEl(event.currentTarget);
   // };
+
+
+
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  const LogoButton = styled.button`
-    background-color: transparent;
-    border: none;
-    left: 200px;
-    z-index: 100;
-    align-self: center;
-    width: 150px;
-    margin: 10px;
-
-    img {
-      width: 100%;
-      height: 4%;
-      background-color: transparent;
-    }
-  `;
-
+ 
   return (
     <Fragment>
       <Box
