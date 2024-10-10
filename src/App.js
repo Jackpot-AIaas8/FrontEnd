@@ -14,7 +14,7 @@ import DogDetail from "./dogList/DogDetail";
 import DogListPage from "./pages/DogListPage";
 import ShopPage from "./pages/ShopPage";
 import ShopDetailPage from "./pages/ShopDetailPage";
-import CheckoutPage from "./pages/CheckoutPage";
+import CheckoutPage from "./pages/Checkout/CheckoutPage";
 import { Routes, Route, useRoutes, useLocation } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import theme from "./config/theme";
