@@ -1,7 +1,6 @@
 import styled from "styled-components";
 
 export const StyledMypageWrapper = styled.div`
-
   padding: 30px;
   gap: 100px;
 
@@ -31,14 +30,13 @@ export const StyledMypageWrapper = styled.div`
 `;
 
 export const StyledNavBar = styled.div`
- 
   flex: 1;
   padding: 0 20px;
 
   .nav-section {
-  border-radius: 8px;
-   border: 2px solid #bbbbbb;
-   box-shadow: 10px 10px 5px rgb(0, 0, 0, 0.2);
+    border-radius: 8px;
+    border: 2px solid #bbbbbb;
+    box-shadow: 10px 10px 5px rgb(0, 0, 0, 0.2);
     max-width: 100%;
     width: 100%;
   }
@@ -92,7 +90,7 @@ export const StyledProFileArea = styled.div`
 `;
 
 export const StyledMypageMenu = styled.div`
-  margin-top:20px;
+  margin-top: 20px;
   padding: 10px 30px;
 
   .menu_list {
