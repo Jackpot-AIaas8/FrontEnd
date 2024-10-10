@@ -51,7 +51,7 @@ body {
   height: 100vh;
 }
 
-a{
+a {
   text-decoration: none; /* 기본 밑줄 제거 */
   cursor: pointer;
 }
@@ -73,7 +73,8 @@ p {
   white-space: normal;
 }
 
-ol, ul {
+ol,
+ul {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -299,6 +300,13 @@ button[class^="btn_"] {
   transition: 0.2s ease-in;
   cursor: pointer;
 }
+
 [class^="btn_"]:hover {
   background-color: #0056b3;
+}
+
+[class^="section-"] {
+  border-radius: 8px;
+  border: 1px solid #bbbbbb;
+  box-shadow: 10px 10px 5px rgb(0, 0, 0, 0.2);
 }
