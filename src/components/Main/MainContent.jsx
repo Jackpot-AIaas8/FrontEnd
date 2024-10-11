@@ -6,6 +6,7 @@ import {styled} from '@mui/material/styles';
 import { useState, useEffect } from "react";
 import apiClient from "../../token/AxiosConfig";
 import { useNavigate } from "react-router-dom";
+import DogCarousel from "./DogCarousel";
 
 function MainContent() {
     const navigate = useNavigate();
@@ -118,6 +119,8 @@ function MainContent() {
                         </Grid2>
                     </Grid2>
                 </Container>
+
+                <DogCarousel/>
                 
                 {/*애완 용품*/}
                 <Grid2 container spacing={1} sx={{marginBottom: '150px'}}>
@@ -204,7 +207,7 @@ const StyledBox = styled(Box)`
 
 const StyledImg = styled("img")`
   width: 100%;
-  height: auto;
+  height: 50%;
 `;
 
 const StyledCard = styled(Box)`

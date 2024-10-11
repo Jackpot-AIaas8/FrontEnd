@@ -20,7 +20,7 @@ function MainCarousel() {
     
   };
   return (
-    <div className="slider-container" style={{display: "block", width: '60%', margin: "30px auto"}}>
+    <div className="slider-container" style={{display: "block", width: '100%', margin: "30px auto"}}>
       <Slider {...settings}>
         {/* <div>
           <img src={dogSupplies} alt="" style={{height: '400px', width: '100%', margin: "0 auto"}}/>
