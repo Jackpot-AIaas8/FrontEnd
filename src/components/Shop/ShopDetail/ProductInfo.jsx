@@ -3,13 +3,14 @@ import { Typography, Button } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 const ProductInfo = ({ productId }) => {
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation(); // useLocation을 사용하여 현재 위치 정보를 가져옵니다.
 
   // 상품 정보 가져오기
   const fetchProduct = async () => {
@@ -52,13 +53,13 @@ const ProductInfo = ({ productId }) => {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        });        
-  
+        });
+
         const userData = userResponse.data;
         console.log("User Data:", userData);
-  
+
         // 결제 페이지로 이동하며 사용자 정보 전달
-        navigate("/checkout", {
+        navigate("/OrderConfirmation", {
           state: {
             name: product.name,
             price: product.price,
@@ -75,16 +76,16 @@ const ProductInfo = ({ productId }) => {
       }
     } else {
       alert("로그인이 필요합니다.");
-      navigate("/SignIn?redirect=/checkout", {
+      // 로그인 페이지로 리디렉션
+      navigate("/signIn", {
+        replace: true,
         state: {
-          name: product.name,
-          price: product.price,
-          totalPrice: totalPrice,
+          redirectedFrom: location.pathname, // 사용자가 원래 위치한 경로를 전달
         },
       });
     }
   };
-  
+
   return (
     <TopSection className="flex flex-row justify-between">
       <LeftSection className="flex flex-column align-start">
