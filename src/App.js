@@ -66,8 +66,13 @@ function App() {
                 </ProtectedRoute>
               }
             /> */}
-
-            <Route
+          </Routes>
+        </ThemeProvider>
+        {!isAdmin && <Button />}
+        {!isAdmin && <Footer />}
+      </div>
+      <Routes>
+           <Route
               path="/admin/*"
               element={
                 <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
@@ -75,11 +80,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-          </Routes>
-        </ThemeProvider>
-        {!isAdmin && <Button />}
-        {!isAdmin && <Footer />}
-      </div>
+        </Routes>
     </>
   );
 }
