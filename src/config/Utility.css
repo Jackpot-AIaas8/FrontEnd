@@ -51,20 +51,48 @@ body {
   height: 100vh;
 }
 
+a {
+  text-decoration: none; /* 기본 밑줄 제거 */
+  cursor: pointer;
+}
+
+a:hover {
+  text-decoration: underline; /* 마우스 오버 시 밑줄 추가 */
+}
+
+a:focus {
+  outline: none; /* 포커스 시 기본 아웃라인 제거 */
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2); /* 포커스 시 시각적 표시 */
+}
+
+a:active {
+  color: #d64229; /* 클릭된 상태일 때 색상 변화 */
+}
+
 p {
   white-space: normal;
+}
+
+ol,
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 h1,
 h2,
 h3 {
+  margin: 0;
+  padding: 0;
   font-weight: 600; /* SemiBold 적용 */
 }
 
 .container {
   margin-top: 100px;
   width: 100vw;
-  min-height: 100vh;
+  height: fit-content;
+  
 }
 
 /* flex-area */
@@ -93,6 +121,14 @@ h3 {
 
 .justify-around {
   justify-content: space-around;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-end {
+  justify-content: flex-end;
 }
 
 .align-center {
@@ -178,12 +214,21 @@ h3 {
 }
 
 /* Width 관련 */
+
 .w-full {
   width: 100%;
 }
 
+.w-eighty {
+  width: 80%;
+}
+
 .w-half {
   width: 50%;
+}
+
+.w-thirty{
+  width: 30%;
 }
 
 .w-auto {
@@ -267,6 +312,13 @@ button[class^="btn_"] {
   transition: 0.2s ease-in;
   cursor: pointer;
 }
+
 [class^="btn_"]:hover {
   background-color: #0056b3;
+}
+
+[class^="section-"] {
+  border-radius: 8px;
+  border: 1px solid #bbbbbb;
+  box-shadow: 10px 10px 5px rgb(0, 0, 0, 0.2);
 }

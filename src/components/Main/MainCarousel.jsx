@@ -1,7 +1,7 @@
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-// import mainCarousel1 from "../../static/mainCarousel1.jpg"
+import mainCarousel1 from "../../static/mainCarousel1.jpg"
 import mainCarousel2 from "../../static/mainCarousel2.jpg"
 import mainCarousel3 from "../../static/mainCarousel3.jpg"
 import mainCarousel4 from "../../static/mainCarousel4.jpg"
@@ -21,10 +21,7 @@ function MainCarousel() {
     };
     return (
         <div className="slider-container" style={{display: "block"}}>
-            <Slider {...settings}>
-                {/* <div>
-                    <img src={mainCarousel1} alt="" style={{height: '700px', width: '100%'}}/>
-                </div>   */}
+            <Slider {...settings}>                
                 <div>
                     <img src={mainCarousel2} alt="" style={{height: '700px', width: '100%'}}/>
                 </div>
@@ -33,6 +30,9 @@ function MainCarousel() {
                 </div>
                 <div>
                     <img src={mainCarousel4} alt="" style={{height: '700px', width: '100%'}}/>
+                </div>
+                <div>
+                    <img src={mainCarousel1} alt="" style={{height: '700px', width: '100%'}}/>
                 </div>
             </Slider>
         </div>

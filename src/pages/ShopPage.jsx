@@ -9,29 +9,32 @@ import styled from "styled-components";
 import axios from "axios";
 
 function ShopPage() {
-  const [category, setCategory] = useState(null);  
+  const [category, setCategory] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
-  const [sortOrder, setSortOrder] = useState("latest");  
+  const [sortOrder, setSortOrder] = useState("latest");
   const location = useLocation();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const itemsPerPage = 12;
 
+  // 정렬 순서 초기화
   useEffect(() => {
     setSortOrder("latest");
   }, [location]);
 
+  // URL에서 카테고리 쿼리 파라미터 가져오기
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const categoryParam = params.get('category');
+    const categoryParam = params.get("category");
 
     if (categoryParam) {
-      setCategory(categoryParam); 
+      setCategory(categoryParam);
     } else {
-      setCategory(null);  
+      setCategory(null);
     }
   }, [location]);
 
+  // 카테고리나 정렬 순서 변경 시 URL 업데이트
   useEffect(() => {
     if (category !== null) {
       navigate(`/shop?category=${category}&sortOrder=${sortOrder}`, { replace: true });
@@ -40,20 +43,18 @@ function ShopPage() {
     }
   }, [category, sortOrder, navigate]);
 
+  // 상품 데이터 가져오기
   const fetchProducts = async () => {
     try {
-      let response;
-      if (category !== null) {
-        response = await axios.get(`http://localhost:8181/shop/category/${category}`, {
-          params: { page: 1, size: itemsPerPage, sortOrder: sortOrder },
-        });
-      } else {
-        response = await axios.get("http://localhost:8181/shop/findList", {
-          params: { page: 1, size: itemsPerPage, sortOrder: sortOrder },
-        });
-      }
+      const endpoint = category
+        ? `http://localhost:8181/shop/category/${category}`
+        : `http://localhost:8181/shop/findList`;
 
-      if (Array.isArray(response.data.dtoList)) {
+      const response = await axios.get(endpoint, {
+        params: { page: 1, size: itemsPerPage, sortOrder },
+      });
+
+      if (response.data && Array.isArray(response.data.dtoList)) {
         setProducts(response.data.dtoList);
       } else {
         setProducts([]);
@@ -63,12 +64,14 @@ function ShopPage() {
     }
   };
 
+  // 카테고리나 정렬 순서 변경 시 상품 데이터 갱신
   useEffect(() => {
     fetchProducts();
-  }, [category]);
+  }, [category, sortOrder]);
 
+  // 정렬 순서 변경
   const handleSortChange = (newSortOrder) => {
-    setSortOrder(newSortOrder); 
+    setSortOrder(newSortOrder);
   };
 
   return (
@@ -87,12 +90,12 @@ function ShopPage() {
           </SideBarWrapper>
           <CardSection>
             <CardWrapper>
-              <Card 
+              <Card
                 products={products}
-                category={category} 
-                searchResults={searchResults} 
-                sortOrder={sortOrder} 
-                onSortChange={handleSortChange} 
+                category={category}
+                searchResults={searchResults}
+                sortOrder={sortOrder}
+                onSortChange={handleSortChange}
               />
             </CardWrapper>
           </CardSection>
@@ -148,24 +151,24 @@ const CardSection = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 60%; /* 너비를 60%로 설정 */
+  width: 60%;
   max-width: 1000px;
   margin: 0 auto;
 `;
 
 const CardWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 300px); /* 기본적으로 4개 */
+  grid-template-columns: repeat(4, 300px);
   gap: 20px;
-  justify-content: center; /* 카드들을 중앙으로 정렬 */
+  justify-content: center;
 
   @media (max-width: 1200px) {
-    grid-template-columns: repeat(3, 300px); /* 화면이 줄면 3개 */
+    grid-template-columns: repeat(3, 300px);
   }
 
   @media (max-width: 900px) {
-    grid-template-columns: repeat(2, 300px); /* 화면이 더 줄어들면 2개 */
-    overflow-x: auto; /* 스크롤 가능 */
+    grid-template-columns: repeat(2, 300px);
+    overflow-x: auto;
   }
 `;
 

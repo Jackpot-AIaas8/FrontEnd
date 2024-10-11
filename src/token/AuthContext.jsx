@@ -1,34 +1,51 @@
-import React, { createContext, useState, useEffect } from "react";
-
+import React, { createContext, useState } from "react";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 import { logout as requestLogout } from "./Logout";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
+  const token = sessionStorage.getItem("accessToken");
+  const decodedToken = token ? jwtDecode(token) : null;
 
-  useEffect(() => {
-    const token = sessionStorage.getItem("accessToken");
-    setIsAuthenticated(Boolean(token));
-  }, []);
+  const initialRole = decodedToken?.role || "guest";
+  const initialIsAuthenticated = Boolean(token);
+  const initialIsAdmin = initialRole === "ROLE_ADMIN";
+  const initialIsPremium = initialRole === "premium";
 
-  const login = (accessToken) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    initialIsAuthenticated
+  );
+  const [userRole, setUserRole] = useState(initialRole);
+  const [isAdmin, setIsAdmin] = useState(initialIsAdmin);
+  const [isPremium, setIsPremium] = useState(initialIsPremium);
+
+  const login = (accessToken, redirectPath = "/") => {
     sessionStorage.setItem("accessToken", accessToken);
+    const decoded = jwtDecode(accessToken);
     setIsAuthenticated(true);
+    setUserRole(decoded.role || "ROLE_USER");
+    setIsAdmin(decoded.role === "ROLE_ADMIN");
+    setIsPremium(decoded.role === "ROLE_PREMIUM");
+    navigate(decoded.role === "ROLE_ADMIN" ? "/admin" : redirectPath, {
+      replace: true,
+    });
   };
 
   const logout = async () => {
-    await requestLogout(); // 분리된 logout 함수 호출
-    setIsAuthenticated(false); // 로그인 상태 업데이트
+    await requestLogout();
+    sessionStorage.removeItem("accessToken");
+    setIsAuthenticated(false);
+    setUserRole("guest");
+    setIsAdmin(false);
+    setIsPremium(false);
   };
 
   return (
     <AuthContext.Provider
-      value={{
-        isAuthenticated,
-        login,
-        logout,
-      }}
+      value={{ isAuthenticated, userRole, isAdmin, isPremium, login, logout }}
     >
       {children}
     </AuthContext.Provider>
