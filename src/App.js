@@ -71,7 +71,6 @@ function App() {
         {!isAdmin && <Button />}
         {!isAdmin && <Footer />}
       </div>
-
       <Routes>
         <Route
           path="/admin/*"
