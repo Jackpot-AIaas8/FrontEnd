@@ -73,7 +73,6 @@ function App() {
         {!isAdmin && <Button />}
         {!isAdmin && <Footer />}
       </div>
-
       <Routes>
         <Route element={<ProtectedRoute allowedRoles={["ROLE_ADMIN"]} />}>
           <Route path="/admin/*" element={<ThemeRoutes />} />

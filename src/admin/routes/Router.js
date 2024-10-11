@@ -37,6 +37,7 @@ const ThemeRoutes = () => {
         <Route path="shopdetailform/:shopId" element={<ShopDetailForm />} />
         <Route path="stockform/:shopId" element={<StockForm />} />
         <Route path="boardtable" element={<BoardTables />} />
+        <Route path="boarddetailform/:boardId" element={<BoardDetailForm />} />
           
         {/* /admin 경로가 아닌 경우, /admin으로 리디렉션 */}
         <Route path="*" element={<Navigate to="/admin" replace />} />
