@@ -23,7 +23,7 @@ const PageComponent = ({
   };
 
   return (
-    <Stack direction="row" spacing={2} justifyContent="center" mt={4}>
+    <Stack direction="row" spacing={2} justifyContent="center" mt={6}>
       <Button
         variant="contained"
         onClick={onPrev}

@@ -91,7 +91,7 @@ h3 {
 .container {
   margin-top: 100px;
   width: 100vw;
-  height: fit-content;
+  height: 100vh;
   
 }
 

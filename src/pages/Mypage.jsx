@@ -103,18 +103,24 @@ const Mypage = () => {
                     <h2>
                       {nickName}님의 회원 등급은 {rank}입니다.{" "}
                     </h2>
+                    <hr className="divider" />
                   </li>
                   <li>
                     <h3>마일리지는getMilage원입니다.</h3>
+                    <hr className="divider" />
                   </li>
                   {Object.entries(mockMypageData.member).map(([key, value]) => (
                     <li
                       key={key}
-                      className="div_list flex flex-row justify-between w-full"
+                      className="div_list flex flex-column justify-between w-full"
                     >
-                      <div className="row_item flex flex-row justify-between w-full">
-                        <span className="item_text">{`${key}: ${value}`}</span>
+                      
+                      <div className="row_item flex flex-row justify-start w-full">
+                      
+                      <span className="item_key">{key}</span>
+                      <span className="item_value">{value}</span>
                       </div>
+                      <hr className="divider" />
                     </li>
                   ))}
                 </ul>

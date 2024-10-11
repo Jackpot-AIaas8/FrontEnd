@@ -13,7 +13,7 @@ const StyledIconButton = styled.button`
   top: 8px;
   right: 8px;
   color: ${(props) =>
-    props.heart === 1 ? theme.colors.red : theme.colors.white};
+    props.$heart === 1 ? theme.colors.red : theme.colors.white};
   background: none;
   border: none;
   padding: 0;
@@ -77,7 +77,7 @@ const HeartButton = (props) => {
 
   return (
     <StyledIconButton
-      heart={heart}
+      $heart={heart}
       onClick={(e) => {
         e.stopPropagation(); // 부모 요소로 이벤트 전파 방지
         updateHeart();

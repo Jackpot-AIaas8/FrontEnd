@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import BannerImage from "../static/Banner1.png";
+
 
 
 
@@ -101,8 +101,12 @@ export const StyeldRightSection = styled.div`
   }
 
   li {
-    border-top: 1px solid rgba(220, 227, 233, 0.8);
+
     width: 100%;
     align-items: center;
+  }
+
+  hr{
+    width: 100%;
   }
 `;

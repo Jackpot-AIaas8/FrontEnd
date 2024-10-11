@@ -11,7 +11,7 @@ import BoardEdit from "./pages/BoardEditPage";
 import BoardRemove from "./pages/BoardDeletePage";
 import Cart from "./components/Cart";
 import DogDetail from "./dogList/DogDetail";
-import DogListPage from "./pages/DogListPage";
+import DogList from "./pages/DogList";
 import ShopPage from "./pages/ShopPage";
 import ShopDetailPage from "./pages/ShopDetailPage";
 import CheckoutPage from "./pages/Checkout/CheckoutPage";
@@ -45,7 +45,7 @@ function App() {
             <Route path="/shop/:shopId" element={<ShopDetailPage />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/dogList" element={<DogListPage />} />
+            <Route path="/dogList" element={<DogList />} />
             <Route path="/dog/:dogId" element={<DogDetail />} />
             <Route path="/freeBoard" element={<FreeBoardPage />} />
             <Route path="/oneOnOneBoard" element={<OneOnOneBoardPage />} />
