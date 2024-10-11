@@ -4,7 +4,7 @@ import HeadsetMicIcon from '@mui/icons-material/HeadsetMic';
 
 const Button = () => {
     const topClick = () => {
-        window.scrollTo({top: 0, behavior: 'smooth'});
+      window.scrollTo({top: 0, behavior: 'smooth'});
     };
     const chatClick = () => {
 

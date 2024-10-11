@@ -1,33 +1,52 @@
-
-.register-spacing-top{
-  margin-top: 3%;
+.board-table {
+  border-collapse: collapse;
+  width: 100%; /* 테이블의 width 설정을 100%로 변경 */
+  margin: 0 auto; /* 테이블을 가운데 정렬 */
 }
 
+.board-table thead td {
+  border-top: 1px solid #ccc;
+  border-left: none; /* 좌측 경계선 제거 */
+  border-right: none; /* 우측 경계선 제거 */
+  border-bottom: none; /* 아래 경계선 제거 */
+  background-color: #ffffff;
+  padding: 10px;
+}
 
-.board-write-container {
-    padding: 20px;
-    max-width: 600px;
-    margin: auto;
-  }
-  
-  h1 {
-    text-align: center;
-  }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  input, textarea {
-    margin-bottom: 10px;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  button {
-    align-self: flex-end;
-  }
-  
+.board-table tbody .content-row {
+  padding: 10px;
+}
+
+.no-border-textarea {
+  border: none;
+  resize: none;
+  min-height: 150px;
+}
+
+.no-border-textarea:focus {
+  outline: none;
+}
+
+.save-button {
+  background-color: white;
+  color: #ff7600;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.save-button:hover {
+  background-color: #ff7600;
+  color: white;
+}
+
+input, textarea {
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+}

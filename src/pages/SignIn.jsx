@@ -41,23 +41,16 @@ const SignIn = () => {
 
   const signIn = async (event) => {
     event.preventDefault(); // 폼 제출 기본 동작 방지
-    console.log("Sending user data:", user);
+
     try {
       const response = await apiNoToken.post("member/signIn", user, {
         withCredentials: true, // 쿠키를 사용하려면 true로 설정
       });
 
       const { access: accessToken } = response.data;
-
       if (accessToken) {
-        login(accessToken);
-        const decodeToken = jwtDecode(accessToken);
-        console.log(decodeToken.role);
-        if (decodeToken.role === "ROLE_ADMIN") {
-          navigate("/admin");
-        } else {
-          navigate("/");
-        }
+        const redirectPath = location.state?.redirectedFrom || "/";
+        login(accessToken, redirectPath);
       } else {
         alert("로그인 실패");
       }

@@ -11,9 +11,10 @@ function FreeBoardPage() {
   const [searchResults, setSearchResults] = useState([]); // 검색 결과 상태
 
   return (
-    <>
+    <div className='container'>
+      <div className="box">
       <NavBar />
-      <div className="banner-spacing-top">
+      <div className="">
         <Banner1 />
       </div>
       <BoardSearchBox setSearchResults={setSearchResults}/> 
@@ -23,7 +24,8 @@ function FreeBoardPage() {
       <div className="MoveBoardRegisterButton">
         <MoveBoardRegisterButton />
       </div>
-    </>
+      </div>
+    </div>
   );
 }
 
