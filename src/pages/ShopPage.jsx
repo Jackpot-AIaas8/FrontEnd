@@ -117,6 +117,11 @@ const MainContentWrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  max-width: 1200px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto; 
 `;
 
 const SearchWrapper = styled.div`
@@ -127,7 +132,8 @@ const SearchWrapper = styled.div`
 `;
 
 const CarouselWrapper = styled.div`
-  width: 100%;
+  width: 1200px;
+  height: auto;
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
@@ -135,6 +141,7 @@ const CarouselWrapper = styled.div`
 
 const ContentWrapper = styled.div`
   display: flex;
+  width: 100%;
   padding: 20px;
   justify-content: space-between;
   align-items: flex-start;

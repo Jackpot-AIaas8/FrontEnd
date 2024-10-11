@@ -8,7 +8,7 @@ import SortSelector from "../dogList/SortSelector";
 import PageComponent from "../dogList/PageComponent";
 import apiClient from "../token/AxiosConfig";
 import styled from "styled-components";
-import image from "../static/Banner1mod.png"
+import image from "../static/fundingBanner.jpg"
 
 const DogListPage = () => {
   const [dogsData, setDogsData] = useState([]);
@@ -72,9 +72,10 @@ const DogListPage = () => {
     <div className="container">
       
     <Container>
-      <ImageBanner className="flex align-center justify-center">
-        <img src={image} alt="대표 사진 " />
+      <ImageBanner className="flex align-center justify-center w-full m-0 m-auto relative">
+        <img src={image} alt="펀딩 배너 사진" style={{width: '100%'}}/>
       </ImageBanner>
+      {/* 여기 스타일코드 인라인으로 넣어놓은거 없애보려고 클래스네임에 넣었는데 안먹히는거같음 */}
 
       {loading ? (
         <div>Loading...</div> // 로딩 중일 때는 로딩 메시지 표시
