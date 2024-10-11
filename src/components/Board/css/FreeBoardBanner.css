@@ -1,4 +1,8 @@
 /* 네비바와 배너 사이의 여백, 페이지스 디렉토리에 프리보드페이지 파일에서 사용함*/
+.box{
+  height:75vh;
+}
+
 .banner-spacing-top {
   margin-top: 140px;
 }
@@ -6,12 +10,6 @@
 .banner-spacing-top2 {
   margin-top: 60px;
 }
-
-/* 글 조회 테이블과 푸터사이 간격 여백 만들기. 보드파인드원페이지 파일에서 사용함 */
-.findOne-spacing-below {
-  margin-bottom: 100px;
-}
-
 
 .banner-margin-0 {
   margin: 0 auto;
