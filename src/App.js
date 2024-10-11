@@ -25,7 +25,7 @@ import SignUp from "./pages/SignUp";
 
 import { AuthContext } from "./token/AuthContext";
 import Mypage from "./pages/Mypage";
-import MypageDemo from "./pages/MypageDemo";
+
 import { useContext } from "react";
 import ProtectedRoute from "./token/ProtectedRoute";
 import ThemeRoutes from "./admin/routes/Router";

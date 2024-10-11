@@ -1,9 +1,19 @@
 import styled from "styled-components";
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes
 
 export const StyledMypageWrapper = styled.div`
   padding: 30px;
   gap: 100px;
+<<<<<<< Updated upstream
   min-width: 1200px;
+=======
+  min-width:1200px;
+  
+>>>>>>> Stashed changes
 `;
 
 export const StyledNavBar = styled.div`
