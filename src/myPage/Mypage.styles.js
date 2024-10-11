@@ -1,5 +1,5 @@
 import styled from "styled-components";
-
+import BannerImage from "../static/Banner1.png";
 
 
 
