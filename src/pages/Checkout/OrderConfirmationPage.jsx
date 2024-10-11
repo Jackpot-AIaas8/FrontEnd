@@ -1,54 +1,103 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { loadTossPayments } from "@tosspayments/payment-sdk";
+import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 
 const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+const customerKey = "6JqYbn-tMjCQIrq9p4xLN";
 
 function CheckoutPage() {
   const location = useLocation();
   const {
-    name,
-    userName,
-    userEmail,
-    userPhone,
-    userAddress,
-    quantity,
-    totalPrice,
+    name = "상품명",
+    userName = "고객 이름",
+    userEmail = "example@example.com",
+    userPhone = "010-1234-5678",
+    userAddress = "서울특별시 강남구",
+    quantity = 1,
+    totalPrice = 50000,
   } = location.state || {};
 
-  const finalAmount = totalPrice ? totalPrice + 3000 : 0; // 총 결제 금액 (상품 가격 + 배송비)
+  const [ready, setReady] = useState(false);
+  const [widgets, setWidgets] = useState(null);
+  const [address, setAddress] = useState(userAddress);
+  const [isEditingAddress, setIsEditingAddress] = useState(false);
+  const [amount] = useState(totalPrice + 3000);
 
   useEffect(() => {
-    console.log("Received location state:", location.state); // 데이터 확인용 로그
-    console.log("User Address:", userAddress);
-    console.log("User Name:", userName);
-    console.log("User Email:", userEmail);
-    console.log("User Phone:", userPhone);
-  }, [location.state]);
+    async function fetchPaymentWidgets() {
+      const tossPayments = await loadTossPayments(clientKey);
+      const widgets = tossPayments.widgets({ customerKey });
+      setWidgets(widgets);
+    }
+    fetchPaymentWidgets();
+  }, []);
+
+  useEffect(() => {
+    async function renderPaymentWidgets() {
+      if (!widgets) return;
+
+      await widgets.setAmount({
+        currency: "KRW",
+        value: parseInt(amount, 10), // 정수형으로 변환하여 전달
+      });
+      await Promise.all([
+        widgets.renderPaymentMethods({
+          selector: "#payment-method",
+          variantKey: "DEFAULT",
+        }),
+        widgets.renderAgreement({
+          selector: "#agreement",
+          variantKey: "AGREEMENT",
+        }),
+      ]);
+      setReady(true);
+    }
+    renderPaymentWidgets();
+  }, [widgets, amount]);
 
   const handlePayment = async () => {
-    try {
-      const tossPayments = await loadTossPayments(clientKey);
+    const paymentAmount = String(parseInt(amount, 10)); // 문자열로 변환된 정수형 금액
 
-      await tossPayments.requestPayment("카드", {
-        amount: finalAmount, // 결제할 총 금액
-        orderId: "unique-order-id", // 고유한 주문 ID
-        orderName: name || "상품명 없음", // 상품명
-        customerName: userName || "구매자", // 구매자 이름
-        successUrl: window.location.origin + "/success", // 결제 성공 시 리디렉션할 URL
-        failUrl: window.location.origin + "/fail", // 결제 실패 시 리디렉션할 URL
+    if (!ready) {
+      alert("현재는 토스 카드 결제만 가능합니다.");
+      return;
+    }
+
+    try {
+      console.log("결제 요청 시작, amount:", paymentAmount);
+
+      await widgets.requestPayment({
+        orderId: "orderId_123456",
+        orderName: name,
+        amount: paymentAmount, // 문자열 형태의 정수 금액
+        successUrl: `${window.location.origin}/success`,
+        failUrl: `${window.location.origin}/fail`,
         customerEmail: userEmail,
+        customerName: userName,
         customerMobilePhone: userPhone,
       });
     } catch (error) {
-      console.error("결제 오류:", error);
+      console.error("결제 요청 중 오류 발생:", error);
+      if (error.response) {
+        console.log("응답 데이터:", error.response.data);
+        console.log("응답 상태 코드:", error.response.status);
+        console.log("응답 헤더:", error.response.headers);
+      }
     }
+  };
+ 
+
+  const handleAddressEdit = () => {
+    setIsEditingAddress(true);
+  };
+
+  const handleAddressSave = () => {
+    setIsEditingAddress(false);
   };
 
   return (
     <PageContainer>
-      {/* 로고 및 주문/결제 단계 */}
       <Header>
         <Logo>로고</Logo>
         <OrderProcess>
@@ -57,7 +106,6 @@ function CheckoutPage() {
       </Header>
       <Divider />
 
-      {/* 구매자 정보 섹션 */}
       <Section>
         <SectionTitle>구매자 정보</SectionTitle>
         <InfoBox>
@@ -76,17 +124,31 @@ function CheckoutPage() {
         </InfoBox>
       </Section>
 
-      {/* 받는 사람 정보 섹션 */}
+      <Divider />
+
       <Section>
         <FlexRow>
           <SectionTitle>받는 사람 정보</SectionTitle>
-          <AddShippingBox>배송지 추가</AddShippingBox>
+          {isEditingAddress ? (
+            <SaveAddressButton onClick={handleAddressSave}>저장</SaveAddressButton>
+          ) : (
+            <EditAddressButton onClick={handleAddressEdit}>수정</EditAddressButton>
+          )}
         </FlexRow>
-        <MessageBox>저장되어 있는 배송지가 없습니다. 추가해주세요.</MessageBox>
+        {isEditingAddress ? (
+          <Input
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder="주소를 수정하세요"
+          />
+        ) : (
+          <MessageBox>{address || "주소 정보가 없습니다."}</MessageBox>
+        )}
       </Section>
+
       <Divider />
 
-      {/* 상품 정보 섹션 */}
       <Section>
         <SectionTitle>상품 정보</SectionTitle>
         <ProductInfoBox>
@@ -100,9 +162,9 @@ function CheckoutPage() {
           </ProductRow>
         </ProductInfoBox>
       </Section>
+
       <Divider />
 
-      {/* 결제 정보 섹션 */}
       <Section>
         <SectionTitle>결제 정보</SectionTitle>
         <InfoBox>
@@ -116,15 +178,22 @@ function CheckoutPage() {
           </InfoRow>
           <TotalRow>
             <Label>총 결제 금액</Label>
-            <Value>{finalAmount ? `${finalAmount.toLocaleString()}원` : "가격 정보 없음"}</Value>
+            <Value>{totalPrice ? `${(totalPrice + 3000).toLocaleString()}원` : "가격 정보 없음"}</Value>
           </TotalRow>
         </InfoBox>
       </Section>
 
-      {/* 결제 방법과 결제하기 버튼 */}
+      <Divider />
+
       <PaymentSection>
-        <PaymentMethods>결제 방법: 네이버페이, 카카오페이 구현 예정</PaymentMethods>
-        <PayButton onClick={handlePayment}>결제하기</PayButton>
+        <MessageBox>
+          현재는 <strong>토스 카드 결제</strong>만 가능합니다.
+        </MessageBox>
+        <div id="payment-method" />
+        <div id="agreement" />
+        <PayButton onClick={handlePayment} disabled={!ready}>
+          결제하기
+        </PayButton>
       </PaymentSection>
     </PageContainer>
   );
@@ -132,7 +201,7 @@ function CheckoutPage() {
 
 // 스타일 정의
 const PageContainer = styled.div`
-  width: 60%;
+  width: 40%;
   margin: 0 auto;
   padding: 20px;
   background-color: #f9f9f9;
@@ -216,8 +285,17 @@ const ProductRow = styled.div`
   margin-bottom: 10px;
 `;
 
-const AddShippingBox = styled.button`
+const EditAddressButton = styled.button`
   background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+`;
+
+const SaveAddressButton = styled.button`
+  background-color: #28a745;
   color: white;
   border: none;
   padding: 10px;
@@ -230,16 +308,22 @@ const MessageBox = styled.div`
   padding: 10px;
   border-radius: 5px;
   text-align: center;
-  background-color: white;
+  background-color: #f9f9f9;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #333;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 `;
 
 const PaymentSection = styled.div`
   margin-top: 20px;
-`;
-
-const PaymentMethods = styled.p`
-  font-size: 16px;
-  margin-bottom: 20px;
 `;
 
 const PayButton = styled.button`

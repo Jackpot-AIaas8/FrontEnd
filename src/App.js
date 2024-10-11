@@ -14,7 +14,7 @@ import DogDetail from "./dogList/DogDetail";
 import DogListPage from "./pages/DogListPage";
 import ShopPage from "./pages/ShopPage";
 import ShopDetailPage from "./pages/ShopDetailPage";
-import CheckoutPage from "./pages/Checkout/CheckoutPage";
+import OrderConfirmationPage from "./pages/Checkout/OrderConfirmationPage";
 import { Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import theme from "./config/theme";
@@ -29,6 +29,7 @@ import Mypage from "./pages/Mypage";
 import { useContext } from "react";
 import ProtectedRoute from "./token/ProtectedRoute";
 import ThemeRoutes from "./admin/routes/Router";
+import PaymentCheckoutPage from './pages/Checkout/PaymentCheckoutPage';
 
 function App() {
   const { isAdmin, userRole } = useContext(AuthContext);
@@ -44,7 +45,8 @@ function App() {
             <Route path="/shop" element={<ShopPage />} />
             <Route path="/shop/:shopId" element={<ShopDetailPage />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/paymentWidget" element={<PaymentCheckoutPage />} />
+            <Route path="/OrderConfirmation" element={<OrderConfirmationPage />} />
             <Route path="/dogList" element={<DogListPage />} />
             <Route path="/dog/:dogId" element={<DogDetail />} />
             <Route path="/freeBoard" element={<FreeBoardPage />} />
@@ -59,6 +61,7 @@ function App() {
             {/* 회원 전용 route가 될예정이오니 여기 내부에 pageroute넣어주세요 */}
             <Route element={<ProtectedRoute allowedRoles={["ROLE_USER"]} />}>
               <Route path="/mypage" element={<Mypage />} />
+              <Route path="/OrderConfirmation" element={<OrderConfirmationPage />} />
             </Route>
             {/* 회원 전용 route가 될예정이오니 여기 내부에 pageroute넣어주세요 */}
 
