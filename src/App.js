@@ -23,7 +23,7 @@ import SignIn from "./pages/SignIn";
 import Button from "./components/Button";
 import SignUp from "./pages/SignUp";
 
-import { AuthProvider, AuthContext } from "./token/AuthContext";
+import { AuthContext } from "./token/AuthContext";
 import Mypage from "./pages/Mypage";
 import MypageDemo from "./pages/MypageDemo";
 import { useContext } from "react";
@@ -72,15 +72,15 @@ function App() {
         {!isAdmin && <Footer />}
       </div>
       <Routes>
-           <Route
-              path="/admin/*"
-              element={
-                <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
-                  <ThemeRoutes />
-                </ProtectedRoute>
-              }
-            />
-        </Routes>
+        <Route
+          path="/admin/*"
+          element={
+            <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
+              <ThemeRoutes />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
     </>
   );
 }
