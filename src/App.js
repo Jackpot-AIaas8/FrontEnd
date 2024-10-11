@@ -55,7 +55,9 @@ function App() {
             <Route path="/board/remove/:boardId" element={<BoardRemove />} />
             <Route path="/signIn" element={<SignIn />} />
             <Route path="/signUp" element={<SignUp />} />
-            <Route path="/myPage" element={<Mypage />} />
+            <Route element={<ProtectedRoute allowedRoles={["ROLE_USER"]} />}>
+              <Route path="/mypage" element={<Mypage />} />
+            </Route>
             {/* <Route path="/myPage" element={<MypageDemo />} /> */}
             {/* 
             <Route
@@ -73,14 +75,9 @@ function App() {
       </div>
 
       <Routes>
-        <Route
-          path="/admin/*"
-          element={
-            <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
-              <ThemeRoutes />
-            </ProtectedRoute>
-          }
-        />
+        <Route element={<ProtectedRoute allowedRoles={["ROLE_ADMIN"]} />}>
+          <Route path="/admin/*" element={<ThemeRoutes />} />
+        </Route>
       </Routes>
     </>
   );

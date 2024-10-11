@@ -15,13 +15,13 @@ const SignIn = () => {
   const { isAuthenticated } = useContext(AuthContext); // 로그인 상태 확인
   const navigate = useNavigate();
   const { login } = useContext(AuthContext); // 로그인 상태 및 토큰 전달
-  const from = location?.state?.redirectFrom || "/";
+
   // *** 로그인 상태일 경우 메인 페이지로 리다이렉트 ***
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(from);
+      navigate("/");
     }
-  }, [isAuthenticated, navigate, from]);
+  }, [isAuthenticated, navigate]);
   // ************************************************
 
   // *** 회원가입한 이메일 적용 하기 ***
@@ -49,7 +49,8 @@ const SignIn = () => {
 
       const { access: accessToken } = response.data;
       if (accessToken) {
-        login(accessToken);
+        const redirectPath = location.state?.redirectedFrom || "/";
+        login(accessToken, redirectPath);
       } else {
         alert("로그인 실패");
       }
@@ -58,8 +59,6 @@ const SignIn = () => {
       alert("로그인 중 오류가 발생했습니다");
     }
   };
-
-  console.log(location);
 
   return (
     <div className="wrapper">

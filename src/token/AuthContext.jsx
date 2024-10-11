@@ -22,14 +22,16 @@ export const AuthProvider = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(initialIsAdmin);
   const [isPremium, setIsPremium] = useState(initialIsPremium);
 
-  const login = (accessToken) => {
+  const login = (accessToken, redirectPath = "/") => {
     sessionStorage.setItem("accessToken", accessToken);
     const decoded = jwtDecode(accessToken);
     setIsAuthenticated(true);
     setUserRole(decoded.role || "ROLE_USER");
     setIsAdmin(decoded.role === "ROLE_ADMIN");
     setIsPremium(decoded.role === "ROLE_PREMIUM");
-    navigate(decoded.role === "ROLE_ADMIN" ? "/admin" : "/");
+    navigate(decoded.role === "ROLE_ADMIN" ? "/admin" : redirectPath, {
+      replace: true,
+    });
   };
 
   const logout = async () => {
