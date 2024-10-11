@@ -9,7 +9,6 @@ import axios from "axios";
 const ProductInfo = ({ productId }) => {
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState(null);
-  const [loginUser, setLoginUser]= useState([]);
   const navigate = useNavigate();
 
   // 상품 정보 가져오기
