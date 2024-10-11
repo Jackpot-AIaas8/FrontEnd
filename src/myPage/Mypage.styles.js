@@ -3,8 +3,7 @@ import styled from "styled-components";
 export const StyledMypageWrapper = styled.div`
   padding: 30px;
   gap: 100px;
-  min-width:1200px;
-  }
+  min-width: 1200px;
 `;
 
 export const StyledNavBar = styled.div`
