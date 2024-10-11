@@ -47,14 +47,14 @@ function ShopPage() {
   const fetchProducts = async () => {
     try {
       const endpoint = category
-      ? `http://localhost:8181/shop/category/${category}`
-      : `http://localhost:8181/shop/findList`;
+        ? `http://localhost:8181/shop/category/${category}`
+        : `http://localhost:8181/shop/findList`;
 
       const response = await axios.get(endpoint, {
         params: { page: 1, size: itemsPerPage, sortOrder },
       });
 
-      if (Array.isArray(response.data.dtoList)) {
+      if (response.data && Array.isArray(response.data.dtoList)) {
         setProducts(response.data.dtoList);
       } else {
         setProducts([]);
