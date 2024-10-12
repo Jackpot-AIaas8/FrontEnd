@@ -30,7 +30,6 @@ import { useContext } from "react";
 import ProtectedRoute from "./token/ProtectedRoute";
 import ThemeRoutes from "./admin/routes/Router";
 // import PaymentCheckoutPage from './pages/Checkout/PaymentCheckoutPage';
-import CheckoutPage from "./pages/Checkout/OrderConfirmationPage";
 
 function App() {
   const { isAdmin, userRole } = useContext(AuthContext);
@@ -46,7 +45,7 @@ function App() {
             <Route path="/shop" element={<ShopPage />} />
             <Route path="/shop/:shopId" element={<ShopDetailPage />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/OrderConfirmation" element={<OrderConfirmationPage />} />
             <Route path="/dogList" element={<DogList />} />
             <Route path="/dog/:dogId" element={<DogDetail />} />
             <Route path="/freeBoard" element={<FreeBoardPage />} />
