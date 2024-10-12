@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import styled from "styled-components";
 
+import { useLocation, useNavigate } from "react-router-dom";
 import OffHeart from "@mui/icons-material/FavoriteBorderSharp";
 import OnHeart from "@mui/icons-material/FavoriteSharp";
 import theme from "../config/theme";
@@ -35,6 +36,8 @@ const HeartButton = (props) => {
   const { onHeartToggle, dog } = props;
   const [heart, setHeart] = useState(props.dog.isHeart);
   const { isAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleHeartToggle = () => {
     setHeart((prevHeart) => (prevHeart === 1 ? 0 : 1));
@@ -69,6 +72,7 @@ const HeartButton = (props) => {
   const updateHeart = () => {
     if (!isAuthenticated) {
       alert("로그인 후 이용할 수 있는 기능입니다.");
+      navigate("/signIn", { state: { redirectedFrom: location.pathname } });
     } else {
       handleHeartToggle();
       apiHeartUpdate();

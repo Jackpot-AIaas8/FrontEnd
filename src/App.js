@@ -30,6 +30,8 @@ import { useContext } from "react";
 import ProtectedRoute from "./token/ProtectedRoute";
 import ThemeRoutes from "./admin/routes/Router";
 // import PaymentCheckoutPage from './pages/Checkout/PaymentCheckoutPage';
+import CheckoutPage from "./pages/Checkout/OrderConfirmationPage";
+import MyPageDemo from "./pages/MypageDemo";
 
 function App() {
   const { isAdmin, userRole } = useContext(AuthContext);
@@ -56,6 +58,7 @@ function App() {
             <Route path="/board/remove/:boardId" element={<BoardRemove />} />
             <Route path="/signIn" element={<SignIn />} />
             <Route path="/signUp" element={<SignUp />} />
+            <Route path="/mypageDemo" element={<MyPageDemo />} />
 
             {/* 회원 전용 route가 될예정이오니 여기 내부에 pageroute넣어주세요 */}
             <Route element={<ProtectedRoute allowedRoles={["ROLE_USER"]} />}>
