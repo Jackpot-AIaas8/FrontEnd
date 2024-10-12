@@ -1,14 +1,10 @@
 import styled from "styled-components";
-import BannerImage from "../static/Banner1.png";
-
-
 
 export const StyledMypageWrapper = styled.div`
   padding: 30px;
   gap: 100px;
 
-  min-width:1200px;
-
+  min-width: 1200px;
 `;
 
 export const StyledNavBar = styled.div`
@@ -60,7 +56,7 @@ export const StyledProFileArea = styled.div`
     border-radius: 50%;
   }
 
-  .nickName {
+  .name {
     font-size: 26px;
     font-weight: 700;
     line-height: 32px;
@@ -88,25 +84,30 @@ export const StyledMypageMenu = styled.div`
 `;
 
 export const StyeldRightSection = styled.div`
-  flex: 1;
-  gap: 10%;
-
+  flex: 2;
+  gap: 20px;
   .section-mypage {
+    height: fit-content;
     padding: 20px;
-    flex: 1;
   }
-
-  .div-section {
-    gap: 15px;
+`;
+export const StyledProfileContainer = styled.div`
+  padding: 20px;
+  background-color: ${(props) => props.theme.colors.white};
+  .point-view {
+    margin-right: 30px;
   }
+`;
 
-  li {
+export const StyledProfileInfo = styled.div`
+  margin-left: 20px;
+`;
 
-    width: 100%;
-    align-items: center;
-  }
+export const StyledImage = styled.div`
+  width: 85px;
+  height: 85px;
 
-  hr{
-    width: 100%;
+  img {
+    border-radius: 50%;
   }
 `;

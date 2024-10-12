@@ -8,7 +8,7 @@ import SortSelector from "../dogList/SortSelector";
 import PageComponent from "../dogList/PageComponent";
 import apiClient from "../token/AxiosConfig";
 import styled from "styled-components";
-import image from "../static/Banner1mod.png";
+import image from "../static/fundingBanner.jpg";
 
 const DogListPage = () => {
   const [dogsData, setDogsData] = useState([]);
@@ -61,48 +61,46 @@ const DogListPage = () => {
   };
 
   return (
-    <div className="container">
-      <Container>
-        <ImageBanner className="flex align-center justify-center">
-          <img src={image} alt="대표 사진 " />
-        </ImageBanner>
+    <div className="container flex flex-column align-center justify-center">
+      <StyledImageBox className=" section-Image flex">
+        <img src={image} alt="대표 사진 " />
+      </StyledImageBox>
 
-        {loading ? (
-          <div>Loading...</div> // 로딩 중일 때는 로딩 메시지 표시
-        ) : (
-          <>
-            <SortSelector value={pageInfo.sort} onChange={handleSortChange} />
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3,1fr)",
-                gap: 8,
-              }}
-            >
-              {dogsData.map((dog) => (
-                <Box key={dog.dogId}>
-                  <Dog dog={dog} onHeartToggle={dogListAPI} />
-                </Box>
-              ))}
-            </Box>
-            <PageComponent
-              pageInfo={pageInfo}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-              onPrev={() => handlePageChange(Math.max(pageInfo.page - 1, 1))}
-              onNext={() =>
-                handlePageChange(Math.min(pageInfo.page + 1, totalPages))
-              }
-            />
-          </>
-        )}
+      <Container disableGutters>
+        <SortSelector value={pageInfo.sort} onChange={handleSortChange} />
+        <div className="section-doglist">
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3,1fr)",
+              gap: 8,
+              padding: "20px",
+            }}
+          >
+            {dogsData.map((dog) => (
+              <Box key={dog.dogId}>
+                <Dog dog={dog} onHeartToggle={dogListAPI} />
+              </Box>
+            ))}
+          </Box>
+        </div>
       </Container>
+      <PageComponent
+        pageInfo={pageInfo}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        onPrev={() => handlePageChange(Math.max(pageInfo.page - 1, 1))}
+        onNext={() => handlePageChange(Math.min(pageInfo.page + 1, totalPages))}
+      />
     </div>
   );
 };
 
-const ImageBanner = styled.div`
-  margin: 20px 0;
+const StyledImageBox = styled.div`
+  margin: 0;
+
+  width: fit-content;
+  max-width: 1400px;
   img {
     width: 100%;
   }

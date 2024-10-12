@@ -71,6 +71,8 @@ a:active {
 
 p {
   white-space: normal;
+  margin: 0;
+  padding: 0;
 }
 
 ol,
