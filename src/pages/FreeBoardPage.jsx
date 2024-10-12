@@ -14,7 +14,7 @@ function FreeBoardPage() {
     <div className='container'>
       <div className="box">
       <NavBar />
-      <div className="">
+      <div>
         <Banner1 />
       </div>
       <BoardSearchBox setSearchResults={setSearchResults}/> 
