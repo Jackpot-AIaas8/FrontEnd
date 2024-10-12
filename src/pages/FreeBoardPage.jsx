@@ -17,7 +17,7 @@ function FreeBoardPage() {
       <div>
         <Banner1 />
       </div>
-      <BoardSearchBox setSearchResults={setSearchResults}/> 
+        <BoardSearchBox setSearchResults={setSearchResults}/> 
       <div className="banner-spacing-top2">
         <BoardList boards={searchResults} /> {/* 검색 결과를 BoardList로 전달 */}
       </div>

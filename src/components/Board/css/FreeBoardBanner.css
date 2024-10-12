@@ -24,9 +24,9 @@
     z-index: 10;
   }
 
-  /* 배너 이미지 크기 60%로 조정 */
+  /* 배너 이미지 크기 1200px로 조정 */
   .banner-container {
-    width: 50%; /* 페이지 너비의 60%를 차지 */
+    width: 50%;
     margin: 0 auto; /* 중앙 정렬 */
     position: relative; /* 배너 내 텍스트 배치를 위한 상대적 위치 */
     z-index: 1;

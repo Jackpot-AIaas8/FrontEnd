@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Banner2 from "../../static/Banner2mod.png";
 import "../../config/Utility.css";
 import "./css/FreeBoardBanner.css";
