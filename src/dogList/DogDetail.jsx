@@ -20,37 +20,39 @@ const DogDetail = () => {
   const options = [50000, 100000, 150000, "직접입력"]; // 옵션 리스트
 
   useEffect(() => {
-    fetchDogDetail();
+    apiDogDetail();
   }, [dogId]);
 
-  const fetchDogDetail = async () => {
+  const apiDogDetail = async () => {
     try {
       const response = await apiNoToken.get("dog/findOne", {
         params: { dogId: dogId },
       });
+      setDogData(response.data);
       console.log(response.data);
     } catch (err) {
       console.error(err);
     }
   };
-  const handleSelectChange = (event) => {
-    const selectedValue = event.target.value;
-    setSelectValue(selectedValue);
-    if (selectedValue === "직접입력") {
-      setPrice("");
-    } else {
-      setPrice(selectedValue);
-    }
-  };
 
-  const handleInputChange = (event) => {
-    setPrice(event.target.value);
-  };
+  // const handleSelectChange = (event) => {
+  //   const selectedValue = event.target.value;
+  //   setSelectValue(selectedValue);
+  //   if (selectedValue === "직접입력") {
+  //     setPrice("");
+  //   } else {
+  //     setPrice(selectedValue);
+  //   }
+  // };
+
+  // const handleInputChange = (event) => {
+  //   setPrice(event.target.value);
+  // };
 
   return (
     <StyledContainer className="container flex justify-center align-center">
       <div className=" flex flex-column justify-center align-center detail-wrapper w-full">
-        <Info className="flex" />
+        <Info className="flex" dogData={dogData} />
 
         {/* <Grid2 container spacing={2} direction="column">
         {" "}
@@ -96,7 +98,7 @@ const DogDetail = () => {
           <YouTubeContainer youtubeLink={dogData.videoUrl} />
           <FundStory />
         </div>
-        <DogHistory />
+        <DogHistory dogData={dogData} />
       </div>
     </StyledContainer>
   );

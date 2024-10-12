@@ -15,20 +15,21 @@ const fundStory = `
 `;
 
 const Section = styled.div`
-outline-width: medium;
-outline-color: blue;
-outline-style: solid;
-width: 80%;
-border-radius: 10px;
-margin: 20px 0;
+  outline-width: medium;
+  outline-color: blue;
+  outline-style: solid;
+  width: 80%;
+  border-radius: 10px;
+  margin: 20px 0;
+  padding: 20px;
 
- .story-section{
- word-break: break-word;
- }
- 
- .top-name{
+  .story-section {
+    word-break: break-word;
+  }
+
+  .top-name {
     background-color: #002fa3;
-    color : #fff;
+    color: #fff;
     font-size: 18px;
     font-weight: 700;
     letter-spacing: -0.3px;
@@ -37,55 +38,46 @@ margin: 20px 0;
     justify-content: center;
     align-items: center;
     padding: 0 15px;
-    line-height: 42px; 
+    line-height: 42px;
     border-top-left-radius: 10px;
+  }
 
- }
-
-.discription-section{
+  .discription-section {
     max-width: 900px;
-     margin: 0 30px;
- }
+    margin: 0 30px;
+  }
 
- .title{
+  .title {
     font-weight: 700;
     font-size: 30px;
     word-spacing: -0.75px;
     line-height: 1.5em;
-    margin : 20px 0 0 0;
+    margin: 20px 0 0 0;
     padding: 1px 8px 1px;
     border-left: 3px solid #1b62ab;
-    width: fit-content; 
-    color: #000; 
-  
- }
+    width: fit-content;
+    color: #000;
+  }
 
-
-
- .discription{
-     white-space: pre-line;
-     text-align: left;
-     margin-top : 0;
-     font-size: 1.2rem;
-    
- }
-`
+  .discription {
+    white-space: pre-line;
+    text-align: left;
+    margin-top: 0;
+    font-size: 1.2rem;
+  }
+`;
 const storySection = () => {
-
-
-    return (
-        <Section className="flex justify-center align-center">
-        
-            <div className="story-section flex flex-column justify-center align-start">
-
-                <div className="top-name flex">프로젝트 소개</div>
-                <div className = "discription-section flex flex-column">
-                <div className="title flex">유기견</div>
-                <p className="discription flex">{fundStory}</p>
-                </div>
-            </div>
-        </Section>
-    );
-}
+  return (
+    <Section className="flex justify-center align-center">
+      <div className="story-section flex flex-column justify-center align-start">
+        <div className="top-name flex">프로젝트 소개</div>
+        <div className="discription-section flex flex-column">
+          <div className="title flex">유기견</div>
+          <p className="discription flex">{fundStory}</p>
+        </div>
+      </div>
+    </Section>
+  );
+};
 
 export default storySection;
