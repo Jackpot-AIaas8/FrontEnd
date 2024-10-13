@@ -4,7 +4,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import apiNoToken from "../../../token/AxiosConfig"; 
 
 const ProductInfo = ({ productId }) => {
   const [quantity, setQuantity] = useState(1);
@@ -15,7 +15,8 @@ const ProductInfo = ({ productId }) => {
   // 상품 정보 가져오기
   const fetchProduct = async () => {
     try {
-      const response = await axios.get(`http://localhost:8181/shop/findOne/${productId}`);
+      // axios 대신 apiNoToken으로 변경
+      const response = await apiNoToken.get(`/shop/findOne/${productId}`);
       setProduct(response.data);
     } catch (error) {
       console.error("상품 정보를 불러오는 중 오류 발생:", error);
@@ -48,12 +49,8 @@ const ProductInfo = ({ productId }) => {
     if (accessToken) {
       console.log("Access Token found:", accessToken);
       try {
-        // 로그인된 경우 사용자 정보 가져오기
-        const userResponse = await axios.get("http://localhost:8181/member/myPage", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        // 로그인된 경우 사용자 정보 가져오기 (apiNoToken 사용)
+        const userResponse = await apiNoToken.get("/member/myPage");
 
         const userData = userResponse.data;
         console.log("User Data:", userData);

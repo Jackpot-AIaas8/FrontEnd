@@ -8,26 +8,24 @@ import "../config/Utility.css";
 import "../components/Board/css/FreeBoardBanner.css";
 
 function OneOnOneBoardPage() {
-  const [keyword, setKeyword] = useState("");
-
-  const handleSearch = (newKeyword) => {
-    setKeyword(newKeyword);
-  };
+  const [searchResults, setSearchResults] = useState([]); // 검색 결과 상태
 
   return (
-    <>
+    <div className='container'>
+      <div className="box">
       <NavBar />
-      <div className="banner-spacing-top">
+      <div>
         <Banner2 />
       </div>
-      <BoardSearchBox onSearch={handleSearch} />
+        <BoardSearchBox setSearchResults={setSearchResults}/> 
       <div className="banner-spacing-top2">
-        <BoardList keyword={keyword} />
+        <BoardList boards={searchResults} />
       </div>
       <div className="MoveBoardRegisterButton">
       <MoveBoardRegisterButton />
       </div>
-    </>
+      </div>
+    </div>
   );
 }
 

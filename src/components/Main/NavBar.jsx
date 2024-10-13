@@ -14,19 +14,19 @@ import { AuthContext } from "../../token/AuthContext";
 import styled from "styled-components";
 
 const LogoButton = styled.button`
-background-color: transparent;
-border: none;
-left: 200px;
-z-index: 100;
-align-self: center;
-width: 150px;
-margin: 10px;
-
-img {
-  width: 100%;
-  height: 4%;
   background-color: transparent;
-}
+  border: none;
+  left: 200px;
+  z-index: 100;
+  align-self: center;
+  width: 150px;
+  margin: 10px;
+
+  img {
+    width: 100%;
+    height: 4%;
+    background-color: transparent;
+  }
 `;
 
 export default function NavBar() {
@@ -38,13 +38,10 @@ export default function NavBar() {
   //     setAnchorEl(event.currentTarget);
   // };
 
-
-
   const handleClose = () => {
     setAnchorEl(null);
   };
 
- 
   return (
     <Fragment>
       <Box
@@ -66,7 +63,8 @@ export default function NavBar() {
         }}
       >
         <LogoButton
-          className="flex align-center pointer" style={{ cursor: "pointer" }}
+          className="flex align-center pointer"
+          style={{ cursor: "pointer" }}
           onClick={() => navigate("/")}
         >
           <img className="flex " src={logo} alt="로고" />
@@ -104,7 +102,26 @@ export default function NavBar() {
         >
           <Button
             variant="text"
-            style={{ color: "black", fontSize: "18px", right: '1rem', top: "0.2rem"}}
+            style={{
+              color: "black",
+              fontSize: "18px",
+              right: "1rem",
+              top: "0.2rem",
+            }}
+            onClick={() => {
+              navigate("/mypage");
+            }}
+          >
+            마이페이지
+          </Button>
+          <Button
+            variant="text"
+            style={{
+              color: "black",
+              fontSize: "18px",
+              right: "1rem",
+              top: "0.2rem",
+            }}
             onClick={() => {
               navigate("/dogList");
             }}
@@ -114,7 +131,12 @@ export default function NavBar() {
 
           <Button
             variant="text"
-            style={{ color: "black", fontSize: "18px", right: '1rem', top: "0.2rem"}}
+            style={{
+              color: "black",
+              fontSize: "18px",
+              right: "1rem",
+              top: "0.2rem",
+            }}
             onClick={() => {
               navigate("/shop");
             }}
@@ -124,7 +146,12 @@ export default function NavBar() {
 
           <Button
             variant="text"
-            style={{ color: "black", fontSize: "18px", right: '1rem', top: "0.2rem"}}
+            style={{
+              color: "black",
+              fontSize: "18px",
+              right: "1rem",
+              top: "0.2rem",
+            }}
             onClick={() => {
               navigate("/freeBoard");
             }}

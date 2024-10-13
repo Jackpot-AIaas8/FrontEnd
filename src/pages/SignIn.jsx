@@ -4,9 +4,8 @@ import "../login/CSS/Login.css";
 import SocialLogin from "../login/components/SocialLogin";
 import SignLink from "../login/components/SignLink";
 import InputField from "../login/components/InputField";
-import { replace, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../token/AuthContext";
-import { jwtDecode } from "jwt-decode";
 import { apiNoToken } from "../token/AxiosConfig";
 
 const SignIn = () => {

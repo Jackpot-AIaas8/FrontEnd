@@ -1,5 +1,4 @@
 import "./App.css";
-// import SignUp from "./login/SignUp";
 import Main from "./pages/MainPage";
 import NavBar from "./components/Main/NavBar";
 import Footer from "./components/Main/Footer";
@@ -31,8 +30,11 @@ import ProtectedRoute from "./token/ProtectedRoute";
 import ThemeRoutes from "./admin/routes/Router";
 // import PaymentCheckoutPage from './pages/Checkout/PaymentCheckoutPage';
 
+import CheckoutPage from "./pages/Checkout/OrderConfirmationPage";
+import MyPageDemo from "./pages/MypageDemo";
+
 function App() {
-  const { isAdmin, userRole } = useContext(AuthContext);
+  const { isAdmin} = useContext(AuthContext);
 
   return (
     <>
@@ -50,20 +52,19 @@ function App() {
             <Route path="/dog/:dogId" element={<DogDetail />} />
             <Route path="/freeBoard" element={<FreeBoardPage />} />
             <Route path="/oneOnOneBoard" element={<OneOnOneBoardPage />} />
-            <Route path="/board/:boardId" element={<BoardFindOnePage />} />
+            
             <Route path="/board/register" element={<BoardRegister />} />
             <Route path="/board/edit/:boardId" element={<BoardEdit />} />
             <Route path="/board/remove/:boardId" element={<BoardRemove />} />
             <Route path="/signIn" element={<SignIn />} />
             <Route path="/signUp" element={<SignUp />} />
+            <Route path="/mypageDemo" element={<MyPageDemo />} />
 
             {/* 회원 전용 route가 될예정이오니 여기 내부에 pageroute넣어주세요 */}
             <Route element={<ProtectedRoute allowedRoles={["ROLE_USER"]} />}>
               <Route path="/mypage" element={<Mypage />} />
-              <Route
-                path="/OrderConfirmation"
-                element={<OrderConfirmationPage />}
-              />
+              <Route path="/OrderConfirmation" element={<OrderConfirmationPage />} />
+              <Route path="/board/:boardId" element={<BoardFindOnePage />} />
             </Route>
             {/* 회원 전용 route가 될예정이오니 여기 내부에 pageroute넣어주세요 */}
 
