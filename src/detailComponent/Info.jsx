@@ -1,20 +1,73 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, Button, Grid2 } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
 import Categories from "./Categories";
 import styled from "styled-components";
 import MainImage from "./MainImage";
+import getTimeAgo from "./GetTImeAgo";
 
-const DogInfo = () => {
-  const infoItems = [
-    { label: "달성률", value: "223%", extra: "목표금액 50,002,000원" },
-    { label: "남은기간", value: "10일", extra: "2024-10-02에 종료" },
-    { label: "fundMemberNum,", value: "Int Value" },
-  ];
+const DogInfo = ({ dogData: initialDogData }) => {
 
-  const categories = ["채권형", "소득공제가능", "선착순"]; // '채권형', '소득공제가능', '선착순' 카테고리
+
+  const [data, setData] = useState({
+    name: "",
+    gender: "",
+    age: "",
+    regDate: "",
+    fundCollection: 0,
+    fundMemberNum: 0,
+    heart: 0,
+  });
+
+  useEffect(() => {
+    if (initialDogData) {
+      const {
+        name,
+        gender,
+        age,
+        regDate,
+        fundCollection,
+        fundMemberNum,
+        heart,
+      } = initialDogData;
+
+      setData({
+        name,
+        gender: gender === 1 ? "남성" : "여성",
+        age: `${age}세`,
+        regDate,
+        fundCollection,
+        fundMemberNum,
+        heart,
+      });
+    }
+  }, [initialDogData]);
+
+  const { name, gender, age, regDate, fundCollection, fundMemberNum, heart } =
+    data;
+
+    const infoItems = regDate
+    ? [
+        {
+          label: "등록시간",
+          value: getTimeAgo(regDate),
+          extra: `${regDate.slice(0, 10)}에 등록됨`,
+        },
+        { label: "참여자 수", value: `${fundMemberNum}` },
+      ]
+    : [];
+
+  
+
+  const categories = [
+    name, 
+    gender,  
+    age, 
+  ]; // '이름', '성별', '나이' 카테고리
+
   const title = "증액 예정 | 소득공제 | 전환 사채 주거 구독";
+
   const imgSrc =
     "//image-se.ycrowdy.com/20240909/CROWDY_202409091318250233_oSBCe.jpg/ycrowdy/resize/!740x!417";
 
@@ -32,7 +85,7 @@ const DogInfo = () => {
           fontSize: "12px",
           padding: "5px 12px",
           lineHeight: "18px",
-          textAlign: "center",
+          textAlign: "start",
         }}
       >
         크라우드펀딩 투자는 <b>투자금액 전부</b>를 잃을 수 있는 <b>높은 위험</b>
@@ -58,7 +111,7 @@ const DogInfo = () => {
 
         {/* 펀딩 금액 */}
         <div className="flex align-center">
-          <FundingAmount>fundcollection원</FundingAmount>
+          <FundingAmount>{fundCollection}원</FundingAmount>
           <span className="flex text-small">펀딩중</span>
         </div>
 
@@ -68,6 +121,7 @@ const DogInfo = () => {
           container
           spacing={2}
           flexDirection="column"
+          textAlign="start"
           sx={{ marginTop: 2 }}
         >
           {infoItems.map((item, index) => (
@@ -86,6 +140,7 @@ const DogInfo = () => {
             sx={{ marginRight: 1 }}
             startIcon={<FavoriteBorderIcon />}
           >
+            {heart}
             명이 관심있어요
           </Button>
           <Button variant="outlined" startIcon={<ShareIcon />}>
