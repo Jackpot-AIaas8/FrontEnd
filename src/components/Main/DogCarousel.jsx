@@ -24,8 +24,25 @@ function DogCarousel() {
         console.log("error : ", err);
       });
   }, []);
+  useEffect(() => {
+    const dogListAPI = async () => {
+      try {
+        const response = await apiClient.get("dog/dogList", {
+          params: {
+            page: 1,
+            size: 10,
+            sort: "heart",
+          },
+        });
+        // console.log(response.data);
 
-  console.log(dogs);
+        // setDogs(response.data);
+        setDogs(response.data.dogList);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+  }, []);
 
   const settings = {
     infinite: true,
@@ -43,9 +60,9 @@ function DogCarousel() {
       style={{ marginBottom: "200px", width: "100%" }}
     >
       <Slider {...settings}>
-        {dogs.map((dog, index) => (
-          <StyledWrapper>
-            <div key={index} className="card">
+        {dogs.map((dog) => (
+          <StyledWrapper key={dog.dogId}>
+            <div className="card">
               <div className="card-image">
                 <img
                   src="https://img.29cm.co.kr/item/202402/11eec0d158bd69388377bffeae35630c.jpg?width=700"
@@ -68,49 +85,48 @@ function DogCarousel() {
 
 const StyledWrapper = styled.div`
   .card {
-  padding: 20px;
-  width: 330px;
-  min-height: 370px;
-  border-radius: 20px;
-  transition: 0.4s;
-}
+    padding: 20px;
+    width: 330px;
+    min-height: 370px;
+    border-radius: 20px;
+    transition: 0.4s;
+  }
 
-.card:hover {
-  translate: 0 -10px;
-}
+  .card:hover {
+    translate: 0 -10px;
+  }
 
-.card-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #2e54a7;
-  margin: 15px 0 0 10px;
-}
+  .card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2e54a7;
+    margin: 15px 0 0 10px;
+  }
 
-.card-image {
-  min-height: 170px;
-  background-color: #c9c9c9;
-  border-radius: 15px;
-  box-shadow: inset 8px 8px 10px #c3c3c3,
-            inset -8px -8px 10px #cfcfcf;
-  overflow: hidden; /* 이미지가 부모를 넘지 않도록 */
-}
+  .card-image {
+    min-height: 170px;
+    background-color: #c9c9c9;
+    border-radius: 15px;
+    box-shadow: inset 8px 8px 10px #c3c3c3, inset -8px -8px 10px #cfcfcf;
+    overflow: hidden; /* 이미지가 부모를 넘지 않도록 */
+  }
 
-.card-body {
-  margin: 13px 0 0 10px;
-  color: rgb(31, 31, 31);
-  font-size: 15px;
-}
+  .card-body {
+    margin: 13px 0 0 10px;
+    color: rgb(31, 31, 31);
+    font-size: 15px;
+  }
 
-.footer {
-  float: right;
-  margin: 28px 0 0 18px;
-  font-size: 13px;
-  color: #636363;
-}
+  .footer {
+    float: right;
+    margin: 28px 0 0 18px;
+    font-size: 13px;
+    color: #636363;
+  }
 
-.by-name {
-  font-weight: 700;
-}
-;`
+  .by-name {
+    font-weight: 700;
+  }
+`;
 
 export default DogCarousel;
