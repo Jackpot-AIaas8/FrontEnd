@@ -1,5 +1,4 @@
 import "./App.css";
-// import SignUp from "./login/SignUp";
 import Main from "./pages/MainPage";
 import NavBar from "./components/Main/NavBar";
 import Footer from "./components/Main/Footer";
@@ -29,11 +28,10 @@ import Mypage from "./pages/Mypage";
 import { useContext } from "react";
 import ProtectedRoute from "./token/ProtectedRoute";
 import ThemeRoutes from "./admin/routes/Router";
-import PaymentCheckoutPage from './pages/Checkout/PaymentCheckoutPage';
 import CheckoutPage from "./pages/Checkout/OrderConfirmationPage";
 
 function App() {
-  const { isAdmin, userRole } = useContext(AuthContext);
+  const { isAdmin} = useContext(AuthContext);
 
   return (
     <>
