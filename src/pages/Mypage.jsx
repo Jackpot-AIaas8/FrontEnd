@@ -59,13 +59,14 @@ const Mypage = () => {
   useEffect (() => {    
     const askBoardList = async () => {
       try {
-        const response = await apiClient.get(`${SERVER_URL}board/findAllAsk`, {
-          params: { page: 1, size: 5}, // 페이지 사이즈는 5로 너무 길지 않게
+        const response = await apiClient.get(`${SERVER_URL}board/findAllAskMyPage`, {
+          params: { page: 1, size: 5 }, // 페이지 사이즈는 5로 너무 길지 않게
         });
-      const oneOnOneboardList = response.data.dtoList || [];
-      setoneOnOneboardList(oneOnOneboardList.slice(0, 5)); 
-      console.log(oneOnOneboardList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
-      } catch (error){
+        console.log(response.data);
+        const oneOnOneboardList = response.data || [];
+        setoneOnOneboardList(oneOnOneboardList.slice(0, 5)); 
+        console.log(oneOnOneboardList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
+      } catch (error) {
         console.error("구매리스트 받아오기 실패:", error);
       }
     };
@@ -211,17 +212,17 @@ const Mypage = () => {
                     <th>글번호</th>
                     <th>문의글 제목</th>              
                     <th>작성일</th>
+                    <th>작성자</th>
                   </tr>
                 </thead>                
                 <tbody>
-                  {oneOnOneboardList
-                    // .filter((boardDTO) => boardDTO.memberId === loggedInMemberId) // 토큰의 멤버 ID와 게시글의 memberId를 비교
-                    .map((boardDTO) => (
-                      <tr key={boardDTO.boardId}>
-                        <td>{boardDTO.boardId}</td>
-                        <td>{boardDTO.title}</td>
-                        <td>{boardDTO.regDate}</td>
-                      </tr>
+                {oneOnOneboardList.map((boardDTO) => (
+                    <tr key={boardDTO.boardId}>
+                      <td>{boardDTO.boardId}</td>
+                      <td>{boardDTO.title}</td>
+                      <td>{boardDTO.regDate}</td>
+                      <td>{boardDTO.memberId}</td>
+                    </tr>
                     ))}
                 </tbody>
          </table>
