@@ -55,7 +55,7 @@ const StyledContainer = styled.div`
 `;
 
 // 데이터와 컴포넌트 정의
-const historyDescription = `  뽀삐는 어미에게 버림받고 거리에서 상처 입은 채 살아가던 유기견입니다. 
+const historyDescription = `  는 어미에게 버림받고 거리에서 상처 입은 채 살아가던 유기견입니다. 
   구조되었지만 <strong>보호소의 재정 부족</strong>으로 인해 <strong>충분한 치료</strong>를 받기 어려웠습니다. 
   특히 <strong>다리 수술비가 부족</strong>해 <strong>생명에 위협</strong>을 받고 있었습니다. 
   <strong>후원이 없으면</strong> 유기견들은 치료를 받지 못하고, 결국 죽음에 이를 수 있습니다. 
@@ -70,11 +70,12 @@ const images = [
 ];
 
 // 컴포넌트 렌더링
-const History = () => {
+const History = ({ dogData }) => {
+  console.log(dogData.name);
   return (
     <StyledContainer>
       <div className="box-wrapper">
-        <h2 className="title">뽀삐의 History</h2>
+        <h2 className="title">{dogData.name}의 History</h2>
       </div>
       <div className="history-section flex flex-row">
         <div className="pictures-section">
@@ -84,8 +85,8 @@ const History = () => {
         </div>
 
         <div className="dog-info-section flex">
-          <h3>뽀삐</h3>
-          <p>나이: 1세</p>
+          <h3>{dogData.name}</h3>
+          <p>나이: {dogData.age}세</p>
           <p dangerouslySetInnerHTML={{ __html: historyDescription }}></p>
         </div>
       </div>

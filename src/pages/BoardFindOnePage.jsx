@@ -1,18 +1,13 @@
 import React from 'react';
 import BoardFindOne from "../components/Board/BoardFindOne";
-import Banner3 from "../components/Board/BoardFindOneBanner";
-import "../components/Board/css/FreeBoardBanner.css";
+import Banner3 from "../static/Banner3mod.png";
  
 const BoardFindOnePage = () => {
-  return (
-    <>
-    <div className='banner-spacing-top'>
-    <Banner3/>
+  return (  
+    <div className='container flex flex-column align-center'>
+      <img src={Banner3} alt="글 조회하기 배너" style={{ width: '50%', margin:'0 auto', position: 'relative' }} /> 
+      <BoardFindOne className= "flex flex-column align-start" />
     </div>
-    <div className='banner-spacing-below'>
-      <BoardFindOne /> {/* 게시글 상세 컴포넌트 호출 */}
-      </div>
-      </>
   );
 };
   

@@ -51,8 +51,9 @@ const MemberDetailForm = () => {
 
     useEffect(() => {
         apiClient
-            .post(`/admin/member/findOne/${email}`)  // 가져온 email로 상품 정보 요청
+            .get(`/admin/member/findOne/${email}`) 
             .then((res) => {
+                console.log(res.data)
                 setMember(res.data);
             })
             .catch((err) => {
@@ -80,7 +81,7 @@ const MemberDetailForm = () => {
     console.log(member)
     const removeMember = () => {
         window.confirm("정말 탈퇴 처리 하시겠습니까?");
-        apiClient.delete(`/admin/member/remove/${member.memberId}`)
+        apiClient.delete(`/admin/member/remove/${member.memberID}`)
             .then(() => {
                 alert("탈퇴 처리 되었습니다.");
                 window.location.href = "/admin/membertable";
@@ -151,9 +152,10 @@ const MemberDetailForm = () => {
                                     id="isAdmin"
                                     name="isAdmin"
                                     type="select"
+                                    value={member.isAdmin}
                                     onChange={handleInputChange} // 이벤트 핸들러 추가
                                 >
-                                    <option value={0}>사용자</option>
+                                    <option value={0}>회원</option>
                                     <option value={1}>관리자</option>
                                 </Input>
                             </FormGroup>

@@ -1,19 +1,18 @@
 import React, { useState, useContext } from "react";
 import styled from "styled-components";
 
+import { useLocation, useNavigate } from "react-router-dom";
 import OffHeart from "@mui/icons-material/FavoriteBorderSharp";
 import OnHeart from "@mui/icons-material/FavoriteSharp";
-import theme from "../config/theme";
-import apiClient from "../token/AxiosConfig";
 
-import { AuthContext } from "../token/AuthContext";
+import useHeart from "./heart/useHeart";
 
 const StyledIconButton = styled.button`
   position: absolute;
   top: 8px;
   right: 8px;
   color: ${(props) =>
-    props.heart === 1 ? theme.colors.red : theme.colors.white};
+    props.$heart === 1 ? props.theme.colors.red : props.theme.colors.white};
   background: none;
   border: none;
   padding: 0;
@@ -32,52 +31,12 @@ const StyledIconButton = styled.button`
 `;
 
 const HeartButton = (props) => {
-  const { onHeartToggle, dog } = props;
-  const [heart, setHeart] = useState(props.dog.isHeart);
-  const { isAuthenticated } = useContext(AuthContext);
-
-  const handleHeartToggle = () => {
-    setHeart((prevHeart) => (prevHeart === 1 ? 0 : 1));
-  };
-  /* heart db추가 api 성공 시 던져주면 그거 */
-  const apiHeartUpdate = async () => {
-    console.log(dog.dogId);
-    try {
-      const response = await apiClient.post("dog/addHeart", {
-        dogId: dog.dogId,
-      });
-      if (onHeartToggle) {
-        onHeartToggle();
-        alert(
-          heart === 0
-            ? `${dog.name} 하트를 눌렀습니다.`
-            : `${dog.name} 하트를 취소하였습니다.`
-        );
-      }
-
-      if (response.status === 200) {
-        console.log("Heart Update Success");
-      } else {
-        setHeart((prevHeart) => (prevHeart === 1 ? 0 : 1));
-      }
-    } catch (error) {
-      console.error(error);
-      setHeart((prevHeart) => (prevHeart === 1 ? 0 : 1));
-    }
-  };
-
-  const updateHeart = () => {
-    if (!isAuthenticated) {
-      alert("로그인 후 이용할 수 있는 기능입니다.");
-    } else {
-      handleHeartToggle();
-      apiHeartUpdate();
-    }
-  };
+  const { dog, onHeartToggle } = props;
+  const { heart, updateHeart } = useHeart(dog, onHeartToggle);
 
   return (
     <StyledIconButton
-      heart={heart}
+      $heart={heart}
       onClick={(e) => {
         e.stopPropagation(); // 부모 요소로 이벤트 전파 방지
         updateHeart();

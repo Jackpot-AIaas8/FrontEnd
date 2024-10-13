@@ -6,7 +6,6 @@ import SignLink from "../login/components/SignLink";
 import InputField from "../login/components/InputField";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../token/AuthContext";
-import { jwtDecode } from "jwt-decode";
 import { apiNoToken } from "../token/AxiosConfig";
 
 const SignIn = () => {
@@ -19,7 +18,7 @@ const SignIn = () => {
   // *** 로그인 상태일 경우 메인 페이지로 리다이렉트 ***
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/");
+      navigate("/", { replace: true });
     }
   }, [isAuthenticated, navigate]);
   // ************************************************
@@ -41,23 +40,16 @@ const SignIn = () => {
 
   const signIn = async (event) => {
     event.preventDefault(); // 폼 제출 기본 동작 방지
-    console.log("Sending user data:", user);
+
     try {
       const response = await apiNoToken.post("member/signIn", user, {
         withCredentials: true, // 쿠키를 사용하려면 true로 설정
       });
 
       const { access: accessToken } = response.data;
-
       if (accessToken) {
-        login(accessToken);
-        const decodeToken = jwtDecode(accessToken);
-        console.log(decodeToken.role);
-        if (decodeToken.role === "ROLE_ADMIN") {
-          navigate("/admin");
-        } else {
-          navigate("/");
-        }
+        const redirectPath = location.state?.redirectedFrom || "/";
+        login(accessToken, redirectPath);
       } else {
         alert("로그인 실패");
       }

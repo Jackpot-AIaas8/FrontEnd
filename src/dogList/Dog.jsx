@@ -35,11 +35,11 @@ const Dog = ({ dog, onHeartToggle }) => {
 
   return (
     <>
-      <Container>
+      <Container disableGutters>
         <Grid container flexDirection={"column"}>
           <Card
             onClick={handleDogDetail}
-            sx={{ maxWidth: 250, position: "relative", overflow: "visible" }}
+            sx={{ minWidth: "100%", position: "relative", overflow: "visible" }}
           >
             <CardActionArea
               sx={{

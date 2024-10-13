@@ -1,19 +1,19 @@
 import React from 'react';
-import Banner1 from "../components/Board/FreeBoardBanner"
 import BoardRegister from "../components/Board/BoardRegister"; 
+import Banner4 from "../static/Banner4mod.png";
 import "../components/Board/css/BoardRegister.css";
 import "../components/Board/css/FreeBoardBanner.css";
  
 const BoardRegistering = () => {
   return (
-    <>
-    <div className="banner-spacing-top">
-      <Banner1 />
+    <div className='container'>
+    <div className="">
+    <img src={Banner4} alt="글 조회하기 배너" style={{ width: '50%', margin:'0 auto', position: 'relative' }} /> 
     </div>
     <div className='register-spacing-top'>
       <BoardRegister /> 
     </div>
-    </>
+    </div>
   );
 };
   

@@ -1,10 +1,10 @@
-import {lazy} from "react";
+import { lazy } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 /****Layouts*****/
 const FullLayout = lazy(() => import("../layouts/FullLayout.js"));
 
-/***** Pages ****/
-
+/***** Pages *****/
 const MemberTables = lazy(() => import("../views/ui/MembersTables"));
 const MemberDetailForm = lazy(() => import("../views/ui/MemberDetailForm"));
 const DogTables = lazy(() => import("../views/ui/DogTables.js"));
@@ -15,27 +15,38 @@ const ShopTables = lazy(() => import("../views/ui/ShopsTables"));
 const ShopDetailForm = lazy(() => import("../views/ui/ShopDetailForm.js"));
 const StockForm = lazy(() => import("../components/StockForm"));
 const BoardTables = lazy(() => import("../views/ui/BoardsTables"));
+const BoardDetailForm = lazy(() => import("../views/ui/BoardDetailForm.js"));
+const BoardAddFrom = lazy(() => import("../views/ui/BoardAddFrom.js"));
 
 /*****Routes******/
+const ThemeRoutes = () => {
+  console.log("status admin");
 
-const ThemeRoutes = [
-    {
-        path: "/",
-        element: <FullLayout/>,
-        children: [
-            {path: "/admin", exact: true, element: <MemberTables/>},
-            {path: "/admin/membertable", exact: true, element: <MemberTables/>},
-            {path: "/admin/memberdetailform/:email", exact: true, element: <MemberDetailForm/>},
-            {path: "/admin/dogtable", exact: true, element: <DogTables/>},
-            {path: "/admin/dogaddform", exact: true, element: <DogAddFrom/>},
-            {path: "/admin/dogdetailform/:dogId", exact: true, element: <DogDetailForm/>},
-            {path: "/admin/shoptable", exact: true, element: <ShopTables/>},
-            {path: "/admin/shopaddform", exact: true, element: <ShopAddFrom/>},
-            {path: "/admin/shopdetailform/:shopId", exact: true, element: <ShopDetailForm/>},
-            {path: "/admin/stockform/:shopId", exact: true, element: <StockForm/>},
-            {path: "/admin/boardtable", exact: true, element: <BoardTables/>},
-        ],
-    },
-];
+  return (
+    <Routes>
+      <Route path="/" element={<FullLayout />}>
+    
+        {/* /admin에 직접 접근 시 MemberTables로 이동 */}
+        <Route index element={<MemberTables />} />
+        <Route path="membertable" element={<MemberTables />} />
+        <Route path="memberdetailform/:email" element={<MemberDetailForm />} />
+        <Route path="dogtable" element={<DogTables />} />
+        <Route path="dogaddform" element={<DogAddFrom />} />
+        <Route path="dogdetailform/:dogId" element={<DogDetailForm />} />
+        <Route path="shoptable" element={<ShopTables />} />
+        <Route path="shopaddform" element={<ShopAddFrom />} />
+        <Route path="shopdetailform/:shopId" element={<ShopDetailForm />} />
+        <Route path="stockform/:shopId" element={<StockForm />} />
+        <Route path="boardtable" element={<BoardTables />} />
+        <Route path="boarddetailform/:boardId" element={<BoardDetailForm />} />
+        <Route path="boardaddform" element={<BoardAddFrom />} />
+          
+        {/* /admin 경로가 아닌 경우, /admin으로 리디렉션 */}
+        <Route path="*" element={<Navigate to="/admin" replace />} />
+      </Route>
+    </Routes>
+  );
+};
+
 
 export default ThemeRoutes;
