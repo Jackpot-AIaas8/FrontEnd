@@ -66,10 +66,10 @@ const DogInfo = ({ dogData: initialDogData }) => {
     age, 
   ]; // '이름', '성별', '나이' 카테고리
 
-  const title = "증액 예정 | 소득공제 | 전환 사채 주거 구독";
+  const title = "길을 잃어 죽기 직전인 뽀삐를 살려주세요";
 
   const imgSrc =
-    "//image-se.ycrowdy.com/20240909/CROWDY_202409091318250233_oSBCe.jpg/ycrowdy/resize/!740x!417";
+    "https://newsimg.hankookilbo.com/2017/11/14/201711141165118317_1.jpg";
 
   const WarningMessage = () => {
     return (

@@ -4,26 +4,11 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import apiClient from "../../token/AxiosConfig";
 import styled from "styled-components";
+import { apiNoToken } from "../../token/AxiosConfig";
 
 function DogCarousel() {
   const [dogs, setDogs] = useState([]);
 
-  useEffect(() => {
-    apiClient
-      .get("dog/dogList", {
-        params: {
-          page: 1,
-          size: 10,
-          sort: "heart",
-        },
-      })
-      .then((res) => {
-        setDogs(res.data.dogList);
-      })
-      .catch((err) => {
-        console.log("error : ", err);
-      });
-  }, []);
   useEffect(() => {
     const dogListAPI = async () => {
       try {
@@ -34,14 +19,13 @@ function DogCarousel() {
             sort: "heart",
           },
         });
-        // console.log(response.data);
-
-        // setDogs(response.data);
         setDogs(response.data.dogList);
+        
       } catch (err) {
         console.error(err);
       }
     };
+    dogListAPI();
   }, []);
 
   const settings = {
