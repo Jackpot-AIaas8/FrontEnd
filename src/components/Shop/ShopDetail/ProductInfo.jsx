@@ -42,49 +42,17 @@ const ProductInfo = ({ productId }) => {
 
   const totalPrice = quantity * product.price;
 
-  const handlePurchase = async () => {
-    const accessToken = sessionStorage.getItem("accessToken");
-
-    if (accessToken) {
-      console.log("Access Token found:", accessToken);
-      try {
-        // 로그인된 경우 사용자 정보 가져오기
-        const userResponse = await axios.get("http://localhost:8181/member/myPage", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-
-        const userData = userResponse.data;
-        console.log("User Data:", userData);
-
-        // 결제 페이지로 이동하며 사용자 정보 전달
-        navigate("/OrderConfirmation", {
-          state: {
-            name: product.name,
-            price: product.price,
-            totalPrice: totalPrice,
-            userName: userData.name,
-            userEmail: userData.email,
-            userAddress: userData.address,
-            userPhone: userData.phone,
-          },
-        });
-      } catch (error) {
-        console.error("사용자 정보를 불러오는 중 오류 발생:", error);
-        alert("사용자 정보를 불러오지 못했습니다. 다시 시도해 주세요.");
-      }
-    } else {
-      alert("로그인이 필요합니다.");
-      // 로그인 페이지로 리디렉션
-      navigate("/signIn", {
-        replace: true,
-        state: {
-          redirectedFrom: location.pathname, // 사용자가 원래 위치한 경로를 전달
-        },
-      });
-    }
-  };
+// 결제 페이지로 상품 정보만 전달
+const handlePurchase = () => {
+  navigate("/OrderConfirmation", {
+    state: {
+      productName: product.name,
+      productPrice: product.price,
+      totalPrice: totalPrice,
+      quantity: quantity,
+    },
+  });
+};
 
   return (
     <TopSection className="flex flex-row justify-between">
