@@ -1,5 +1,4 @@
 import React from "react";
-import BoardCustomerCenterMoveButton from "./BoardCustomerCenterMoveButton";
 import Banner2 from "../../static/Banner2mod.png";
 import "../../config/Utility.css";
 import "./css/FreeBoardBanner.css";
@@ -22,13 +21,6 @@ const OneOnOneBoardBanner = () => {
       </Button>
       <div className="banner-container relative banner-margin-0">
         <img src={Banner2} alt="1:1 문의 게시판 배너 이미지"  className="banner-img"/>
-        {/* <h2 className="banner-text absolute">1:1 문의 게시판</h2>
-        <span className="banner-description absolute">
-          문의사항을 작성하는 곳입니다.
-        </span> */}
-        <section>
-          <BoardCustomerCenterMoveButton />
-        </section>
       </div>
     </div>
   );

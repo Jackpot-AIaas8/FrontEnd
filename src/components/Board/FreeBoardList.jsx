@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import apiClient from "../../token/AxiosConfig.js";
 import { SERVER_URL } from "../../config/Constants.js";
 import "./css/BoardList.css";
 
