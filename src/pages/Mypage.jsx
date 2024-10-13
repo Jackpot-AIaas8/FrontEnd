@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logoImage from "../static/newLogoHorizontalOrange.png";
+import logoImage from "../static/newLogoverticalOrange.png";
 import MockMypageData from "../myPage/MockMypageData";
 import {
   StyledMypageWrapper,
@@ -49,7 +49,7 @@ const Mypage = () => {
             <div className="section-nav h-full flex flex-column">
               <div className="logoArea flex flex-row justify-start align-center">
                 <a href="/" className="logo flex">
-                  <img className="logo-image" src={logoImage} alt="" />
+                  <img className="logo-image" src={logoImage} alt="로고이미지" style={{ height: '50px', width: 'auto'}} />
                 </a>
                 <a href="/myPage" className="logo_title flex">
                   <h1 className="text">
@@ -86,7 +86,7 @@ const Mypage = () => {
                       text={item.text}
                       isActive={currentPage === item.text}
                       onClick={() => handleMenuClick(item)}
-                    ></MenuItem>
+                    />  
                   ))}
                 </ul>
               </StyledMypageMenu>
@@ -125,7 +125,49 @@ const Mypage = () => {
               </StyledProfileContainer>
             </div>
 
-            <div className="section-mypage flex w-full"></div>
+            <div className="section-mypage flex w-full">
+              구매내역
+  <table>
+    <thead>
+      <tr>
+        <th>상품 ID</th>
+        <th>상품명</th>
+        <th>디테일</th>
+        <th>카테고리</th>
+        <th>가격</th>
+        <th>리뷰보기</th>
+        <th>장바구니 담기</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>001</td>
+        <td>강아지 사료</td>
+        <td>디테일</td>
+        <td>식자재</td>
+        <td>30,000원</td>
+        <td><a href="">리뷰보기</a></td>
+        <td><button onClick={() => alert("장바구니에 담겼습니다.")}>장바구니 담기</button></td>
+      </tr>
+      {/* 아래 부분처럼 샵디티오에서 데이터 받아오면 될듯 */}
+      {/* <tr key={shopDTO.shopId}>
+            <td>{shopDTO.shopId}</td>
+            <td>{shopDTO.name}</td>
+           <td>{shopDTO.detail}</a></td>
+           <td>{shopDTO.category}</td>
+            <td>{shopDTO.price}</td>
+            <td><Link
+              to={`/mypage/${reviewDTO.reviewId}`}
+              style={{ textDecoration: "none", color: "black" }}
+                  >
+                리뷰보기
+            </Link>
+        </td>
+        <td><button onClick={() => alert("장바구니에 담겼습니다.")}>장바구니 담기</button></td>
+      </tr> */}
+           </tbody>
+         </table>
+        </div>
             <div className="section-mypage flex w-full"></div>
           </StyeldRightSection>
         </StyledMypageWrapper>

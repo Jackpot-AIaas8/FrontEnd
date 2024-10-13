@@ -1,5 +1,4 @@
 import "./App.css";
-// import SignUp from "./login/SignUp";
 import Main from "./pages/MainPage";
 import NavBar from "./components/Main/NavBar";
 import Footer from "./components/Main/Footer";
@@ -34,7 +33,7 @@ import CheckoutPage from "./pages/Checkout/OrderConfirmationPage";
 import MyPageDemo from "./pages/MypageDemo";
 
 function App() {
-  const { isAdmin, userRole } = useContext(AuthContext);
+  const { isAdmin} = useContext(AuthContext);
 
   return (
     <>
@@ -47,12 +46,12 @@ function App() {
             <Route path="/shop" element={<ShopPage />} />
             <Route path="/shop/:shopId" element={<ShopDetailPage />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/OrderConfirmation" element={<OrderConfirmationPage />} />
             <Route path="/dogList" element={<DogList />} />
             <Route path="/dog/:dogId" element={<DogDetail />} />
             <Route path="/freeBoard" element={<FreeBoardPage />} />
             <Route path="/oneOnOneBoard" element={<OneOnOneBoardPage />} />
-            <Route path="/board/:boardId" element={<BoardFindOnePage />} />
+            
             <Route path="/board/register" element={<BoardRegister />} />
             <Route path="/board/edit/:boardId" element={<BoardEdit />} />
             <Route path="/board/remove/:boardId" element={<BoardRemove />} />
@@ -63,10 +62,8 @@ function App() {
             {/* 회원 전용 route가 될예정이오니 여기 내부에 pageroute넣어주세요 */}
             <Route element={<ProtectedRoute allowedRoles={["ROLE_USER"]} />}>
               <Route path="/mypage" element={<Mypage />} />
-              <Route
-                path="/OrderConfirmation"
-                element={<OrderConfirmationPage />}
-              />
+              <Route path="/OrderConfirmation" element={<OrderConfirmationPage />} />
+              <Route path="/board/:boardId" element={<BoardFindOnePage />} />
             </Route>
             {/* 회원 전용 route가 될예정이오니 여기 내부에 pageroute넣어주세요 */}
 

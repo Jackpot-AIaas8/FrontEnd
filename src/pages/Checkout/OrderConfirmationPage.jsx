@@ -18,11 +18,14 @@ function CheckoutPage() {
     totalPrice = 50000,
   } = location.state || {};
 
+  // 디버깅 1: 처음 렌더링 시 amount 값 확인
+  const amount = totalPrice + 3000; // 결제 금액 + 배송비
+  console.log("Initial Amount:", amount);
+
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState(null);
   const [address, setAddress] = useState(userAddress);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
-  const [amount] = useState(totalPrice + 3000);
 
   useEffect(() => {
     async function fetchPaymentWidgets() {
@@ -37,10 +40,14 @@ function CheckoutPage() {
     async function renderPaymentWidgets() {
       if (!widgets) return;
 
+      // 디버깅 2: setAmount 호출 시 전달되는 amount 값 확인
+      console.log("Setting Amount in Widgets:", amount);
+
       await widgets.setAmount({
         currency: "KRW",
         value: parseInt(amount, 10), // 정수형으로 변환하여 전달
       });
+
       await Promise.all([
         widgets.renderPaymentMethods({
           selector: "#payment-method",
@@ -57,36 +64,47 @@ function CheckoutPage() {
   }, [widgets, amount]);
 
   const handlePayment = async () => {
-    const paymentAmount = String(parseInt(amount, 10)); // 문자열로 변환된 정수형 금액
+    const paymentAmount = parseInt(amount, 10); // 숫자로 변환
+    const orderId = `order_${Date.now()}`; // 고유한 orderId 생성
+    console.log("Amount:", paymentAmount);       // 디버깅 로그 추가
 
+  
     if (!ready) {
       alert("현재는 토스 카드 결제만 가능합니다.");
       return;
     }
-
+  
     try {
-      console.log("결제 요청 시작, amount:", paymentAmount);
+      console.log("결제 요청 시작");
+      console.log("Order ID:", orderId);
+      console.log("Order Name:", name);
+      console.log("Amount:", paymentAmount);  // 숫자로 변환된 금액 확인
+      console.log("Customer Email:", userEmail);
+      console.log("Customer Name:", userName);
+      console.log("Widgets Object:", widgets);
+      console.log("Customer Phone:", userPhone);
+      console.log("Sending amount to Toss Payments:", paymentAmount);
 
+  
+      // 결제 요청 처리
       await widgets.requestPayment({
         orderId: "orderId_123456",
         orderName: name,
-        amount: paymentAmount, // 문자열 형태의 정수 금액
         successUrl: `${window.location.origin}/success`,
         failUrl: `${window.location.origin}/fail`,
         customerEmail: userEmail,
         customerName: userName,
         customerMobilePhone: userPhone,
       });
+      console.log("결제 요청 완료");
     } catch (error) {
       console.error("결제 요청 중 오류 발생:", error);
-      if (error.response) {
-        console.log("응답 데이터:", error.response.data);
-        console.log("응답 상태 코드:", error.response.status);
-        console.log("응답 헤더:", error.response.headers);
-      }
+      
+      
+      alert("결제 요청 중 오류가 발생했습니다. 다시 시도해 주세요.");
     }
   };
- 
+
 
   const handleAddressEdit = () => {
     setIsEditingAddress(true);
@@ -198,6 +216,8 @@ function CheckoutPage() {
     </PageContainer>
   );
 }
+
+
 
 // 스타일 정의
 const PageContainer = styled.div`
