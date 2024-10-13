@@ -8,7 +8,7 @@ import { apiNoToken } from "../../token/AxiosConfig";
 Modal.setAppElement("#root");
 
 const mockData = [
-  { phone: "010-1234-5678", name: "홍길동", email: "hong@example.com" },
+  { phone: "010-0000-0000", name: "test", email: "test@test.com" },
   { phone: "010-9876-5432", name: "이순신", email: "lee@example.com" },
 ];
 
