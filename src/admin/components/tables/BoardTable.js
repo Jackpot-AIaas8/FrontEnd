@@ -1,7 +1,7 @@
 import {Card, CardBody, CardTitle, Table} from "reactstrap";
 import React from "react";
 import {useState, useEffect, useCallback} from "react";
-import Button from "../button/ShopButton";
+import Button from "../button/BoardButton";
 import apiClient from "../../../token/AxiosConfig";
 import {useNavigate, useLocation} from 'react-router-dom';
 import Search from "../Search";
@@ -14,17 +14,17 @@ const BoardTables = () => {
     const [searchText, setSearchText] = useState("");
     const [pageInfo, setPageInfo] = useState({
         page: 1,
-        size: 9,
+        size: 10,
     });
     const [totalPages, setTotalPages] = useState(1);
-    const [sortOrder, setSortOrder] = useState("latest");
+    // const [sortOrder, setSortOrder] = useState("latest");
 
 
     const fetchBoards = useCallback((page, search = "") => {
-        const endpoint = search ? `/admin/board/searchBoard/${search}` : `/admin/board/findAll`;
+        const endpoint = search ? `/admin/board/search/${search}` : `/admin/board/findAll`;
         apiClient
             .get(endpoint, {
-                params: {page: page, size: pageInfo.size}
+                params: {page: page, size: pageInfo.size, search: search}
             })
             .then((res) => {
                 if (Array.isArray(res.data.dtoList)) {
@@ -46,12 +46,12 @@ const BoardTables = () => {
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
-        const sortOrderFromUrl = queryParams.get("sortOrder");
+        // const sortOrderFromUrl = queryParams.get("sortOrder");
         const pageFromUrl = queryParams.get("page");
 
-        if (sortOrderFromUrl) {
-            setSortOrder(sortOrderFromUrl);
-        }
+        // if (sortOrderFromUrl) {
+        //     setSortOrder(sortOrderFromUrl);
+        // }
 
         if (pageFromUrl) {
             setPageInfo(prev => ({...prev, page: parseInt(pageFromUrl)}));
@@ -63,9 +63,9 @@ const BoardTables = () => {
         setPageInfo(prev => ({...prev, page: 1}));
     }, []);
 
-    const updateUrlParams = useCallback((sortOrder, page) => {
+    const updateUrlParams = useCallback((page) => {
         const queryParams = new URLSearchParams();
-        if (sortOrder) queryParams.set("sortOrder", sortOrder);
+        // if (sortOrder) queryParams.set("sortOrder", sortOrder);
         if (page) queryParams.set("page", page.toString());
         navigate({
             search: queryParams.toString(),
@@ -74,8 +74,8 @@ const BoardTables = () => {
 
     const handlePageChange = useCallback((newPage) => {
         setPageInfo(prev => ({...prev, page: newPage}));
-        updateUrlParams(sortOrder, newPage);
-    }, [sortOrder, updateUrlParams]);
+        updateUrlParams( newPage);
+    }, [ updateUrlParams]);
 
 
     const sortedBoards = boards.sort((a, b) => {
