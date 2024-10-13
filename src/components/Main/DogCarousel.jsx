@@ -65,7 +65,7 @@ function DogCarousel() {
             <div className="card">
               <div className="card-image">
                 <img
-                  src="https://img.29cm.co.kr/item/202402/11eec0d158bd69388377bffeae35630c.jpg?width=700"
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWAKSR0zHQrRZfEUhbpewPESqP85h9afAquw&s"
                   alt=""
                   style={{ width: "100%", height: "100%" }}
                 />
