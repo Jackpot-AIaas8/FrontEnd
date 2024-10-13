@@ -65,6 +65,7 @@ const StyledWrapper = styled.div`
     outline: none;
     font-size: 0.9em;
     caret-color: rgb(255, 81, 0);
+    background-color: white;
   }
 
   .labelforsearch {
