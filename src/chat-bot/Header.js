@@ -3,7 +3,7 @@ import theme from "../config/theme";
 
 const HeaderContainer = styled.div`
   background: ${theme.colors.lightOrange};
-  width: 100%;
+  width: 500;
   display: flex;
   justify-content: space-between;
   align-items: center;

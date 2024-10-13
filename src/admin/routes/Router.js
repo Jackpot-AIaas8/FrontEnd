@@ -16,6 +16,7 @@ const ShopDetailForm = lazy(() => import("../views/ui/ShopDetailForm.js"));
 const StockForm = lazy(() => import("../components/StockForm"));
 const BoardTables = lazy(() => import("../views/ui/BoardsTables"));
 const BoardDetailForm = lazy(() => import("../views/ui/BoardDetailForm.js"));
+const BoardAddFrom = lazy(() => import("../views/ui/BoardAddFrom.js"));
 
 /*****Routes******/
 const ThemeRoutes = () => {
@@ -38,6 +39,7 @@ const ThemeRoutes = () => {
         <Route path="stockform/:shopId" element={<StockForm />} />
         <Route path="boardtable" element={<BoardTables />} />
         <Route path="boarddetailform/:boardId" element={<BoardDetailForm />} />
+        <Route path="boardaddform" element={<BoardAddFrom />} />
           
         {/* /admin 경로가 아닌 경우, /admin으로 리디렉션 */}
         <Route path="*" element={<Navigate to="/admin" replace />} />

@@ -29,9 +29,8 @@ const Button = () => {
             </button>
             {isChatbotOpen && (
           <>
-            <Header onCloseChatbot={chatClose} /> {/* Header에서 chatClose 전달 */}
             <Chatbot
-              config={config}
+              config={config(chatClose)}
               messageParser={MessageParser}
               actionProvider={ActionProvider}
             />
