@@ -2,17 +2,13 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import styled from "styled-components";
-import mainCarousel1 from "../../static/mainCarousel1.jpg";
-import mainCarousel2 from "../../static/mainCarousel2.jpg";
-import mainCarousel3 from "../../static/mainCarousel3.jpg";
-import mainCarousel4 from "../../static/mainCarousel4.jpg";
 
 function AuctionCarousel() {
   const auctionCarousels = [
-    mainCarousel1,
-    mainCarousel2,
-    mainCarousel3,
-    mainCarousel4,
+    "https://sitem.ssgcdn.com/84/39/75/item/1000572753984_i1_1200.jpg",
+    "https://sitem.ssgcdn.com/84/39/75/item/1000572753984_i4_1200.jpg",
+    "https://sitem.ssgcdn.com/84/39/75/item/1000572753984_i5_1200.jpg",
+    "https://sitem.ssgcdn.com/84/39/75/item/1000572753984_i6_1200.jpg",
   ];
 
   const settings = {

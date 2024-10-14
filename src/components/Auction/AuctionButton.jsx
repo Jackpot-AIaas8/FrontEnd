@@ -1,11 +1,22 @@
 import React from "react";
 import styled from "styled-components";
 import theme from "../../config/theme";
+import { useNavigate } from "react-router-dom";
 
 const AuctionButton = ({text}) => {
+    const navigate = useNavigate();
+
+    const buttonHref = () => {
+        if (text === "뒤로가기") {
+            window.history.back(); // history.back() 호출
+          } else {
+            navigate("/some-path"); // 원하는 경로로 이동
+          }
+    }
+
   return (
     <StyledWrapper>
-      <button>{text}</button>
+      <button onClick={buttonHref}>{text}</button>
     </StyledWrapper>
   );
 };
