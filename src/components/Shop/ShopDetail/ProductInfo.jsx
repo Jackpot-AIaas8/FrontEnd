@@ -3,13 +3,14 @@ import { Typography, Button } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 const ProductInfo = ({ productId }) => {
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation(); // useLocation을 사용하여 현재 위치 정보를 가져옵니다.
 
   // 상품 정보 가져오기
   const fetchProduct = async () => {
@@ -41,50 +42,18 @@ const ProductInfo = ({ productId }) => {
 
   const totalPrice = quantity * product.price;
 
-  const handlePurchase = async () => {
-    const accessToken = sessionStorage.getItem("accessToken");
+// 결제 페이지로 상품 정보만 전달
+const handlePurchase = () => {
+  navigate("/OrderConfirmation", {
+    state: {
+      productName: product.name,
+      productPrice: product.price,
+      totalPrice: totalPrice,
+      quantity: quantity,
+    },
+  });
+};
 
-    if (accessToken) {
-      console.log("Access Token found:", accessToken);
-      try {
-        // 로그인된 경우 사용자 정보 가져오기
-        const userResponse = await axios.get("http://localhost:8181/member/myPage", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });        
-  
-        const userData = userResponse.data;
-        console.log("User Data:", userData);
-  
-        // 결제 페이지로 이동하며 사용자 정보 전달
-        navigate("/checkout", {
-          state: {
-            name: product.name,
-            price: product.price,
-            totalPrice: totalPrice,
-            userName: userData.name,
-            userEmail: userData.email,
-            userAddress: userData.address,
-            userPhone: userData.phone,
-          },
-        });
-      } catch (error) {
-        console.error("사용자 정보를 불러오는 중 오류 발생:", error);
-        alert("사용자 정보를 불러오지 못했습니다. 다시 시도해 주세요.");
-      }
-    } else {
-      alert("로그인이 필요합니다.");
-      navigate("/SignIn?redirect=/checkout", {
-        state: {
-          name: product.name,
-          price: product.price,
-          totalPrice: totalPrice,
-        },
-      });
-    }
-  };
-  
   return (
     <TopSection className="flex flex-row justify-between">
       <LeftSection className="flex flex-column align-start">

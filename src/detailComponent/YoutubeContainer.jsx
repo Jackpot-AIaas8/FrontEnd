@@ -47,7 +47,7 @@ const YouTubeContainer = () => {
       </BoxWrapper>
       <VideoWrapper>
         <VideoIframe
-          src="https://www.youtube.com/embed/8t0UvzrX9Qc?si=e2J_4YE2YyD1kugV"
+          src="https://www.youtube-nocookie.com/embed/8t0UvzrX9Qc?si=e2J_4YE2YyD1kugV"
           title="YouTube video player"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           referrerPolicy="strict-origin-when-cross-origin"

@@ -1,35 +1,53 @@
-import React from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
 import HeadsetMicIcon from '@mui/icons-material/HeadsetMic';
+import Chatbot from "react-chatbot-kit";
+import config from "../chat-bot/config.js";
+import MessageParser from "../chat-bot/MessageParser.js";
+import ActionProvider from "../chat-bot/ActionProvider.js";
+import "../chat-bot/style.css";
+import "remixicon/fonts/remixicon.css";
+import theme from "../config/theme.js";
+import Header from "../chat-bot/Header.js";
 
 const Button = () => {
-    const topClick = () => {
-      window.scrollTo({top: 0, behavior: 'smooth'});
-    };
-    const chatClick = () => {
+  const [isChatbotOpen, setChatbotOpen] = useState(false);
 
-    };
+  const chatOpen = () => {
+    setChatbotOpen(true); // 챗봇 토글
+  };
+
+  const chatClose = () => {
+    setChatbotOpen(false); // 챗봇 닫기
+  };
+  
     return (
-        <>
-            <StyledWrapper>
-                <button onClick={topClick} style={{marginRight: "50px"}}>
-                    <div className="arrow-up"/>
-                </button>
-                <button onClick={chatClick}>
-                    <HeadsetMicIcon style={{color: "white"}}/>
-                </button>
-            </StyledWrapper>
-        </>
+      <>
+        <StyledWrapper>
+            <button onClick={chatOpen}>
+              <HeadsetMicIcon style={{ color: "white" , width:"30", height:"30"}} />
+            </button>
+            {isChatbotOpen && (
+          <>
+            <Chatbot
+              config={config(chatClose)}
+              messageParser={MessageParser}
+              actionProvider={ActionProvider}
+            />
+          </>
+        )}
+        </StyledWrapper>
+      </>
     );
 };
 
 const StyledWrapper = styled.div`
   button {
-    width: 45px;
-    height: 45px;
-    bottom: 45px;
+    width: 70px;
+    height: 70px;
+    bottom: 40px;
     right: 40px;
-    background-color: #004dff;
+    background-color: ${theme.colors.lightOrange};;
     color: #FFF;
     border-radius: 50px;
     text-align: center;
