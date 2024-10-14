@@ -10,8 +10,7 @@ const customerKey = "6JqYbn-tMjCQIrq9p4xLN";
 function CheckoutPage() {
   const location = useLocation();
   const {
-    name = "상품명",
-
+    productName: name = "",
     quantity = 1,
     totalPrice = 50000,
   } = location.state || {};
