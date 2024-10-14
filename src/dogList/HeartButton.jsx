@@ -1,11 +1,9 @@
-import React, { useState, useContext } from "react";
 import styled from "styled-components";
 
-import { useLocation, useNavigate } from "react-router-dom";
 import OffHeart from "@mui/icons-material/FavoriteBorderSharp";
 import OnHeart from "@mui/icons-material/FavoriteSharp";
 
-import useHeart from "./heart/useHeart";
+import UseHeart from "./heart/useHeart";
 
 const StyledIconButton = styled.button`
   position: absolute;
@@ -32,7 +30,7 @@ const StyledIconButton = styled.button`
 
 const HeartButton = (props) => {
   const { dog, onHeartToggle } = props;
-  const { heart, updateHeart } = useHeart(dog, onHeartToggle);
+  const { heart, updateHeart } = UseHeart(dog, onHeartToggle);
 
   return (
     <StyledIconButton

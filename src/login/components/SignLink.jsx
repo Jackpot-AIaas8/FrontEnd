@@ -32,33 +32,28 @@ const SignLink = () => {
     setUser({ ...user, [e.target.name]: e.target.value });
 
   const sendUser = async () => {
-    // try {
-    //   const endpoint = modalInfo.type === "ID" ? "member/findId" : "member/findPwd";
-    //   const response = await apiNoToken.post(endpoint, user);
-
-    //   if (response.data) {
-    //     setUser((prev) => ({ ...prev, email: response.data.email }));
-    //     setIsSuccess(true);
-    //   } else {
-    //    console.log("입력하신 정보가 일치하지 않습니다.")
-    //    setIsSuccess(false);
-    //   }
-    // } catch (err) {
-    //   console.error(err);
-    //   setIsSuccess(false); // 통신 실패 시 실패 상태로 설정
-
-    const foundUser = mockData.find(
-      (data) => data.phone === user.phone && data.name === user.name
-    );
-
-    if (foundUser) {
-      setUser((prev) => ({ name:"", phone:"", email: foundUser.email }));
-      setIsSuccess(true); // 성공 시 상태 업데이트
-    } else {
-      alert("일치하는 사용자를 찾을 수 없습니다.");
-      setIsSuccess(false); // 실패 시 상태 업데이트
+    try {
+      const endpoint =
+        modalInfo.type === "ID" ? "member/findId" : "member/findPwd";
+      const response = await apiNoToken.get(endpoint, {
+        params: user, // 쿼리 파라미터로 user 전송
+      });
+      console.log(response);
+      if (response.data) {
+        setUser((prev) => ({
+          name: "",
+          phone: "",
+          email: response.data,
+        }));
+        setIsSuccess(true); // 성공 시 상태 업데이트
+      } else {
+        alert("일치하는 사용자를 찾을 수 없습니다.");
+        setIsSuccess(false); // 실패 시 상태 업데이트
+      }
+    } catch (err) {
+      console.error(err);
+      setIsSuccess(false); // 통신 실패 시 실패 상태로 설정
     }
-    // }
   };
 
   const renderForm = () => (
