@@ -64,10 +64,14 @@ function ShopPage() {
     }
   };
 
-  // 카테고리나 정렬 순서 변경 시 상품 데이터 갱신
+  // 상품 데이터 가져오기와 URL 변경을 구분
   useEffect(() => {
-    fetchProducts();
+    // URL 변경 후 상품 데이터 가져오기 실행
+    if (category !== null && sortOrder !== null) {
+      fetchProducts();
+    }
   }, [category, sortOrder]);
+
 
   // 정렬 순서 변경
   const handleSortChange = (newSortOrder) => {
@@ -141,7 +145,7 @@ const CarouselWrapper = styled.div`
 
 const ContentWrapper = styled.div`
   display: flex;
-  width: 100%;
+  width: 1350px;
   padding: 20px;
   justify-content: space-between;
   align-items: flex-start;
@@ -151,6 +155,7 @@ const SideBarWrapper = styled.div`
   flex-basis: 20%;
   max-width: 250px;
   min-width: 200px;
+
 `;
 
 const CardSection = styled.div`
@@ -166,8 +171,10 @@ const CardSection = styled.div`
 const CardWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 300px);
-  gap: 20px;
   justify-content: center;
+  width: 1350px;
+  gap:50px;
+  margin-right : 250px;
 
   @media (max-width: 1200px) {
     grid-template-columns: repeat(3, 300px);

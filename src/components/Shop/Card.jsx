@@ -128,7 +128,10 @@ const Card = ({ category, searchResults }) => {
             onClick={() => handleProductClick(product.shopId)}
           >
             <div className="image-container">
-              <img src={product.imageUrl || "기본이미지경로"} alt={product.name} />
+              <img
+                src={product.imageUrl || "기본이미지경로"}
+                alt={product.name}
+              />
             </div>
             <div className="card-content">
               <h3>{product.name}</h3>
@@ -138,10 +141,12 @@ const Card = ({ category, searchResults }) => {
           </div>
         ))}
       </div>
-
+      
       <div className="pagination">
         {currentPage > 1 && (
-          <button onClick={() => handlePageChange(currentPage - 1)}>&lt;</button>
+          <button onClick={() => handlePageChange(currentPage - 1)}>
+            &lt;
+          </button>
         )}
         {[...Array(totalPages)].map((_, index) => {
           const pageNumber = index + 1;
@@ -156,9 +161,12 @@ const Card = ({ category, searchResults }) => {
           );
         })}
         {currentPage < totalPages && (
-          <button onClick={() => handlePageChange(currentPage + 1)}>&gt;</button>
+          <button onClick={() => handlePageChange(currentPage + 1)}>
+            &gt;
+          </button>
         )}
       </div>
+      
     </StyledWrapper>
   );
 };
@@ -170,7 +178,6 @@ const StyledWrapper = styled.div`
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;
-  padding: 20px;
   box-sizing: border-box;
   justify-content: center; /* 수정 부분 */
   
@@ -195,6 +202,7 @@ const StyledWrapper = styled.div`
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 50px;
+    width: 300px;
 
 
     @media (max-width: 1200px) {
