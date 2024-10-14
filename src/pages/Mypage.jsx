@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logoImage from "../static/newLogoverticalOrange.png";
-// import MockMypageData from "../myPage/MockMypageData";
+import MockMypageData from "../myPage/MockMypageData";
 import {
   StyledMypageWrapper,
   StyledNavBar,
@@ -36,7 +36,7 @@ const Mypage = () => {
   ];
   const [memberMerchList, setMemberMerchList] = useState([]);
   const [oneOnOneboardList, setoneOnOneboardList] = useState([]);
-
+  const [dogList, setDogList] = useState([]);
   const loggedInMemberId = authState?.member?.memberId || null;
 
   useEffect (() => {    
@@ -67,11 +67,31 @@ const Mypage = () => {
         setoneOnOneboardList(oneOnOneboardList.slice(0, 5)); 
         console.log(oneOnOneboardList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
       } catch (error) {
-        console.error("구매리스트 받아오기 실패:", error);
+        console.error("문의내역 받아오기 실패:", error);
       }
     };
 
     askBoardList(); // 비동기 함수 호출
+}, []);
+
+
+
+
+useEffect (() => {    
+  const dogFund = async () => {
+    try {
+      const response = await apiClient.get(`${SERVER_URL}dog/fundListMyPage`, {
+      });
+      console.log(response.data.dogList);
+      const dogList = response.data.dogList || [];
+      setDogList(dogList.slice(0, 5)); 
+      console.log(dogList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
+    } catch (error) {
+      console.error("펀딩내역 받아오기 실패:", error);
+    }
+  };
+
+  dogFund(); // 비동기 함수 호출
 }, []);
 
   const handleMenuClick = (item) => {
@@ -166,14 +186,14 @@ const Mypage = () => {
               </StyledProfileContainer>
             </div>
 
-            <div className="section-mypage flex w-full">
-              구매내역
+            <div className="section-mypage flex w-full flex-column">
+              <h2 className="text-left p-2">구매내역</h2> 
               <table>
-                <thead style={{ borderBottom: '1px solid lightOrange'}}>
+                <thead>
                   <tr>
                     <th>상품 ID</th>
                     <th>상품명</th>
-                    <th>디테일</th>
+                    {/* <th>디테일</th> */}
                     <th>카테고리</th>
                     <th>가격</th>
                     <th>리뷰보기</th>
@@ -185,7 +205,7 @@ const Mypage = () => {
                     <tr key={shopDTO.shopId}>
                       <td>{shopDTO.shopId}</td>
                       <td>{shopDTO.name}</td>
-                      <td>{shopDTO.detail}</td>
+                      {/* <td>{shopDTO.detail}</td> */}
                       <td>{shopDTO.category}</td>
                       <td>{shopDTO.price}</td>
                       <td>
@@ -203,11 +223,42 @@ const Mypage = () => {
         </div>
 
 
-            <div className="section-mypage flex w-full">취소/반품/환불내역</div>
-            <div className="section-mypage flex w-full">
-             1:1문의내역
+        <div className="section-mypage flex w-full flex-column">
+  <h2 className="text-left p-2">취소/반품/환불내역</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>상품 ID</th>
+        <th>상품명</th>
+        <th>카테고리</th>
+        <th>가격</th>
+        <th>주문상태</th>
+        <th>장바구니 담기</th>
+      </tr>
+    </thead>
+    <tbody>
+      {mockMypageData.returnItems.map((item) => (
+        <tr key={item.shopId}>
+          <td>{item.shopId}</td>
+          <td>{item.name}</td>
+          <td>{item.category}</td>
+          <td>{item.price} 원</td>
+          <td>{item.status}</td>
+          <td>
+            <button onClick={() => alert("장바구니에 담겼습니다.")}>
+              장바구니 담기
+            </button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+            <div className="section-mypage flex w-full flex-column">
+              <h2 className="text-left p-2">1:1문의내역</h2>
               <table>
-                <thead style={{ borderBottom: '1px solid lightOrange'}}>
+                <thead>
                   <tr>
                     <th>글번호</th>
                     <th>문의글 제목</th>              
@@ -227,8 +278,33 @@ const Mypage = () => {
                 </tbody>
          </table>
         </div>
-            <div className="section-mypage flex w-full">펀딩내역</div>
-
+        <div className="section-mypage flex w-full flex-column">
+            <h2 className="text-left p-2">펀딩내역</h2>
+            <table>
+              <thead style={{ borderBottom: '1px solid lightOrange' }}>
+                <tr>
+                  <th>펀딩 번호</th>
+                  <th>유기견 번호</th>
+                  <th>펀딩 금액</th>
+                </tr>
+              </thead>
+              <tbody>
+                {mockMypageData.fundingItems.map((fundDTO) => (
+                  <tr key={fundDTO.fundId}>
+                    <td>{fundDTO.fundId}</td>
+                    <td>{fundDTO.dogId}</td>
+                    <td>{fundDTO.amount} 원</td>
+                  </tr>
+                ))}
+                {/* {oneOnOneboardList.map((fundDTO) => (
+                              <tr key={fundDTO.fundId}>
+                                <td>{fundDTO.fundId}</td>
+                                <td>{fundDTO.dogId}</td>
+                              </tr>
+                              ))} */}
+              </tbody>
+            </table>
+          </div>
           </StyeldRightSection>
         </StyledMypageWrapper>
       </div>

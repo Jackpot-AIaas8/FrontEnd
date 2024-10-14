@@ -8,11 +8,9 @@ import FundStory from "../detailComponent/FundStory";
 import styled from "styled-components";
 import { apiNoToken } from "../token/AxiosConfig";
 
-
 const DogDetail = () => {
   const { dogId } = useParams();
   const [dogData, setDogData] = useState({});
-
 
   useEffect(() => {
     apiDogDetail();
@@ -30,14 +28,11 @@ const DogDetail = () => {
     }
   };
 
-
-
   return (
     <StyledContainer className="container flex justify-center align-center">
       <div className=" flex flex-column justify-center align-center detail-wrapper w-full">
         <Info className="flex" dogData={dogData} />
 
-        
         <div className="flex flex-column align-center justify-center w-full">
           <YouTubeContainer youtubeLink={dogData.videoUrl} />
           <FundStory />

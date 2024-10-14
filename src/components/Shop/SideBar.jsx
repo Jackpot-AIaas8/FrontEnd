@@ -19,7 +19,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import GavelIcon from '@mui/icons-material/Gavel';
 import { useNavigate } from 'react-router-dom';
 
-export default function Sidebar({ setCategory, fetchProducts }) {
+export default function Sidebar({ setCategory }) {
   const navigate = useNavigate();
 
   // 카테고리 항목
@@ -39,7 +39,6 @@ export default function Sidebar({ setCategory, fetchProducts }) {
   const handleCategorySelect = (item) => {
     if (setCategory) {
       setCategory(item.category); // 카테고리 상태 업데이트
-      fetchProducts(); // 상품 데이터 재요청
     }
     // URL에 카테고리 추가해서 이동
     navigate(`/shop?category=${item.category}`);
@@ -51,8 +50,8 @@ export default function Sidebar({ setCategory, fetchProducts }) {
       <Box
         sx={{
           position: 'fixed',
-          top: '70px',
-          left: 0, // 왼쪽에 고정
+          top: '150px',
+          left: '70px', // 왼쪽에 고정
           borderRadius: '10px',
           boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
           border: '1px solid #e0e0e0',
@@ -61,7 +60,7 @@ export default function Sidebar({ setCategory, fetchProducts }) {
           width: '20vw', // 화면 너비의 20% 차지
           maxWidth: '200px', // 최대 너비
           minWidth: '200px', // 최소 너비
-          height: 'calc(100vh - 130px)',
+          height: '70%',
           overflowY: 'auto',
           '@media (max-width: 768px)': {
             position: 'relative',
