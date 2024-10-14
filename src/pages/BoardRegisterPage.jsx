@@ -8,13 +8,15 @@ const BoardRegistering = () => {
   return (
     <div className='container'>
     <div className="">
-    <img src={Banner4} alt="글 조회하기 배너" style={{ width: '50%', margin:'0 auto', position: 'relative' }} /> 
+    <img src={Banner4} alt="글 작성하기 배너" style={{ width: '50%', margin:'0 auto', position: 'relative' }} /> 
     </div>
     <div className='register-spacing-top'>
-      <BoardRegister /> 
+      <BoardRegister/> 
     </div>
     </div>
   );
 };
   
 export default BoardRegistering;
+
+
