@@ -12,10 +12,9 @@ import {
 } from "reactstrap";
 import "../../assets/scss/style.scss";
 import React, {useState} from "react";
-import axios from "axios";
 import apiClient from "../../../token/AxiosConfig";
 
-const DogAddFrom = () => {
+const ShopAddFrom = () => {
     const [shop, setShop] = useState({
         name: '',
         price: '',
@@ -144,4 +143,4 @@ const DogAddFrom = () => {
     );
 };
 
-export default DogAddFrom;
+export default ShopAddFrom;

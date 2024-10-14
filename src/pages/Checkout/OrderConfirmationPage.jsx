@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
+import apiClient from "../../token/AxiosConfig";
 
 const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 const customerKey = "6JqYbn-tMjCQIrq9p4xLN";
@@ -10,10 +11,7 @@ function CheckoutPage() {
   const location = useLocation();
   const {
     name = "상품명",
-    userName = "고객 이름",
-    userEmail = "example@example.com",
-    userPhone = "010-1234-5678",
-    userAddress = "서울특별시 강남구",
+
     quantity = 1,
     totalPrice = 50000,
   } = location.state || {};
@@ -24,8 +22,25 @@ function CheckoutPage() {
 
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState(null);
-  const [address, setAddress] = useState(userAddress);
+  
   const [isEditingAddress, setIsEditingAddress] = useState(false);
+  const [user, setUser] = useState({});
+
+
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await apiClient.get("/member/myPage");
+        console.log("User Data:", response.data); // 결과 콘솔에 출력
+        setUser(response.data);
+      } catch (error) {
+        console.error("서버 오류 발생:", error); // 오류 발생 시 콘솔에 출력
+      }
+    };
+
+    fetchUserInfo(); // 컴포넌트 마운트 시 호출
+  }, []);
 
   useEffect(() => {
     async function fetchPaymentWidgets() {
@@ -79,10 +94,10 @@ function CheckoutPage() {
       console.log("Order ID:", orderId);
       console.log("Order Name:", name);
       console.log("Amount:", paymentAmount);  // 숫자로 변환된 금액 확인
-      console.log("Customer Email:", userEmail);
-      console.log("Customer Name:", userName);
+      console.log("Customer Email:", user.email);
+      console.log("Customer Name:", user.name);
       console.log("Widgets Object:", widgets);
-      console.log("Customer Phone:", userPhone);
+      console.log("Customer Phone:", user.phone);
       console.log("Sending amount to Toss Payments:", paymentAmount);
 
   
@@ -92,9 +107,9 @@ function CheckoutPage() {
         orderName: name,
         successUrl: `${window.location.origin}/success`,
         failUrl: `${window.location.origin}/fail`,
-        customerEmail: userEmail,
-        customerName: userName,
-        customerMobilePhone: userPhone,
+        customerEmail: user.email,
+        customerName: user.name,
+        customerMobilePhone: user.phone,
       });
       console.log("결제 요청 완료");
     } catch (error) {
@@ -113,6 +128,10 @@ function CheckoutPage() {
   const handleAddressSave = () => {
     setIsEditingAddress(false);
   };
+  const handleAddressChange = (e) => {
+    const newAddress = e.target.value;
+    setUser((prevUser) => ({ ...prevUser, address: newAddress }));
+  };
 
   return (
     <PageContainer>
@@ -129,15 +148,15 @@ function CheckoutPage() {
         <InfoBox>
           <InfoRow>
             <Label>이름</Label>
-            <Value>{userName || "정보 없음"}</Value>
+            <Value>{user.name || "정보 없음"}</Value>
           </InfoRow>
           <InfoRow>
             <Label>이메일</Label>
-            <Value>{userEmail || "정보 없음"}</Value>
+            <Value>{user.email || "정보 없음"}</Value>
           </InfoRow>
           <InfoRow>
             <Label>휴대폰 번호</Label>
-            <Value>{userPhone || "정보 없음"}</Value>
+            <Value>{user.phone || "정보 없음"}</Value>
           </InfoRow>
         </InfoBox>
       </Section>
@@ -156,12 +175,12 @@ function CheckoutPage() {
         {isEditingAddress ? (
           <Input
             type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            value={user.address}
+            onChange={handleAddressChange}
             placeholder="주소를 수정하세요"
           />
         ) : (
-          <MessageBox>{address || "주소 정보가 없습니다."}</MessageBox>
+          <MessageBox>{user.address || "주소 정보가 없습니다."}</MessageBox>
         )}
       </Section>
 

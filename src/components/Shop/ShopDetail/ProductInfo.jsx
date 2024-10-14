@@ -4,7 +4,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
-import apiNoToken from "../../../token/AxiosConfig"; 
+import axios from "axios";
 
 const ProductInfo = ({ productId }) => {
   const [quantity, setQuantity] = useState(1);
@@ -15,8 +15,7 @@ const ProductInfo = ({ productId }) => {
   // 상품 정보 가져오기
   const fetchProduct = async () => {
     try {
-      // axios 대신 apiNoToken으로 변경
-      const response = await apiNoToken.get(`/shop/findOne/${productId}`);
+      const response = await axios.get(`http://localhost:8181/shop/findOne/${productId}`);
       setProduct(response.data);
     } catch (error) {
       console.error("상품 정보를 불러오는 중 오류 발생:", error);
@@ -43,45 +42,17 @@ const ProductInfo = ({ productId }) => {
 
   const totalPrice = quantity * product.price;
 
-  const handlePurchase = async () => {
-    const accessToken = sessionStorage.getItem("accessToken");
-
-    if (accessToken) {
-      console.log("Access Token found:", accessToken);
-      try {
-        // 로그인된 경우 사용자 정보 가져오기 (apiNoToken 사용)
-        const userResponse = await apiNoToken.get("/member/myPage");
-
-        const userData = userResponse.data;
-        console.log("User Data:", userData);
-
-        // 결제 페이지로 이동하며 사용자 정보 전달
-        navigate("/OrderConfirmation", {
-          state: {
-            name: product.name,
-            price: product.price,
-            totalPrice: totalPrice,
-            userName: userData.name,
-            userEmail: userData.email,
-            userAddress: userData.address,
-            userPhone: userData.phone,
-          },
-        });
-      } catch (error) {
-        console.error("사용자 정보를 불러오는 중 오류 발생:", error);
-        alert("사용자 정보를 불러오지 못했습니다. 다시 시도해 주세요.");
-      }
-    } else {
-      alert("로그인이 필요합니다.");
-      // 로그인 페이지로 리디렉션
-      navigate("/signIn", {
-        replace: true,
-        state: {
-          redirectedFrom: location.pathname, // 사용자가 원래 위치한 경로를 전달
-        },
-      });
-    }
-  };
+// 결제 페이지로 상품 정보만 전달
+const handlePurchase = () => {
+  navigate("/OrderConfirmation", {
+    state: {
+      productName: product.name,
+      productPrice: product.price,
+      totalPrice: totalPrice,
+      quantity: quantity,
+    },
+  });
+};
 
   return (
     <TopSection className="flex flex-row justify-between">
