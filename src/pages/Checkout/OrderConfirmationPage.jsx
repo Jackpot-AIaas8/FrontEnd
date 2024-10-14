@@ -103,7 +103,7 @@ function CheckoutPage() {
   
       // 결제 요청 처리
       await widgets.requestPayment({
-        orderId: "orderId_123456",
+        orderId: orderId,
         orderName: name,
         successUrl: `${window.location.origin}/success`,
         failUrl: `${window.location.origin}/fail`,
