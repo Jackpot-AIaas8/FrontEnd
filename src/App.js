@@ -21,7 +21,7 @@ import "./config/Utility.css";
 import SignIn from "./pages/SignIn";
 import Button from "./components/Button";
 import SignUp from "./pages/SignUp";
-import AuctionMain from "./pages/AuctionMain";
+import AuctionMain from "./pages/Auction/AuctionMain";
 
 import { AuthContext } from "./token/AuthContext";
 import Mypage from "./pages/Mypage";
