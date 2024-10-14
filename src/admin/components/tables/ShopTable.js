@@ -101,74 +101,93 @@ const ShopTables = () => {
     );
 
     return (
-        <div>
-            <Card>
-                <CardBody>
-                    <div style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                    }}>
-                        <CardTitle tag="h5">상품 목록</CardTitle>
-                        <Search onSearch={handleSearch}/>
-                        <Button/>
-                    </div>
-                    <Table className="no-wrap mt-3 align-middle" responsive borderless>
-                        <thead>
-                        <tr>
-                            <th>상품명</th>
-                            <th>가격</th>
-                            <th>재고</th>
-                            <th>카테고리</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {shops.map((shop) => (
-                            <tr key={shop.shopId} className="border-top">
-                                <td>
-                                    <div className="d-flex align-items-center p-2">
-                                        <div className="ms-3">
-                                            <h6 className="mb-0">{shop.name}</h6>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>{shop.price}</td>
-                                <td>{shop.buy_count - shop.cell_count}개</td>
-                                <td>
-                                    {shop.category === 0 && '식품'}
-                                    {shop.category === 1 && '장난감'}
-                                    {shop.category === 2 && '가구'}
-                                    {shop.category === 3 && '개모차'}
-                                </td>
-                                <td>
-                                    <button onClick={() => navigate(`/admin/shopdetailform/${shop.shopId}`)}
-                                            style={{border: "none", background: "white"}}>상세보기
-                                    </button>
-                                    |
-                                    <button onClick={() => handleOpenModal(shop.shopId)}
-                                            style={{border: "none", background: "white"}}>매입등록
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </Table>
-                </CardBody>
-                <PageComponent
-                    pageInfo={pageInfo}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                    onPrev={() => handlePageChange(Math.max(pageInfo.page - 1, 1))}
-                    onNext={() => handlePageChange(Math.min(pageInfo.page + 1, totalPages))}
-                />
-            </Card>
-            {isModalOpen && (
-                <Modal onClose={handleCloseModal}>
-                    <StockForm key={currentShopId} shopId={currentShopId}/>
-                </Modal>
-            )}
-        </div>
+      <div>
+        <Card>
+          <CardBody>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <CardTitle tag="h5">상품 목록</CardTitle>
+              <Search onSearch={handleSearch} />
+              <Button />
+            </div>
+            <Table className="no-wrap mt-3 align-middle" responsive borderless>
+              <thead>
+                <tr>
+                  <th>상품명</th>
+                  <th>가격</th>
+                  <th>재고</th>
+                  <th>카테고리</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {shops.map((shop) => (
+                  <tr key={shop.shopId} className="border-top">
+                    <td>
+                      <div className="d-flex align-items-center p-2">
+                        <div className="ms-3">
+                          <h6 className="mb-0">{shop.name}</h6>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{shop.price}</td>
+                    <td>{shop.buy_count - shop.cell_count}개</td>
+                    <td>
+                      {shop.category === 0 && "식품"}
+                      {shop.category === 1 && "장난감"}
+                      {shop.category === 2 && "가구"}
+                      {shop.category === 3 && "개모차"}
+                    </td>
+                    <td>
+                      <button
+                        onClick={() =>
+                          navigate(`/admin/shopdetailform/${shop.shopId}`)
+                        }
+                        style={{ border: "none", background: "white" }}
+                      >
+                        상세보기
+                      </button>
+                      |
+                      <button
+                        onClick={() => handleOpenModal(shop.shopId)}
+                        style={{ border: "none", background: "white" }}
+                      >
+                        매입등록
+                      </button>
+                      |
+                      <button
+                        onClick={() => navigate(`/admin/auctionaddform/${shop.shopId}`)}
+                        style={{ border: "none", background: "white" }}
+                      >
+                        경매 등록
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </CardBody>
+          <PageComponent
+            pageInfo={pageInfo}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            onPrev={() => handlePageChange(Math.max(pageInfo.page - 1, 1))}
+            onNext={() =>
+              handlePageChange(Math.min(pageInfo.page + 1, totalPages))
+            }
+          />
+        </Card>
+        {isModalOpen && (
+          <Modal onClose={handleCloseModal}>
+            <StockForm key={currentShopId} shopId={currentShopId} />
+          </Modal>
+        )}
+      </div>
     );
 };
 
