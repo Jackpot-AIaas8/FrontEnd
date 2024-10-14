@@ -21,7 +21,6 @@ const ShopDetailForm = () => {
         name: '',
         price: '',
         category: '',
-        species: '',
         detail: '',
         img: null
     });
@@ -32,6 +31,11 @@ const ShopDetailForm = () => {
     formData.append("price", shop.price);
     formData.append("category", shop.category);
     formData.append("detail", shop.detail);
+    formData.append("buy_count", shop.buy_count);
+    formData.append("cell_count", shop.cell_count);
+
+    console.log(shop.buy_count);
+
     if (shop.img) {
         formData.append("img", shop.img); // 파일이 존재할 때만 추가
     }
@@ -111,7 +115,7 @@ const ShopDetailForm = () => {
                                 />
                             </FormGroup>
                             <FormGroup>
-                                <Label for="price">가격</Label>
+                                <Label for="price">상품 가격</Label>
                                 <Input
                                     id="price"
                                     name="price"
@@ -154,7 +158,7 @@ const ShopDetailForm = () => {
                             </FormGroup>
                             <FormGroup>
                                 <Button onClick={editShop} style={{marginRight: '20px'}}>수정</Button>
-                                <Button onClick={removeShop}>삭제</Button>
+                                <Button onClick={removeShop} style={{marginRight: '20px'}}>삭제</Button>
                             </FormGroup>
                         </Form>
                     </CardBody>
