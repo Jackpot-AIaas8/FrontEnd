@@ -172,6 +172,8 @@ const StyledWrapper = styled.div`
   margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;
+  justify-content: center; /* 수정 부분 */
+  
 
   .controls {
     display: flex;
@@ -193,6 +195,7 @@ const StyledWrapper = styled.div`
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 50px;
+
 
     @media (max-width: 1200px) {
       grid-template-columns: repeat(3, 1fr);
