@@ -33,7 +33,7 @@ import ThemeRoutes from "./admin/routes/Router";
 import CheckoutPage from "./pages/Checkout/OrderConfirmationPage";
 
 function App() {
-  const { isAdmin} = useContext(AuthContext);
+  const { isAdmin } = useContext(AuthContext);
 
   return (
     <>
@@ -60,7 +60,6 @@ function App() {
             <Route path="/board/remove/:boardId" element={<BoardRemove />} />
             <Route path="/signIn" element={<SignIn />} />
             <Route path="/signUp" element={<SignUp />} />
-
 
             {/* 회원 전용 route가 될예정이오니 여기 내부에 pageroute넣어주세요 */}
             <Route element={<ProtectedRoute allowedRoles={["ROLE_USER"]} />}>
