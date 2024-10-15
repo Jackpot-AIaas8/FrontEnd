@@ -63,7 +63,7 @@ const BoardEdit = () => {
             <h2 className="align-left p-2">게시글 수정하기</h2>
           </div>
           <div className="m-auto">
-            <table className="board-table w-full">
+            <table className="board-table-reg w-full">
               <thead>
                 <tr>
                   <td>
