@@ -2,7 +2,8 @@
   height: 45vh;
   padding: 5px;
   margin: 1.5% 0;
-  border: 1px solid transparent; /* 불필요한 보더 값 수정 */
+  border: 1px solid transparent;
+  margin-top: 5%;
 }
 
 .board-read-table {
@@ -18,7 +19,7 @@
 }
 
 .board-content {
-  height: 200px; /* 내용 부분의 높이 */
+  height: 400px; /* 내용 부분의 높이 */
   vertical-align: top; /* 내용 텍스트 위쪽 정렬 */
   white-space: pre-wrap; /* 줄 바꿈 허용 */
 }

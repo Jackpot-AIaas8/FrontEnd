@@ -58,8 +58,8 @@ const BoardFindOne = () => {
         <thead>
           <tr>
             <td>
-              <b>{board.boardId}</b> <h1>{board.title}</h1>
-              {board.memberId} | {board.regDate}
+              <b>{board.boardId}번 글</b> <h1>{board.title}</h1>
+              {board.memberId} | {board.regDate} 작성
             </td>
           </tr>
         </thead>

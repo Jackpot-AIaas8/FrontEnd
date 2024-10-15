@@ -18,7 +18,7 @@ const FreeBoardList = ({ boards }) => {
     if (boards.length === 0) {
       const fetchBoards = async () => {
         try {
-          const response = await axios.get(`${SERVER_URL}board/findAll`, {
+          const response = await apiClient.get("board/findAll", {
             params: { page, size: 10 }, // 페이지와 페이지 사이즈 요청
           });
           const allBoards = response.data.dtoList || [];
@@ -76,7 +76,7 @@ const FreeBoardList = ({ boards }) => {
             <th>작성일</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody style={{borderLeft: 'none'}}>
           {displayedBoards.length > 0 ? (
             displayedBoards.map((boardDTO) => (
               <tr key={boardDTO.boardId}>
