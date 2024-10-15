@@ -1,236 +1,241 @@
-import React from "react";
-import styled from "styled-components";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import apiClient from "../../token/AxiosConfig"; // 서버 API를 호출하는 axios 설정
+import styled from "styled-components"; // 스타일링을 위해 styled-components 사용
 
 function SuccessPage() {
   const [searchParams] = useSearchParams();
-
   const orderId = searchParams.get("orderId");
-  const amount = searchParams.get("amount");
-  const paymentKey = searchParams.get("paymentKey");
+  const [user, setOrderInfo] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
+
+  useEffect(() => {
+    const fetchOrderInfo = async () => {
+      // Authorization 헤더 없이 API 호출
+      try {
+        const response = await apiClient.get(`/order/info?orderId=${orderId}`);
+        console.log("Fetched Order Info:", response.data); // 가져온 데이터를 로그로 출력
+        setOrderInfo(response.data); // 가져온 데이터를 상태에 저장
+        setIsLoading(false); // 로딩 완료
+      } catch (error) {
+        console.error("Error fetching order info:", error); // 에러 발생 시 로그 출력
+        setIsLoading(false); // 로딩 완료
+      }
+    };
+
+    if (orderId) {
+      console.log("Order ID:", orderId); // URL에서 넘어온 orderId 로그로 출력
+      fetchOrderInfo();
+    }
+  }, [orderId]);
+
+  if (isLoading) {
+    return <div>Loading...</div>; // 로딩 중 표시
+  }
+
+  if (!user) {
+    return <div>정보를 불러오지 못했습니다. 다시 시도해 주세요.</div>; // 데이터가 없을 때의 오류 처리
+  }
 
   return (
-    <PageContainer>
-      <OrderCompleteBox>
-        <OrderHeader>
-          <Step>01 주문/결제</Step>
-          <StepHighlight>02 주문완료</StepHighlight>
-        </OrderHeader>
+    <PageWrapper>
+      <ContentWrapper>
+        <Container>
+          <Title>주문완료</Title>
+          <SubTitle>주문이 완료되었습니다. 감사합니다!</SubTitle>
 
-        <OrderCompleteHeader>주문완료</OrderCompleteHeader>
-        <OrderMessage>주문이 완료되었습니다. 감사합니다!</OrderMessage>
+          {/* 데이터를 확인하기 위한 임시 출력 */}
+          <pre>{JSON.stringify(user, null, 2)}</pre>
 
-        {/* 상품 배송 정보 */}
-        <SectionTitle>상품배송 정보</SectionTitle>
-        <DeliveryBox>
-          <DeliveryStatus>
-            <DeliveryText>
-              내일(화) 도착 보장(상품 1개)
-            </DeliveryText>
-          </DeliveryStatus>
-        </DeliveryBox>
+          <Section>
+            <SectionTitle>상품배송 정보</SectionTitle>
+            <DeliveryInfo>
+              <DeliveryStatus>
+                <img src="/delivery-icon.png" alt="배송 아이콘" />
+                <p>내일(화) 도착 보장 ({user.productName} 1개)</p>
+              </DeliveryStatus>
+            </DeliveryInfo>
+          </Section>
 
-        {/* 받는 사람 정보 */}
-        <SectionTitle>받는사람 정보</SectionTitle>
-        <InfoWrapper>
-          <InfoBox>
-            <InfoRow>
-              <Label>받는사람</Label>
-              <Value>박우람 / 010-4826-7085</Value>
-            </InfoRow>
-            <InfoRow>
-              <Label>받는주소</Label>
-              <Value>
-                광주광역시 북구 일동 632 2차 국제미소래아파트 201동 1508호
-              </Value>
-              <ModifyLink>변경하기</ModifyLink>
-            </InfoRow>
-            <InfoRow>
-              <Label>배송요청사항</Label>
-              <Value>문 앞 (15*********)</Value>
-              <ModifyLink>변경하기</ModifyLink>
-            </InfoRow>
-          </InfoBox>
+          <Row>
+            <InfoBox>
+              <SectionTitle>받는사람 정보</SectionTitle>
+              <InfoItem>
+                <Label>받는사람</Label>
+                <Value>{user.name}</Value>
+              </InfoItem>
+              <InfoItem>
+                <Label>받는주소</Label>
+                <Value>{user.address}</Value>
+              </InfoItem>
+              <InfoItem>
+                <Label>배송요청사항</Label>
+                <Value>문 앞 (예: {user.phone})</Value>
+              </InfoItem>
+            </InfoBox>
 
-          {/* 결제 정보 */}
-          <SectionTitle>결제 정보</SectionTitle> {/* 박스 바깥으로 이동 */}
-          <InfoBox>
-            <InfoRow>
-              <Label>주문금액</Label>
-              <Value>4,890원</Value>
-            </InfoRow>
-            <InfoRow>
-              <Label>배송비</Label>
-              <Value>+0원</Value>
-            </InfoRow>
-            <TotalRow>
-              <Label>총 결제금액</Label>
-              <TotalValue>4,8920원</TotalValue>
-            </TotalRow>
-          </InfoBox>
-        </InfoWrapper>
+            <InfoBox>
+              <SectionTitle>결제 정보</SectionTitle>
+              <InfoItem>
+                <Label>주문금액</Label>
+                <Value>{user.amount.toLocaleString()}원</Value>
+              </InfoItem>
+              <InfoItem>
+                <Label>배송비</Label>
+                <Value>0원</Value> {/* 실제로 배송비를 서버에서 받아올 수 있으면 수정 */}
+              </InfoItem>
+              <TotalItem>
+                <Label>총 결제금액</Label>
+                <TotalValue>{user.amount.toLocaleString()}원</TotalValue>
+              </TotalItem>
+            </InfoBox>
+          </Row>
 
-        {/* 버튼 섹션 */}
-        <ButtonSection>
-          <OrderButton>주문 상세보기</OrderButton>
-          <ContinueShoppingButton>쇼핑 계속하기</ContinueShoppingButton>
-        </ButtonSection>
-      </OrderCompleteBox>
-    </PageContainer>
+          <ButtonGroup>
+            <Button>주문 상세보기</Button>
+            <Button secondary>쇼핑 계속하기</Button>
+          </ButtonGroup>
+        </Container>
+      </ContentWrapper>
+
+      <Footer>
+        <p>Copyright © 2024 Your Company. All rights reserved.</p>
+      </Footer>
+    </PageWrapper>
   );
 }
 
 export default SuccessPage;
 
-// 스타일 정의
-const PageContainer = styled.div`
-  margin-top: 150px;
+// 스타일 정의 (기존 코드와 동일)
+const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  min-height: 80vh;
+  min-height: 100vh; // 화면의 전체 높이를 차지하도록 설정
 `;
 
-const OrderCompleteBox = styled.div`
-  width: 60%; /* 중앙에 배치하기 위해 너비를 60%로 설정 */
-  margin: 20px auto;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+const ContentWrapper = styled.div`
+  flex-grow: 1; // 메인 콘텐츠가 남은 모든 공간을 차지하게 설정
+`;
+
+const Container = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
   padding: 20px;
   background-color: #f9f9f9;
 `;
 
-const OrderHeader = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
-`;
-
-const Step = styled.span`
-  color: #888;
-  margin-right: 20px;
-`;
-
-const StepHighlight = styled.span`
-  color: #000;
-  font-weight: bold;
-`;
-
-const OrderCompleteHeader = styled.h2`
-  text-align: left;
+const Title = styled.h1`
   font-size: 24px;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-`;
-
-const OrderMessage = styled.p`
-  text-align: center;
-  font-size: 18px;
-  margin: 20px 0;
   font-weight: bold;
-
-`;
-
-const SectionTitle = styled.h3`
-  text-align: left;
-  font-size: 20px;
-  margin-bottom: 10px;
-  margin-top: 20px; /* 각 섹션 타이틀이 상단에 떨어지게 여백 추가 */
-`;
-
-const DeliveryBox = styled.div`
-  border: 1px solid #ddd;
-  padding: 20px;
-  border-radius: 8px;
+  text-align: center;
   margin-bottom: 20px;
-  background-color: white;
+`;
+
+const SubTitle = styled.p`
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 30px;
+`;
+
+const Section = styled.div`
+  margin-bottom: 20px;
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+`;
+
+const DeliveryInfo = styled.div`
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #fff;
 `;
 
 const DeliveryStatus = styled.div`
   display: flex;
   align-items: center;
-`;
 
-const DeliveryText = styled.p`
-  font-size: 18px;
-  margin: 0;
-  span {
-    color: #888;
+  img {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+  }
+
+  p {
     font-size: 16px;
-    margin-left: 10px;
+    color: #28a745;
   }
 `;
 
-const InfoWrapper = styled.div`
+const Row = styled.div`
   display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 20px;
+  justify-content: space-between;
 `;
 
 const InfoBox = styled.div`
-  width: 48%; /* 두 박스를 동일한 크기로 설정 */
+  width: 48%;
   border: 1px solid #ddd;
+  padding: 15px;
   border-radius: 8px;
-  padding: 20px;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  background-color: #fff;
 `;
 
-const InfoRow = styled.div`
+const InfoItem = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
-  word-wrap: break-word; /* 긴 텍스트가 줄바꿈되도록 설정 */
-  word-break: break-all;
 `;
 
 const Label = styled.span`
   font-weight: bold;
+  color: #555;
 `;
 
 const Value = styled.span`
-  max-width: 60%; /* 긴 주소에 대한 줄바꿈 처리 */
-  word-wrap: break-word;
+  color: #333;
 `;
 
-const ModifyLink = styled.a`
-  color: #007bff;
-  cursor: pointer;
-`;
-
-const TotalRow = styled(InfoRow)`
+const TotalItem = styled(InfoItem)`
   font-size: 18px;
   font-weight: bold;
 `;
 
-const TotalValue = styled.span`
-  color: red;
+const TotalValue = styled(Value)`
+  color: #e60023;
 `;
 
-const ButtonSection = styled.div`
+const ButtonGroup = styled.div`
   display: flex;
   justify-content: center;
-  gap: 20px;
   margin-top: 20px;
 `;
 
-const OrderButton = styled.button`
+const Button = styled.button`
   padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
+  font-size: 16px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  background-color: ${({ secondary }) => (secondary ? '#007bff' : '#28a745')};
+  color: white;
+  margin: 0 10px;
+
+  &:hover {
+    opacity: 0.8;
+  }
 `;
 
-const ContinueShoppingButton = styled.button`
-  padding: 10px 20px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+const Footer = styled.footer`
+  background-color: #f1f1f1;
+  padding: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  border-top: 1px solid #ddd;
+  width: 100%;
+  margin-top: auto;  // 푸터가 항상 페이지의 맨 아래로 가도록 설정
 `;
