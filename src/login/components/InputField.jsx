@@ -1,6 +1,13 @@
 import React from "react";
 
-const InputField = ({ type, name, placeholder, value, onChange }) => {
+const InputField = ({
+  type,
+  name,
+  placeholder,
+  value,
+  onChange,
+  autoComplete,
+}) => {
   return (
     <input
       className="input"
@@ -9,6 +16,7 @@ const InputField = ({ type, name, placeholder, value, onChange }) => {
       placeholder={placeholder}
       value={value || ""}
       onChange={onChange}
+      autoComplete={autoComplete || "off"} // 추가된 속성 사용
       required
     />
   );
