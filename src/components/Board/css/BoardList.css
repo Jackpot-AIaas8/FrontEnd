@@ -1,11 +1,10 @@
-/* BoardList.css */
 .board-list {
-  width: 50%; /* 부모 컨테이너의 80%만 차지 */
-  margin: 10px auto; /* 위아래 20px 간격, 좌우 자동으로 가운데 정렬 */
+  width: 50%; 
+  margin: 10px auto; 
 }
 
 .board-table {
-  width: 100%; /* board-list의 100%를 사용 */
+  width: 100%; 
   border-collapse: collapse;
   margin: 0 auto; /* 테이블을 중앙에 정렬 */
 }

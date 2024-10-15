@@ -70,7 +70,7 @@ const Mypage = () => {
           });
         const memberMerchList = response.data.dtoList || [];
         setMemberMerchList(memberMerchList);
-        console.log(memberMerchList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
+        // console.log(memberMerchList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
         } catch (error){
           console.error("구매리스트 받아오기 실패:", error);
         }
@@ -108,7 +108,7 @@ useEffect (() => {
       console.log(response.data.dogList);
       const dogList = response.data.dogList || [];
       setDogList(dogList.slice(0, 5)); 
-      console.log(dogList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
+      // console.log(dogList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
     } catch (error) {
       console.error("펀딩내역 받아오기 실패:", error);
     }
@@ -361,23 +361,23 @@ useEffect (() => {
                 <tr>
                   <th>펀딩 번호</th>
                   <th>유기견 번호</th>
-                  <th>펀딩 금액</th>
+                  {/* <th>펀딩 금액</th> */}
                 </tr>
               </thead>
               <tbody>
-                {mockMypageData.fundingItems.map((fundDTO) => (
+                {/* {mockMypageData.fundingItems.map((fundDTO) => (
                   <tr key={fundDTO.fundId}>
                     <td>{fundDTO.fundId}</td>
                     <td>{fundDTO.dogId}</td>
                     <td>{fundDTO.amount} 원</td>
                   </tr>
-                ))}
-                {/* {oneOnOneboardList.map((fundDTO) => (
+                ))} */}
+                {oneOnOneboardList.map((fundDTO) => (
                               <tr key={fundDTO.fundId}>
                                 <td>{fundDTO.fundId}</td>
                                 <td>{fundDTO.dogId}</td>
                               </tr>
-                              ))} */}
+                              ))}
               </tbody>
             </table>
           </div>

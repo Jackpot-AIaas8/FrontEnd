@@ -46,7 +46,7 @@ const BoardRegister = () => {
         </div>
 
         <div className="m-auto">
-          <table className="board-table w-full">
+          <table className="board-table-reg w-full">
             <thead>
               <tr>
                 <td>
@@ -66,8 +66,8 @@ const BoardRegister = () => {
                     required
                     style={{ width: "90%", height: "40px" }}
                   >
-                    <option value="2">자유</option>
-                    <option value="3">문의</option>
+                    <option value="2">자유게시판</option>
+                    <option value="3">문의게시판</option>
                   </select>
                 </td>
               </tr>
@@ -76,7 +76,7 @@ const BoardRegister = () => {
             <tbody>
               <tr>
                 <td colSpan={2} className="">
-                  <h4 className="text-left" style={{ marginLeft: '10px' }}>아래에 글 작성</h4> 
+                  <h4 className="text-left" style={{ marginLeft: '10px' }}>아래에 본문 작성</h4> 
                 </td>
               </tr>
               <tr>
