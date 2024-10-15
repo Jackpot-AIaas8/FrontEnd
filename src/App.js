@@ -24,7 +24,7 @@ import SignIn from "./pages/SignIn";
 import Button from "./components/Button";
 import SignUp from "./pages/SignUp";
 import AuctionMain from "./pages/Auction/AuctionMain";
-
+import AuctionEnter from "./pages/MainPage"; // 경매장 안으로 들어간 페이지로 수정해야 함
 import { AuthContext } from "./token/AuthContext";
 import Mypage from "./pages/Mypage";
 

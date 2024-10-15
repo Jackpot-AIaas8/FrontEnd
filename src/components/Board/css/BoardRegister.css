@@ -1,6 +1,7 @@
 .board-table {
   border-collapse: collapse;
-  width: 100%; /* 테이블의 width 설정을 100%로 변경 */
+  width: 1200px;
+  height: 300px;
   margin: 0 auto; /* 테이블을 가운데 정렬 */
 }
 
@@ -13,17 +14,18 @@
   padding: 10px;
 }
 
-.board-table tbody .content-row {
+.board-table tbody {
   padding: 10px;
 }
 
-.no-border-textarea {
+.contentArea {
   border: none;
   resize: none;
   min-height: 150px;
+  background-color: white;  
 }
 
-.no-border-textarea:focus {
+.contentArea:focus {
   outline: none;
 }
 
@@ -44,9 +46,13 @@ input, textarea {
   font-size: 16px;
   border: none;
   border-radius: 4px;
-  background-color: #f0f0f0;
+  background-color: #ffffff;
 }
 
 input:focus, textarea:focus {
   outline: none;
+}
+
+.contentArea:hover {
+  background-color: white; 
 }

@@ -22,7 +22,7 @@ const AuctionMain = () => {
                   <strong style={{ fontSize: "30px", fontWeight: "20px" }}>
                     개모차
                   </strong>
-                  {"    "}Jackpot사 제품
+                  <span style={{ marginLeft: "8px" }}>Jackpot사 제품</span>
                 </div>
               </Grid>
             </Grid>
