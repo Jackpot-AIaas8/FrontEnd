@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import apiClient from "../../token/AxiosConfig.js";
-import { SERVER_URL } from "../../config/Constants.js";
 import "./css/BoardList.css";
 
 const FreeBoardList = ({ boards }) => {
@@ -76,7 +74,7 @@ const FreeBoardList = ({ boards }) => {
             <th>작성일</th>
           </tr>
         </thead>
-        <tbody style={{borderLeft: 'none'}}>
+        <tbody >
           {displayedBoards.length > 0 ? (
             displayedBoards.map((boardDTO) => (
               <tr key={boardDTO.boardId}>
