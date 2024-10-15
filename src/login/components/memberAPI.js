@@ -24,7 +24,7 @@ export const findId = async (user) => {
 // 이메일 인증 코드 전송 API 호출 함수
 export const sendAuthCode = async (email) => {
   try {
-    const response = await apiNoToken.post("member/sendAuthCode", { email });
+    const response = await apiNoToken.get("sendEmail", { params: { email } });
 
     // 서버 연결 확인 (200번대 응답 확인)
     if (response.status >= 200 && response.status < 300) {
@@ -41,14 +41,16 @@ export const sendAuthCode = async (email) => {
 };
 
 // 인증 코드 확인 API 호출 함수
-export const verifyAuthCode = async (email, authCode) => {
+export const verifyAuthCode = async (email, code) => {
   try {
-    const response = await apiNoToken.post("member/verifyAuthCode", {
-      email,
-      authCode,
+    const response = await apiNoToken.get("/checkVerificationCode", {
+      params: {
+        email,
+        code,
+      },
     });
 
-    if (response.data.verified) {
+    if (response.status === 200) {
       return true; // 인증 성공
     } else {
       throw new Error("인증 코드가 일치하지 않습니다.");
