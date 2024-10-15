@@ -12,6 +12,8 @@ function ShopPage() {
   const [category, setCategory] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
   const [sortOrder, setSortOrder] = useState("latest");
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태 추가
+  const [totalPages, setTotalPages] = useState(1); // 총 페이지 상태 추가
   const location = useLocation();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
@@ -44,18 +46,19 @@ function ShopPage() {
   }, [category, sortOrder, navigate]);
 
   // 상품 데이터 가져오기
-  const fetchProducts = async () => {
+  const fetchProducts = async (page = 1) => {
     try {
       const endpoint = category
         ? `http://localhost:8181/shop/category/${category}`
         : `http://localhost:8181/shop/findList`;
 
       const response = await axios.get(endpoint, {
-        params: { page: 1, size: itemsPerPage, sortOrder },
+        params: { page, size: itemsPerPage, sortOrder },
       });
 
       if (response.data && Array.isArray(response.data.dtoList)) {
         setProducts(response.data.dtoList);
+        setTotalPages(Math.ceil(response.data.total / itemsPerPage)); // 총 페이지 수 계산
       } else {
         setProducts([]);
       }
@@ -64,14 +67,22 @@ function ShopPage() {
     }
   };
 
-  // 카테고리나 정렬 순서 변경 시 상품 데이터 갱신
+  // 상품 데이터 가져오기와 URL 변경을 구분
   useEffect(() => {
-    fetchProducts();
-  }, [category, sortOrder]);
+    // URL 변경 후 상품 데이터 가져오기 실행
+    if (category !== null && sortOrder !== null) {
+      fetchProducts(currentPage); // 페이지 값 추가
+    }
+  }, [category, sortOrder, currentPage]);
 
   // 정렬 순서 변경
   const handleSortChange = (newSortOrder) => {
     setSortOrder(newSortOrder);
+  };
+
+  // 페이지 변경 처리
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
   };
 
   return (
@@ -90,16 +101,29 @@ function ShopPage() {
           </SideBarWrapper>
           <CardSection>
             <CardWrapper>
-              <Card
-                products={products}
-                category={category}
-                searchResults={searchResults}
-                sortOrder={sortOrder}
-                onSortChange={handleSortChange}
-              />
+              <Card products={products} category={category} searchResults={searchResults} />
             </CardWrapper>
           </CardSection>
         </ContentWrapper>
+
+        {/* 페이지네이션 추가 */}
+        <PaginationWrapper>
+          {currentPage > 1 && (
+            <button onClick={() => handlePageChange(currentPage - 1)}>&lt;</button>
+          )}
+          {[...Array(totalPages)].map((_, index) => (
+            <button
+              key={index}
+              onClick={() => handlePageChange(index + 1)}
+              className={currentPage === index + 1 ? "active" : ""}
+            >
+              {index + 1}
+            </button>
+          ))}
+          {currentPage < totalPages && (
+            <button onClick={() => handlePageChange(currentPage + 1)}>&gt;</button>
+          )}
+        </PaginationWrapper>
       </MainContentWrapper>
     </PageContainer>
   );
@@ -141,7 +165,7 @@ const CarouselWrapper = styled.div`
 
 const ContentWrapper = styled.div`
   display: flex;
-  width: 100%;
+  width: 1350px;
   padding: 20px;
   justify-content: space-between;
   align-items: flex-start;
@@ -166,8 +190,10 @@ const CardSection = styled.div`
 const CardWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 300px);
-  gap: 20px;
   justify-content: center;
+  width: 1350px;
+  gap:50px;
+  margin-right : 250px;
 
   @media (max-width: 1200px) {
     grid-template-columns: repeat(3, 300px);
@@ -176,6 +202,28 @@ const CardWrapper = styled.div`
   @media (max-width: 900px) {
     grid-template-columns: repeat(2, 300px);
     overflow-x: auto;
+  }
+`;
+
+// 페이지네이션 스타일 정의
+const PaginationWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  
+  button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .active {
+    background-color: #0056b3;
   }
 `;
 

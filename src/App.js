@@ -13,7 +13,10 @@ import DogDetail from "./dogList/DogDetail";
 import DogList from "./pages/DogList";
 import ShopPage from "./pages/ShopPage";
 import ShopDetailPage from "./pages/ShopDetailPage";
-import OrderConfirmationPage from "./pages/Checkout/OrderConfirmationPage";
+import CheckoutPage from "./pages/Checkout/CheckoutPage";
+import SuccessPage from './pages/Checkout/SuccessPage'; 
+import FailPage from './pages/Checkout/FailPage'; 
+
 import { Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import theme from "./config/theme";
@@ -21,7 +24,7 @@ import "./config/Utility.css";
 import SignIn from "./pages/SignIn";
 import Button from "./components/Button";
 import SignUp from "./pages/SignUp";
-import AuctionMain from "./pages/AuctionMain";
+import AuctionMain from "./pages/Auction/AuctionMain";
 
 import { AuthContext } from "./token/AuthContext";
 import Mypage from "./pages/Mypage";
@@ -29,12 +32,11 @@ import Mypage from "./pages/Mypage";
 import { useContext } from "react";
 import ProtectedRoute from "./token/ProtectedRoute";
 import ThemeRoutes from "./admin/routes/Router";
+// import PaymentCheckoutPage from './pages/Checkout/PaymentCheckoutPage';
 
-import CheckoutPage from "./pages/Checkout/OrderConfirmationPage";
-import MyPageDemo from "./pages/MypageDemo";
 
 function App() {
-  const { isAdmin} = useContext(AuthContext);
+  const { isAdmin } = useContext(AuthContext);
 
   return (
     <>
@@ -48,9 +50,12 @@ function App() {
             <Route path="/shop/:shopId" element={<ShopDetailPage />} />
             <Route path="/cart" element={<Cart />} />
             <Route
-              path="/OrderConfirmation"
-              element={<OrderConfirmationPage />}
+              path="/Checkout"
+              element={<CheckoutPage />}
             />
+            <Route path="/success" element={<SuccessPage />} />  
+            <Route path="/fail" element={<FailPage />} />  
+
             <Route path="/dogList" element={<DogList />} />
             <Route path="/dog/:dogId" element={<DogDetail />} />
             <Route path="/freeBoard" element={<FreeBoardPage />} />
@@ -61,14 +66,13 @@ function App() {
             <Route path="/board/remove/:boardId" element={<BoardRemove />} />
             <Route path="/signIn" element={<SignIn />} />
             <Route path="/signUp" element={<SignUp />} />
-            <Route path="/mypageDemo" element={<MyPageDemo />} />
 
             {/* 회원 전용 route가 될예정이오니 여기 내부에 pageroute넣어주세요 */}
             <Route element={<ProtectedRoute allowedRoles={["ROLE_USER"]} />}>
               <Route path="/mypage" element={<Mypage />} />
               <Route
-                path="/OrderConfirmation"
-                element={<OrderConfirmationPage />}
+                path="/Checkout"
+                element={<CheckoutPage />}
               />
               <Route path="/board/:boardId" element={<BoardFindOnePage />} />
             </Route>

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import "../login/CSS/Login.css";
 import SocialLogin from "../login/components/SocialLogin";
 import SignLink from "../login/components/SignLink";
+
 import InputField from "../login/components/InputField";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../token/AuthContext";
@@ -82,6 +83,7 @@ const SignIn = () => {
         </form>
 
         <SignLink />
+
         <SocialLogin />
       </div>
     </div>

@@ -128,7 +128,10 @@ const Card = ({ category, searchResults }) => {
             onClick={() => handleProductClick(product.shopId)}
           >
             <div className="image-container">
-              <img src={product.imageUrl || "기본이미지경로"} alt={product.name} />
+              <img
+                src={product.imageUrl || "기본이미지경로"}
+                alt={product.name}
+              />
             </div>
             <div className="card-content">
               <h3>{product.name}</h3>
@@ -138,27 +141,9 @@ const Card = ({ category, searchResults }) => {
           </div>
         ))}
       </div>
-
-      <div className="pagination">
-        {currentPage > 1 && (
-          <button onClick={() => handlePageChange(currentPage - 1)}>&lt;</button>
-        )}
-        {[...Array(totalPages)].map((_, index) => {
-          const pageNumber = index + 1;
-          return (
-            <button
-              key={pageNumber}
-              onClick={() => handlePageChange(pageNumber)}
-              className={currentPage === pageNumber ? "active" : ""}
-            >
-              {pageNumber}
-            </button>
-          );
-        })}
-        {currentPage < totalPages && (
-          <button onClick={() => handlePageChange(currentPage + 1)}>&gt;</button>
-        )}
-      </div>
+      
+      
+      
     </StyledWrapper>
   );
 };
@@ -170,8 +155,9 @@ const StyledWrapper = styled.div`
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;
-  padding: 20px;
   box-sizing: border-box;
+  justify-content: center; /* 수정 부분 */
+  
 
   .controls {
     display: flex;
@@ -193,6 +179,8 @@ const StyledWrapper = styled.div`
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 50px;
+    width: 300px;
+
 
     @media (max-width: 1200px) {
       grid-template-columns: repeat(3, 1fr);
@@ -256,14 +244,16 @@ const StyledWrapper = styled.div`
     color: #333;
   }
 
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-top: 20px;
-    width: 100%;
-  }
+.pagination {
+  display: flex;
+  justify-content: center;  /* 버튼들을 중앙에 배치 */
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  width: 100%;  /* pagination 너비를 100%로 설정 */
+}
+
+
 
   .pagination button {
     padding: 5px 10px;

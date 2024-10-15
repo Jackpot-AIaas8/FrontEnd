@@ -4,26 +4,11 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import apiClient from "../../token/AxiosConfig";
 import styled from "styled-components";
+import { apiNoToken } from "../../token/AxiosConfig";
 
 function DogCarousel() {
   const [dogs, setDogs] = useState([]);
 
-  useEffect(() => {
-    apiClient
-      .get("dog/dogList", {
-        params: {
-          page: 1,
-          size: 10,
-          sort: "heart",
-        },
-      })
-      .then((res) => {
-        setDogs(res.data.dogList);
-      })
-      .catch((err) => {
-        console.log("error : ", err);
-      });
-  }, []);
   useEffect(() => {
     const dogListAPI = async () => {
       try {
@@ -34,14 +19,13 @@ function DogCarousel() {
             sort: "heart",
           },
         });
-        // console.log(response.data);
-
-        // setDogs(response.data);
         setDogs(response.data.dogList);
+        
       } catch (err) {
         console.error(err);
       }
     };
+    dogListAPI();
   }, []);
 
   const settings = {
@@ -65,7 +49,7 @@ function DogCarousel() {
             <div className="card">
               <div className="card-image">
                 <img
-                  src="https://img.29cm.co.kr/item/202402/11eec0d158bd69388377bffeae35630c.jpg?width=700"
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWAKSR0zHQrRZfEUhbpewPESqP85h9afAquw&s"
                   alt=""
                   style={{ width: "100%", height: "100%" }}
                 />

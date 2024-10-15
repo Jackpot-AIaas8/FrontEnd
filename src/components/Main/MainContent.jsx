@@ -147,36 +147,6 @@ function MainContent() {
                             </Grid2>
                         ))}
                     </CardContainer>
-
-                </Grid2>
-
-                {/*게시판*/}
-                <Grid2 container spacing={1} sx={{marginBottom: '150px'}}>
-                    <FixedLeftSidebar size={{xs: 6, md: 3}}>
-                        <StyledBox>
-                            <Typography variant="h4">Board</Typography>
-                            <Typography variant="body2">게시판</Typography>
-                        </StyledBox>
-                    </FixedLeftSidebar>
-
-
-                    {/* <CardContainer container size={{xs: 6, md: 9}}>
-                        {cardData.map((card, index) => (
-                            <Grid2 key={index} size={{xs: 2, sm: 4, md: 4}}>
-                                <StyledCard component="a" href=".#/sections/navigation/nav-tabs">
-                                    <StyledBox>
-                                        <StyledImg
-                                            src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/material-design-system/presentation/sections/nav-tabs.jpg"
-                                            alt="Nav Tabs"
-                                        />
-                                        <Typography variant="h6">{card.title}</Typography>
-                                        <Typography variant="button">{card.examples} Examples</Typography>
-                                    </StyledBox>
-                                </StyledCard>
-                            </Grid2>
-                        ))}
-                    </CardContainer> */}
-
                 </Grid2>
             </Container>
         </>

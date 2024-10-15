@@ -4,7 +4,7 @@ import { AuthContext } from "../../token/AuthContext";
 import apiClient from "../../token/AxiosConfig";
 
 const useHeart = (dog, onHeartToggle) => {
-  const [heart, setHeart] = useState(dog.isHeart);
+  const [heart, setHeart] = useState(dog.heart > 0);
   const { isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
