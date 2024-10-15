@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import apiClient from "../../token/AxiosConfig"; // apiClient 임포트
 import { useNavigate, useParams } from "react-router-dom";
 import Button from "@mui/material/Button";
-import Container from "@mui/material/Container"; // Container 임포트
-import Typography from "@mui/material/Typography"; // Typography 임포트
+import "./css/BoardRegister.css";
 
 const BoardEdit = () => {
   const { boardId } = useParams(); // URL에서 게시글 ID를 받아옴
@@ -48,8 +47,8 @@ const BoardEdit = () => {
       });
 
       console.log("게시글 수정 성공:", response.data);
-      if (response.status === 200) {
-        navigate(`/board/findOne/${boardId}`); // 수정 후 해당 게시글로 이동
+      if (response.data.status === 200 || response.status === 200) {
+        navigate("/freeBoard"); 
       }
     } catch (error) {
       console.error(error.response ? error.response.data : error.message);
@@ -57,56 +56,62 @@ const BoardEdit = () => {
   };
 
   return (
-    <Container>
-      <Typography variant="h4" gutterBottom>
-        게시글 수정
-      </Typography>
-      
-      <form onSubmit={handleSubmit}>
-        <table style={{ width: "100%", borderSpacing: "20px" }}>
-          <tbody>
-            <tr>
-              <td style={{ textAlign: "right", verticalAlign: "top", width: "20%" }}>
-                <label>제목:</label>
-              </td>
-              <td style={{ width: "80%" }}>
-                <input
-                  type="text"
-                  value={title} // 기존 제목을 표시
-                  style={{ width: "100%", minHeight: "40px", backgroundColor: 'gray' }}
-                  placeholder="수정할 제목"
-                  onChange={(e) => setTitle(e.target.value)} // 새로운 제목 입력 시 상태 업데이트
-                  required
-                />
-              </td>
-            </tr>
-
-            <tr>
-              <td style={{ textAlign: "right", verticalAlign: "top", width: "20%" }}>
-                <label>내용:</label>
-              </td>
-              <td style={{ width: "80%" }}>
-                <textarea
-                  value={content} // 기존 내용을 표시
-                  onChange={(e) => setContent(e.target.value)} // 새로운 내용 입력 시 상태 업데이트
-                  required
-                  placeholder="수정할 내용"
-                  style={{ width: "100%", minHeight: "200px", resize: 'none', backgroundColor: 'lightgray' }}
-                />
-              </td>
-            </tr>
-
-            <tr>
-              <td colSpan="2" style={{ textAlign: "center" }}>
-                <Button type="submit" variant="contained" color="primary">
-                  수정하기
-                </Button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </form>
-    </Container>
+    <>
+      <div className="flex flex-column align-center">
+        <form onSubmit={handleSubmit}>
+          <div className="flex justify-between items-center w-half p-2">
+            <h2 className="align-left p-2">게시글 수정하기</h2>
+          </div>
+          <div className="m-auto">
+            <table className="board-table w-full">
+              <thead>
+                <tr>
+                  <td>
+                    <input
+                      className="w-full p-2"
+                      type="text"
+                      placeholder="수정할 제목"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      required
+                    />
+                  </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colSpan={2} className="">
+                    <h4 className="text-left" style={{ marginLeft: '10px' }}>
+                      아래에 수정내용 작성
+                    </h4>
+                  </td>
+                </tr>
+                <tr>
+                  <td colSpan={2} style={{ padding: "8px", borderBottom: "1px solid #ccc" }}>
+                    <textarea
+                      className="w-full contentArea"
+                      value={content} // 기존 내용을 표시
+                      onChange={(e) => setContent(e.target.value)} // 새로운 내용 입력 시 상태 업데이트
+                      required
+                      placeholder="수정할 내용"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style={{ marginTop: '16px', textAlign: 'right' }}>
+            <Button
+              type="submit"
+              variant="contained"
+              className="save-button"
+            >
+              수정하기
+            </Button>
+          </div>
+        </form>
+      </div>
+    </>
   );
 };
 
