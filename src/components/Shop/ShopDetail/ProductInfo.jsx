@@ -44,7 +44,7 @@ const ProductInfo = ({ productId }) => {
 
 // 결제 페이지로 상품 정보만 전달
 const handlePurchase = () => {
-  navigate("/OrderConfirmation", {
+  navigate("/Checkout", {
     state: {
       productName: product.name,
       productPrice: product.price,

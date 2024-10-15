@@ -13,7 +13,7 @@ import DogDetail from "./dogList/DogDetail";
 import DogList from "./pages/DogList";
 import ShopPage from "./pages/ShopPage";
 import ShopDetailPage from "./pages/ShopDetailPage";
-import OrderConfirmationPage from "./pages/Checkout/OrderConfirmationPage";
+import CheckoutPage from "./pages/Checkout/CheckoutPage";
 import SuccessPage from './pages/Checkout/SuccessPage'; 
 import FailPage from './pages/Checkout/FailPage'; 
 
@@ -34,7 +34,6 @@ import ProtectedRoute from "./token/ProtectedRoute";
 import ThemeRoutes from "./admin/routes/Router";
 // import PaymentCheckoutPage from './pages/Checkout/PaymentCheckoutPage';
 
-import CheckoutPage from "./pages/Checkout/OrderConfirmationPage";
 
 function App() {
   const { isAdmin } = useContext(AuthContext);
@@ -51,8 +50,8 @@ function App() {
             <Route path="/shop/:shopId" element={<ShopDetailPage />} />
             <Route path="/cart" element={<Cart />} />
             <Route
-              path="/OrderConfirmation"
-              element={<OrderConfirmationPage />}
+              path="/Checkout"
+              element={<CheckoutPage />}
             />
             <Route path="/success" element={<SuccessPage />} />  
             <Route path="/fail" element={<FailPage />} />  
@@ -72,8 +71,8 @@ function App() {
             <Route element={<ProtectedRoute allowedRoles={["ROLE_USER"]} />}>
               <Route path="/mypage" element={<Mypage />} />
               <Route
-                path="/OrderConfirmation"
-                element={<OrderConfirmationPage />}
+                path="/Checkout"
+                element={<CheckoutPage />}
               />
               <Route path="/board/:boardId" element={<BoardFindOnePage />} />
             </Route>
