@@ -142,30 +142,7 @@ const Card = ({ category, searchResults }) => {
         ))}
       </div>
       
-      <div className="pagination">
-        {currentPage > 1 && (
-          <button onClick={() => handlePageChange(currentPage - 1)}>
-            &lt;
-          </button>
-        )}
-        {[...Array(totalPages)].map((_, index) => {
-          const pageNumber = index + 1;
-          return (
-            <button
-              key={pageNumber}
-              onClick={() => handlePageChange(pageNumber)}
-              className={currentPage === pageNumber ? "active" : ""}
-            >
-              {pageNumber}
-            </button>
-          );
-        })}
-        {currentPage < totalPages && (
-          <button onClick={() => handlePageChange(currentPage + 1)}>
-            &gt;
-          </button>
-        )}
-      </div>
+      
       
     </StyledWrapper>
   );
@@ -267,14 +244,16 @@ const StyledWrapper = styled.div`
     color: #333;
   }
 
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-top: 20px;
-    width: 100%;
-  }
+.pagination {
+  display: flex;
+  justify-content: center;  /* 버튼들을 중앙에 배치 */
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  width: 100%;  /* pagination 너비를 100%로 설정 */
+}
+
+
 
   .pagination button {
     padding: 5px 10px;
