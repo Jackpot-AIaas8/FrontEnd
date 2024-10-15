@@ -23,6 +23,11 @@ const navigation = [
         icon: "bi bi-bag",
     },
     {
+        title: "경매",
+        href: "/admin/auctiontable",
+        icon: "bi bi-basket",
+    },
+    {
         title: "게시판",
         href: "/admin/boardtable",
         icon: "bi bi-clipboard2",

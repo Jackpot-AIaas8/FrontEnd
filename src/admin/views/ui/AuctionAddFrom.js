@@ -57,6 +57,7 @@ const AuctionAddFrom = () => {
           })
           .then((response) => {
             alert("경매 상품이 등록 되었습니다.");
+            window.location.href='admin/auctiontable';
           })
           .catch((error) => {
             console.error("경매 상품 등록 실패:", error);
