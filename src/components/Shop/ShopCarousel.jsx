@@ -5,6 +5,7 @@ import "slick-carousel/slick/slick-theme.css";
 // import dogSupplies2 from "../../static/images/dogSupplies2.jpg"
 import dogSupplies3 from "../../static/images/shoppingmallbanner.jpg"
 import dogSupplies4 from "../../static/images/shoppingmallbanner2.jpg"
+import dogSupplies5 from "../../static/images/shoppingmallbanner3.jpg"
 
 
 function ShopCarousel() {
@@ -28,6 +29,9 @@ function ShopCarousel() {
         <div>
           <img src={dogSupplies2} alt="" style={{height: '400px', width: '100%', margin: "0 auto"}}/>
         </div> */}
+        <div>
+          <img src={dogSupplies5} alt="" style={{height: '275px', width: '100%', margin: "0 auto"}}/>
+        </div>
         <div>
           <img src={dogSupplies3} alt="" style={{height: '275px', width: '100%', margin: "0 auto"}}/>
         </div>
