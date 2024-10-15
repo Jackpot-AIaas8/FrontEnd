@@ -25,7 +25,7 @@ import SignIn from "./pages/SignIn";
 import Button from "./components/Button";
 import SignUp from "./pages/SignUp";
 import AuctionMain from "./pages/Auction/AuctionMain";
-
+import AuctionEnter from "./pages/MainPage"; // 경매장 안으로 들어간 페이지로 수정해야 함
 import { AuthContext } from "./token/AuthContext";
 import Mypage from "./pages/Mypage";
 
@@ -67,6 +67,9 @@ function App() {
             <Route path="/signIn" element={<SignIn />} />
             <Route path="/signUp" element={<SignUp />} />
 
+            
+
+
             {/* 회원 전용 route가 될예정이오니 여기 내부에 pageroute넣어주세요 */}
             <Route element={<ProtectedRoute allowedRoles={["ROLE_USER"]} />}>
               <Route path="/mypage" element={<Mypage />} />
@@ -78,6 +81,7 @@ function App() {
             </Route>
             {/* 회원 전용 route가 될예정이오니 여기 내부에 pageroute넣어주세요 */}
             <Route path="/auction" element={<AuctionMain />} />
+            <Route path="/auctionEnter" element={<AuctionEnter />} />
             {/* <Route element={<ProtectedRoute allowedRoles={["premium"]} />}>
               
             </Route> */}

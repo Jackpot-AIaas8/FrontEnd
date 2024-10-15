@@ -40,9 +40,9 @@ const BoardRegister = () => {
 
   return (
     <div className="flex flex-column align-center">
-      <h2 className="text-left w-half">게시판 글 작성</h2>
+      <h2 className="text-left w-half p-2">게시판 글 작성</h2>
       <form onSubmit={handleSubmit}>
-        <div className="w-half m-auto"> {/* 부모 요소의 width 설정 */}
+        <div className="m-auto">
           <table className="board-table w-full"> {/* 테이블의 width 설정 */}
             <thead>
               <tr>
@@ -71,8 +71,9 @@ const BoardRegister = () => {
             </thead>
             <tbody>
               <tr>
-                <td colSpan={2} className="content-row">
-                  <div className="text-left">아래에 글 작성</div>
+
+                <td colSpan={2} className="p-2">
+                  <h4 className="text-left">아래에 글 작성</h4> 
                   <div className="text-right">
                     <Button
                       type="submit"
@@ -87,7 +88,7 @@ const BoardRegister = () => {
               <tr>
                 <td colSpan={2} style={{ padding: "8px", borderBottom: "1px solid #ccc" }}>
                   <textarea
-                    className="w-full no-border-textarea"
+                    className="w-full contentArea"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     required
@@ -104,3 +105,4 @@ const BoardRegister = () => {
 };
 
 export default BoardRegister;
+

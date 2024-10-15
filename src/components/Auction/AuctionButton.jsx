@@ -10,7 +10,7 @@ const AuctionButton = ({text}) => {
         if (text === "뒤로가기") {
             window.history.back(); // history.back() 호출
           } else {
-            navigate("/some-path"); // 원하는 경로로 이동
+            navigate("/auctionEnter"); // 원하는 경로로 이동
           }
     }
 
@@ -23,10 +23,10 @@ const AuctionButton = ({text}) => {
 
 const StyledWrapper = styled.div`
   button {
-  background-color: ${theme.colors.darkOrange};
+  background-color: ${theme.colors.lightOrange};
   border: 1px solid rgb(209, 213, 219);
   border-radius: 0.5rem;
-  color: #111827;
+  color: #ffffff;
   font-size: 1.5rem;
   font-weight: 600;
   line-height: 1.25rem;
@@ -46,6 +46,7 @@ const StyledWrapper = styled.div`
 
 button:hover {
   background-color: ${theme.colors.lightBeige};
+  color: #000000;
 }
 
 button:focus {
