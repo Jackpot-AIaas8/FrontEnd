@@ -59,9 +59,7 @@ function App() {
 
         <Routes>
           {/* 메인 Page  */}
-          {/* <Route path="/" element={<Main />} /> */}
-          <Route path="/" element={<SignIn />} />
-          <Route path="/signUp" element={<SignUp />} />
+          <Route path="/" element={<Main />} />
 
           {/* 쇼핑몰Page */}
           <Route path="/shop" element={<ShopPage />} />
@@ -81,7 +79,7 @@ function App() {
           <Route path="/board/remove/:boardId" element={<BoardRemove />} />
           {/* 회원관리 */}
           <Route path="/signIn" element={<SignIn />} />
-          {/* <Route path="/signUp" element={<SignUp />} /> */}
+          <Route path="/signUp" element={<SignUp />} />
 
           {/* 회원 전용 route가 될예정이오니 여기 내부에 pageroute넣어주세요 */}
           <Route element={<ProtectedRoute allowedRoles={["ROLE_USER"]} />}>
