@@ -26,12 +26,19 @@ const DogAddFrom = () => {
                     <CardBody>
                         <Form>
                             <FormGroup>
-                                <Label for="naem">이름</Label>
+                                <Label for="title">제목</Label>
+                                <Input
+                                    id="title"
+                                    name="title"
+                                    placeholder="제목"
+                                />
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="name">이름</Label>
                                 <Input
                                     id="name"
                                     name="name"
                                     placeholder="강아지 이름"
-
                                 />
                             </FormGroup>
                             <FormGroup>
@@ -63,8 +70,24 @@ const DogAddFrom = () => {
                                 <Input id="detail" name="detail" type="textarea"/>
                             </FormGroup>
                             <FormGroup>
-                                <Label for="img">사진</Label>
-                                <Input id="img" name="img" type="file"/>
+                                <Label for="img">메인 사진</Label>
+                                <Input id="img" name="mainImage" type="file"/>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="img">세부 사진1</Label>
+                                <Input id="img" name="detailImage1" type="file"/>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="img">세부 사진2</Label>
+                                <Input id="img" name="detailImage2" type="file"/>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="img">세부 사진3</Label>
+                                <Input id="img" name="detailImage3" type="file"/>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="img">세부 사진4</Label>
+                                <Input id="img" name="detailImage4" type="file"/>
                             </FormGroup>
                             <Button>등록</Button>
                         </Form>
