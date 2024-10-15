@@ -30,7 +30,7 @@ const BoardRegister = () => {
 
       console.log("게시글 작성 성공:", response.data);
       alert("게시글이 저장되었습니다.");
-      if (response.data.status === 200) {
+      if (response.data.status === 200 || response.status === 200) {
         navigate("/freeBoard");
       }
     } catch (error) {
@@ -40,15 +40,18 @@ const BoardRegister = () => {
 
   return (
     <div className="flex flex-column align-center">
-      <h2 className="text-left w-half">게시판 글 작성</h2>
       <form onSubmit={handleSubmit}>
-        <div className="w-half m-auto"> {/* 부모 요소의 width 설정 */}
-          <table className="board-table w-full"> {/* 테이블의 width 설정 */}
+        <div className="flex justify-between items-center w-half p-2"> 
+          <h2 className="align-left p-2">게시글 작성하기</h2>
+        </div>
+
+        <div className="m-auto">
+          <table className="board-table w-full">
             <thead>
               <tr>
-                <td style={{ width: "70%", borderTopLeftRadius: "8px" }}>
+                <td>
                   <input
-                    className="w-eighty"
+                    className="w-full p-2"
                     type="text"
                     placeholder="제목"
                     value={title}
@@ -69,25 +72,17 @@ const BoardRegister = () => {
                 </td>
               </tr>
             </thead>
+
             <tbody>
               <tr>
-                <td colSpan={2} className="content-row">
-                  <div className="text-left">아래에 글 작성</div>
-                  <div className="text-right">
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      className="save-button"
-                    >
-                      저장하기
-                    </Button>
-                  </div>
+                <td colSpan={2} className="">
+                  <h4 className="text-left" style={{ marginLeft: '10px' }}>아래에 글 작성</h4> 
                 </td>
               </tr>
               <tr>
                 <td colSpan={2} style={{ padding: "8px", borderBottom: "1px solid #ccc" }}>
                   <textarea
-                    className="w-full no-border-textarea"
+                    className="w-full contentArea"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     required
@@ -97,6 +92,15 @@ const BoardRegister = () => {
               </tr>
             </tbody>
           </table>
+        </div>
+        <div style={{ marginTop: '16px', textAlign: 'right' }}> 
+          <Button
+            type="submit"
+            variant="contained"
+            className="save-button"
+          >
+            저장하기
+          </Button>
         </div>
       </form>
     </div>

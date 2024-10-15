@@ -2,12 +2,12 @@ import React, { useState, useEffect, useContext } from "react";
 
 import "../login/CSS/Login.css";
 import SocialLogin from "../login/components/SocialLogin";
-import SignLink from "../login/components/SignLink";
 
 import InputField from "../login/components/InputField";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../token/AuthContext";
 import { apiNoToken } from "../token/AxiosConfig";
+import FindMember from "../login/components/FIndMember";
 
 const SignIn = () => {
   const [user, setUser] = useState({ email: "", pwd: "" });
@@ -71,6 +71,7 @@ const SignIn = () => {
             placeholder="E-mail"
             value={user.email}
             onChange={handleChange}
+            autoComplete="email"
           />
           <InputField
             type="password"
@@ -78,11 +79,12 @@ const SignIn = () => {
             placeholder="Password"
             value={user.pwd}
             onChange={handleChange}
+            autoComplete="current-password"
           />
           <input className="button btn_sign" type="submit" value="Sign In" />
         </form>
 
-        <SignLink />
+        <FindMember />
 
         <SocialLogin />
       </div>

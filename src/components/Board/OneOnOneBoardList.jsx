@@ -17,7 +17,7 @@ const OneOnOneBoardList = ({ boards }) => {
     if (boards.length === 0) {
       const fetchBoards = async () => {
         try {
-          const response = await axios.get(`${SERVER_URL}board/findAllAsk`, {
+          const response = await apiClient.get("board/findAllAsk", {
             params: { page, size: 10 }, // 페이지와 페이지 사이즈 요청
           });
           const allBoards = response.data.dtoList || [];

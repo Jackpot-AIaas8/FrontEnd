@@ -26,7 +26,6 @@ const ThemeRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<FullLayout />}>
-    
         {/* /admin에 직접 접근 시 MemberTables로 이동 */}
         <Route index element={<MemberTables />} />
         <Route path="membertable" element={<MemberTables />} />
@@ -42,13 +41,12 @@ const ThemeRoutes = () => {
         <Route path="boarddetailform/:boardId" element={<BoardDetailForm />} />
         <Route path="boardaddform" element={<BoardAddFrom />} />
         <Route path="auctionaddform/:shopId" element={<AuctionAddFrom />} />
-          
+
         {/* /admin 경로가 아닌 경우, /admin으로 리디렉션 */}
         <Route path="*" element={<Navigate to="/admin" replace />} />
       </Route>
     </Routes>
   );
 };
-
 
 export default ThemeRoutes;

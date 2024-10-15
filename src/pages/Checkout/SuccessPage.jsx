@@ -65,7 +65,7 @@ function SuccessPage() {
             </InfoRow>
             <TotalRow>
               <Label>총 결제금액</Label>
-              <TotalValue>4,890원</TotalValue>
+              <TotalValue>4,8920원</TotalValue>
             </TotalRow>
           </InfoBox>
         </InfoWrapper>
