@@ -13,7 +13,7 @@ import DogDetail from "./dogList/DogDetail";
 import DogList from "./pages/DogList";
 import ShopPage from "./pages/ShopPage";
 import ShopDetailPage from "./pages/ShopDetailPage";
-import OrderConfirmationPage from "./pages/Checkout/OrderConfirmationPage";
+
 import SuccessPage from "./pages/Checkout/SuccessPage";
 import FailPage from "./pages/Checkout/FailPage";
 
@@ -31,9 +31,9 @@ import Mypage from "./pages/Mypage";
 import { useContext, useEffect } from "react";
 import ProtectedRoute from "./token/ProtectedRoute";
 import ThemeRoutes from "./admin/routes/Router";
-// import PaymentCheckoutPage from './pages/Checkout/PaymentCheckoutPage';
+// import PaymentCheckoutPage from "./pages/Checkout/PaymentCheckoutPage";
 
-import CheckoutPage from "./pages/Checkout/OrderConfirmationPage";
+import CheckoutPage from "./pages/Checkout/CheckoutPage";
 import GlobalLoading from "./config/GlobalLoading";
 import {
   setupInterceptors,
@@ -58,38 +58,38 @@ function App() {
         {!isAdmin && <NavBar />}
 
         <Routes>
+          {/* 메인 Page  */}
           <Route path="/" element={<Main />} />
+
+          {/* 쇼핑몰Page */}
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/shop/:shopId" element={<ShopDetailPage />} />
           <Route path="/cart" element={<Cart />} />
-          <Route
-            path="/OrderConfirmation"
-            element={<OrderConfirmationPage />}
-          />
+          {/* 결제 Page */}
           <Route path="/success" element={<SuccessPage />} />
           <Route path="/fail" element={<FailPage />} />
-
+          {/* 강아지 사이트 */}
           <Route path="/dogList" element={<DogList />} />
           <Route path="/dog/:dogId" element={<DogDetail />} />
+          {/* 게시판 사이트  */}
           <Route path="/freeBoard" element={<FreeBoardPage />} />
           <Route path="/oneOnOneBoard" element={<OneOnOneBoardPage />} />
-
           <Route path="/board/register" element={<BoardRegister />} />
           <Route path="/board/edit/:boardId" element={<BoardEdit />} />
           <Route path="/board/remove/:boardId" element={<BoardRemove />} />
+          {/* 회원관리 */}
           <Route path="/signIn" element={<SignIn />} />
           <Route path="/signUp" element={<SignUp />} />
 
           {/* 회원 전용 route가 될예정이오니 여기 내부에 pageroute넣어주세요 */}
           <Route element={<ProtectedRoute allowedRoles={["ROLE_USER"]} />}>
             <Route path="/mypage" element={<Mypage />} />
-            <Route
-              path="/OrderConfirmation"
-              element={<OrderConfirmationPage />}
-            />
+            <Route path="/Checkout" element={<CheckoutPage />} />
             <Route path="/board/:boardId" element={<BoardFindOnePage />} />
           </Route>
           {/* 회원 전용 route가 될예정이오니 여기 내부에 pageroute넣어주세요 */}
+
+          {/* vip 전용 라우터  */}
           <Route path="/auction" element={<AuctionMain />} />
           {/* <Route element={<ProtectedRoute allowedRoles={["premium"]} />}>
               
