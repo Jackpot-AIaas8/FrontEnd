@@ -141,9 +141,6 @@ const Card = ({ category, searchResults }) => {
           </div>
         ))}
       </div>
-      
-      
-      
     </StyledWrapper>
   );
 };
@@ -152,14 +149,13 @@ const Card = ({ category, searchResults }) => {
 const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width:100%;
+  width: 100%;
   height: 90%;
   max-width: 1200px;
   margin: 0 auto;
   box-sizing: border-box;
   justify-content: center;
-  align-items : center ;
-  
+  align-items: center;
 
   .controls {
     display: flex;
@@ -183,7 +179,6 @@ const StyledWrapper = styled.div`
     gap: 45px;
     width: 300px;
     max-width: 1200px;
-
 
     @media (max-width: 1200px) {
       grid-template-columns: repeat(3, 1fr);
@@ -248,16 +243,14 @@ const StyledWrapper = styled.div`
     color: #333;
   }
 
-.pagination {
-  display: flex;
-  justify-content: center;  /* 버튼들을 중앙에 배치 */
-  align-items: center;
-  gap: 10px;
-  margin-top: 20px;
-  width: 100%;  /* pagination 너비를 100%로 설정 */
-}
-
-
+  .pagination {
+    display: flex;
+    justify-content: center; /* 버튼들을 중앙에 배치 */
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    width: 100%; /* pagination 너비를 100%로 설정 */
+  }
 
   .pagination button {
     padding: 5px 10px;
