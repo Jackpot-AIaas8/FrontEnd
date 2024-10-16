@@ -1,46 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import apiClient from "../../token/AxiosConfig";
 
 const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
-const customerKey = "6JqYbn-tMjCQIrq9p4xLN";
+const customerKey = "iCXdif_2ksPkEffz3bqRA";
 
 function CheckoutPage() {
+  const navigate = useNavigate();
   const location = useLocation();
-  const {
-    productName: name = "",
-    quantity = 1,
-    totalPrice = 50000,
-  } = location.state || {};
+  const { productName: name = "", quantity = 1, totalPrice = 50000 } = location.state || {};
 
-  // 디버깅 1: 처음 렌더링 시 amount 값 확인
-  const amount = totalPrice + 3000; // 결제 금액 + 배송비
-  console.log("Initial Amount:", amount);
+  const amount = totalPrice + 3000; // 배송비 포함 금액
 
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState(null);
-  
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [user, setUser] = useState({});
 
-
-
+  // 사용자 정보 불러오기
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
         const response = await apiClient.get("/member/myPage");
-        console.log("User Data:", response.data); // 결과 콘솔에 출력
         setUser(response.data);
+        console.log("Fetched User Info:", response.data); // 확인용 로그 추가
       } catch (error) {
-        console.error("서버 오류 발생:", error); // 오류 발생 시 콘솔에 출력
+        console.error("Error fetching user info:", error);
       }
     };
-
-    fetchUserInfo(); // 컴포넌트 마운트 시 호출
+    fetchUserInfo();
   }, []);
 
+  // 토스 결제 위젯 불러오기
   useEffect(() => {
     async function fetchPaymentWidgets() {
       const tossPayments = await loadTossPayments(clientKey);
@@ -50,16 +43,14 @@ function CheckoutPage() {
     fetchPaymentWidgets();
   }, []);
 
+  // 결제 위젯 렌더링
   useEffect(() => {
     async function renderPaymentWidgets() {
       if (!widgets) return;
 
-      // 디버깅 2: setAmount 호출 시 전달되는 amount 값 확인
-      console.log("Setting Amount in Widgets:", amount);
-
       await widgets.setAmount({
         currency: "KRW",
-        value: parseInt(amount, 10), // 정수형으로 변환하여 전달
+        value: parseInt(amount, 10), // 결제 금액 설정
       });
 
       await Promise.all([
@@ -72,34 +63,31 @@ function CheckoutPage() {
           variantKey: "AGREEMENT",
         }),
       ]);
+
       setReady(true);
     }
     renderPaymentWidgets();
   }, [widgets, amount]);
 
   const handlePayment = async () => {
-    const paymentAmount = parseInt(amount, 10); // 숫자로 변환
-    const orderId = `order_${Date.now()}`; // 고유한 orderId 생성
-    console.log("Amount:", paymentAmount);       // 디버깅 로그 추가
+    const paymentAmount = parseInt(amount, 10);
+    const orderId = `order_${Date.now()}`; // 주문 ID 생성
 
-  
     if (!ready) {
-      alert("현재는 토스 카드 결제만 가능합니다.");
+      alert("결제 준비가 완료되지 않았습니다.");
       return;
     }
-  
+
     try {
       console.log("결제 요청 시작");
       console.log("Order ID:", orderId);
-      console.log("Order Name:", name);
-      console.log("Amount:", paymentAmount);  // 숫자로 변환된 금액 확인
+      console.log("Product Name:", name);
+      console.log("Amount:", paymentAmount);
       console.log("Customer Email:", user.email);
       console.log("Customer Name:", user.name);
-      console.log("Widgets Object:", widgets);
       console.log("Customer Phone:", user.phone);
-      console.log("Sending amount to Toss Payments:", paymentAmount);
+      console.log("Customer Address:", user.address);
 
-  
       // 결제 요청 처리
       await widgets.requestPayment({
         orderId: orderId,
@@ -110,11 +98,29 @@ function CheckoutPage() {
         customerName: user.name,
         customerMobilePhone: user.phone,
       });
-      console.log("결제 요청 완료");
+
+      // 결제 성공 시 sessionStorage에 결제 정보 저장
+      const paymentData = {
+        orderId,
+        orderName: name,
+        quantity,
+        customerName: user.name,
+        customerMobilePhone: user.phone,
+        userAddress: user.address,
+        totalPrice,
+        deliveryFee: 3000,
+        amount: paymentAmount,
+      };
+
+      // sessionStorage에 결제 정보 저장
+      sessionStorage.setItem("paymentData", JSON.stringify(paymentData));
+
+      console.log("SuccessPage로 전달할 데이터: ", paymentData);
+
+      // SuccessPage로 이동
+      navigate("/success");
     } catch (error) {
       console.error("결제 요청 중 오류 발생:", error);
-      
-      
       alert("결제 요청 중 오류가 발생했습니다. 다시 시도해 주세요.");
     }
   };
@@ -127,6 +133,7 @@ function CheckoutPage() {
   const handleAddressSave = () => {
     setIsEditingAddress(false);
   };
+
   const handleAddressChange = (e) => {
     const newAddress = e.target.value;
     setUser((prevUser) => ({ ...prevUser, address: newAddress }));
@@ -223,7 +230,7 @@ function CheckoutPage() {
 
       <PaymentSection>
         <MessageBox>
-          현재는 <strong>토스 카드 결제</strong>만 가능합니다.
+          현재는 <strong>토스, 카카오, 카드 결제</strong>만 가능합니다.
         </MessageBox>
         <div id="payment-method" />
         <div id="agreement" />
@@ -235,9 +242,8 @@ function CheckoutPage() {
   );
 }
 
+export default CheckoutPage;
 
-
-// 스타일 정의
 const PageContainer = styled.div`
   width: 40%;
   margin: 0 auto;
@@ -376,4 +382,3 @@ const PayButton = styled.button`
   cursor: pointer;
 `;
 
-export default CheckoutPage;
