@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import apiClient from "../../token/AxiosConfig";
 
 const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
-const customerKey = "6JqYbn-tMjCQIrq9p4xLN";
+const customerKey = "iCXdif_2ksPkEffz3bqRA";
 
 function CheckoutPage() {
+  const navigate = useNavigate();
   const location = useLocation();
-  const {
-    productName: name = "",
-    quantity = 1,
-    totalPrice = 50000,
-  } = location.state || {};
+  const { productName: name = "", quantity = 1, totalPrice = 50000 } = location.state || {};
 
   const amount = totalPrice + 3000; // 배송비 포함 금액
 
@@ -84,30 +81,50 @@ function CheckoutPage() {
     try {
       console.log("결제 요청 시작");
       console.log("Order ID:", orderId);
-      console.log("Order Name:", name);
+      console.log("Product Name:", name);
       console.log("Amount:", paymentAmount);
       console.log("Customer Email:", user.email);
       console.log("Customer Name:", user.name);
       console.log("Customer Phone:", user.phone);
-      console.log("Sending amount to Toss Payments:", paymentAmount);
+      console.log("Customer Address:", user.address);
 
       // 결제 요청 처리
       await widgets.requestPayment({
         orderId: orderId,
         orderName: name,
-        successUrl: `${window.location.origin}/success?orderId=${orderId}`, // 민감한 정보는 제외하고 주문 ID만 포함
+        successUrl: `${window.location.origin}/success`,
         failUrl: `${window.location.origin}/fail`,
         customerEmail: user.email,
         customerName: user.name,
         customerMobilePhone: user.phone,
       });
 
-      console.log("결제 요청 완료");
+      // 결제 성공 시 sessionStorage에 결제 정보 저장
+      const paymentData = {
+        orderId,
+        orderName: name,
+        quantity,
+        customerName: user.name,
+        customerMobilePhone: user.phone,
+        userAddress: user.address,
+        totalPrice,
+        deliveryFee: 3000,
+        amount: paymentAmount,
+      };
+
+      // sessionStorage에 결제 정보 저장
+      sessionStorage.setItem("paymentData", JSON.stringify(paymentData));
+
+      console.log("SuccessPage로 전달할 데이터: ", paymentData);
+
+      // SuccessPage로 이동
+      navigate("/success");
     } catch (error) {
       console.error("결제 요청 중 오류 발생:", error);
       alert("결제 요청 중 오류가 발생했습니다. 다시 시도해 주세요.");
     }
   };
+
 
   const handleAddressEdit = () => {
     setIsEditingAddress(true);
@@ -225,7 +242,8 @@ function CheckoutPage() {
   );
 }
 
-// 스타일 정의 부분은 그대로 유지
+export default CheckoutPage;
+
 const PageContainer = styled.div`
   width: 40%;
   margin: 0 auto;
@@ -364,4 +382,3 @@ const PayButton = styled.button`
   cursor: pointer;
 `;
 
-export default CheckoutPage;
