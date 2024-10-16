@@ -105,6 +105,8 @@ const handlePurchase = () => {
   );
 };
 
+export default ProductInfo;
+
 // 스타일 정의
 const TopSection = styled.div`
   display: flex;
@@ -141,4 +143,3 @@ const ButtonSection = styled.div`
   gap: 16px;
 `;
 
-export default ProductInfo;

@@ -1,241 +1,150 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import apiClient from "../../token/AxiosConfig"; // 서버 API를 호출하는 axios 설정
-import styled from "styled-components"; // 스타일링을 위해 styled-components 사용
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import styled from "styled-components";
 
-function SuccessPage() {
+export function SuccessPage() {
   const [searchParams] = useSearchParams();
-  const orderId = searchParams.get("orderId");
-  const [user, setOrderInfo] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
+  const location = useLocation(); // CheckoutPage에서 넘어온 state를 받음
+  const navigate = useNavigate();
+  const [isConfirming, setIsConfirming] = useState(true);
+
+  // location.state로 받은 데이터 출력
+  useEffect(() => {
+    console.log("location.state:", location.state);
+  }, [location.state]);
+
+  // searchParams로 받은 데이터 출력
+  useEffect(() => {
+    console.log("searchParams:", {
+      orderId: searchParams.get("orderId"),
+      amount: searchParams.get("amount"),
+      paymentKey: searchParams.get("paymentKey"),
+    });
+  }, [searchParams]);
+
+  const {
+    orderName = "",
+    quantity = 1,
+    customerName = "",
+    customerMobilePhone = "",
+    userAddress = "",
+    totalPrice = 0,
+    deliveryFee = 3000,
+    amount = 0,
+  } = location.state || {};
 
   useEffect(() => {
-    const fetchOrderInfo = async () => {
-      // Authorization 헤더 없이 API 호출
-      try {
-        const response = await apiClient.get(`/order/info?orderId=${orderId}`);
-        console.log("Fetched Order Info:", response.data); // 가져온 데이터를 로그로 출력
-        setOrderInfo(response.data); // 가져온 데이터를 상태에 저장
-        setIsLoading(false); // 로딩 완료
-      } catch (error) {
-        console.error("Error fetching order info:", error); // 에러 발생 시 로그 출력
-        setIsLoading(false); // 로딩 완료
-      }
+    // 결제 확인 요청을 서버로 보냄
+    const requestData = {
+      orderId: searchParams.get("orderId"),
+      amount: searchParams.get("amount"),
+      paymentKey: searchParams.get("paymentKey"),
     };
 
-    if (orderId) {
-      console.log("Order ID:", orderId); // URL에서 넘어온 orderId 로그로 출력
-      fetchOrderInfo();
+    console.log("결제 확인 요청 데이터:", requestData); // 확인용 로그 추가
+
+    async function confirm() {
+      try {
+        const response = await fetch("http://localhost:8181/api/confirm", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        });
+
+        const json = await response.json();
+
+        console.log("결제 확인 응답 데이터:", json); // 응답 데이터 로그 출력
+
+        if (!response.ok) {
+          navigate(`/fail?message=${json.message}&code=${json.code}`);
+          return;
+        }
+
+        // 결제 성공 후 확인 처리
+        setIsConfirming(false);
+      } catch (error) {
+        console.error("결제 확인 중 오류 발생:", error);
+        setIsConfirming(false);
+      }
     }
-  }, [orderId]);
 
-  if (isLoading) {
-    return <div>Loading...</div>; // 로딩 중 표시
-  }
+    confirm();
+  }, [searchParams, navigate]);
 
-  if (!user) {
-    return <div>정보를 불러오지 못했습니다. 다시 시도해 주세요.</div>; // 데이터가 없을 때의 오류 처리
+  if (isConfirming) {
+    return <div>결제 확인 중...</div>; // 결제 확인 중 표시
   }
 
   return (
-    <PageWrapper>
-      <ContentWrapper>
-        <Container>
-          <Title>주문완료</Title>
-          <SubTitle>주문이 완료되었습니다. 감사합니다!</SubTitle>
+    <PageContainer>
+      <h2>결제 성공</h2>
+      <p>{`주문번호: ${searchParams.get("orderId")}`}</p>
+      <p>{`결제 금액: ${Number(searchParams.get("amount")).toLocaleString()}원`}</p>
+      <p>{`Payment Key: ${searchParams.get("paymentKey")}`}</p>
 
-          {/* 데이터를 확인하기 위한 임시 출력 */}
-          <pre>{JSON.stringify(user, null, 2)}</pre>
+      <ProductDetails>
+        <h3>상품 정보</h3>
+        <p>{`상품명: ${orderName || "정보 없음"}`}</p>
+        <p>{`수량: ${quantity}개`}</p>
+      </ProductDetails>
 
-          <Section>
-            <SectionTitle>상품배송 정보</SectionTitle>
-            <DeliveryInfo>
-              <DeliveryStatus>
-                <img src="/delivery-icon.png" alt="배송 아이콘" />
-                <p>내일(화) 도착 보장 ({user.productName} 1개)</p>
-              </DeliveryStatus>
-            </DeliveryInfo>
-          </Section>
+      <UserDetails>
+        <h3>받는 사람 정보</h3>
+        <p>{`이름: ${customerName || "정보 없음"}`}</p>
+        <p>{`전화번호: ${customerMobilePhone || "정보 없음"}`}</p>
+        <p>{`주소: ${userAddress || "정보 없음"}`}</p>
+      </UserDetails>
 
-          <Row>
-            <InfoBox>
-              <SectionTitle>받는사람 정보</SectionTitle>
-              <InfoItem>
-                <Label>받는사람</Label>
-                <Value>{user.name}</Value>
-              </InfoItem>
-              <InfoItem>
-                <Label>받는주소</Label>
-                <Value>{user.address}</Value>
-              </InfoItem>
-              <InfoItem>
-                <Label>배송요청사항</Label>
-                <Value>문 앞 (예: {user.phone})</Value>
-              </InfoItem>
-            </InfoBox>
-
-            <InfoBox>
-              <SectionTitle>결제 정보</SectionTitle>
-              <InfoItem>
-                <Label>주문금액</Label>
-                <Value>{user.amount.toLocaleString()}원</Value>
-              </InfoItem>
-              <InfoItem>
-                <Label>배송비</Label>
-                <Value>0원</Value> {/* 실제로 배송비를 서버에서 받아올 수 있으면 수정 */}
-              </InfoItem>
-              <TotalItem>
-                <Label>총 결제금액</Label>
-                <TotalValue>{user.amount.toLocaleString()}원</TotalValue>
-              </TotalItem>
-            </InfoBox>
-          </Row>
-
-          <ButtonGroup>
-            <Button>주문 상세보기</Button>
-            <Button secondary>쇼핑 계속하기</Button>
-          </ButtonGroup>
-        </Container>
-      </ContentWrapper>
-
-      <Footer>
-        <p>Copyright © 2024 Your Company. All rights reserved.</p>
-      </Footer>
-    </PageWrapper>
+      <PaymentDetails>
+        <h3>결제 정보</h3>
+        <p>{`총 상품 가격: ${totalPrice.toLocaleString()}원`}</p>
+        <p>{`배송비: ${deliveryFee.toLocaleString()}원`}</p>
+        <p>{`총 결제 금액: ${amount.toLocaleString()}원`}</p>
+      </PaymentDetails>
+    </PageContainer>
   );
 }
 
-export default SuccessPage;
-
-// 스타일 정의 (기존 코드와 동일)
-const PageWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh; // 화면의 전체 높이를 차지하도록 설정
-`;
-
-const ContentWrapper = styled.div`
-  flex-grow: 1; // 메인 콘텐츠가 남은 모든 공간을 차지하게 설정
-`;
-
-const Container = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
+// 스타일 정의
+const PageContainer = styled.div`
   padding: 20px;
   background-color: #f9f9f9;
+  margin-top: 200px;
 `;
 
-const Title = styled.h1`
-  font-size: 24px;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 20px;
-`;
-
-const SubTitle = styled.p`
-  font-size: 18px;
-  text-align: center;
-  margin-bottom: 30px;
-`;
-
-const Section = styled.div`
-  margin-bottom: 20px;
-`;
-
-const SectionTitle = styled.h2`
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 10px;
-`;
-
-const DeliveryInfo = styled.div`
-  border: 1px solid #ddd;
-  padding: 15px;
-  border-radius: 8px;
-  background-color: #fff;
-`;
-
-const DeliveryStatus = styled.div`
-  display: flex;
-  align-items: center;
-
-  img {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
+const ProductDetails = styled.div`
+  margin-top: 20px;
+  h3 {
+    font-size: 18px;
   }
-
   p {
     font-size: 16px;
-    color: #28a745;
+    margin: 5px 0;
   }
 `;
 
-const Row = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const InfoBox = styled.div`
-  width: 48%;
-  border: 1px solid #ddd;
-  padding: 15px;
-  border-radius: 8px;
-  background-color: #fff;
-`;
-
-const InfoItem = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-`;
-
-const Label = styled.span`
-  font-weight: bold;
-  color: #555;
-`;
-
-const Value = styled.span`
-  color: #333;
-`;
-
-const TotalItem = styled(InfoItem)`
-  font-size: 18px;
-  font-weight: bold;
-`;
-
-const TotalValue = styled(Value)`
-  color: #e60023;
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: center;
+const UserDetails = styled.div`
   margin-top: 20px;
-`;
-
-const Button = styled.button`
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  background-color: ${({ secondary }) => (secondary ? '#007bff' : '#28a745')};
-  color: white;
-  margin: 0 10px;
-
-  &:hover {
-    opacity: 0.8;
+  h3 {
+    font-size: 18px;
+  }
+  p {
+    font-size: 16px;
+    margin: 5px 0;
   }
 `;
 
-const Footer = styled.footer`
-  background-color: #f1f1f1;
-  padding: 20px;
-  text-align: center;
-  font-size: 14px;
-  color: #666;
-  border-top: 1px solid #ddd;
-  width: 100%;
-  margin-top: auto;  // 푸터가 항상 페이지의 맨 아래로 가도록 설정
+const PaymentDetails = styled.div`
+  margin-top: 20px;
+  h3 {
+    font-size: 18px;
+  }
+  p {
+    font-size: 16px;
+    margin: 5px 0;
+  }
 `;
+
+export default SuccessPage;
