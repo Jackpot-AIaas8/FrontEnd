@@ -16,6 +16,8 @@ const ProductInfo = ({ productId }) => {
   const fetchProduct = async () => {
     try {
       const response = await axios.get(`http://localhost:8181/shop/findOne/${productId}`);
+      console.log("Fetched Product Data:", response.data); // 확인 로그 추가
+
       setProduct(response.data);
     } catch (error) {
       console.error("상품 정보를 불러오는 중 오류 발생:", error);
@@ -44,8 +46,17 @@ const ProductInfo = ({ productId }) => {
 
 // 결제 페이지로 상품 정보만 전달
 const handlePurchase = () => {
+  console.log("Navigating to CheckoutPage with state:", {
+    shopId: product.shopId,
+    productName: product.name,
+    productPrice: product.price,
+    totalPrice: totalPrice,
+    quantity: quantity,
+  });
+
   navigate("/Checkout", {
     state: {
+      shopId: product.shopId,
       productName: product.name,
       productPrice: product.price,
       totalPrice: totalPrice,
