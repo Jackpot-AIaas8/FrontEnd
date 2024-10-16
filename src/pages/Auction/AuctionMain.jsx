@@ -4,101 +4,177 @@ import Container from "@mui/material/Container";
 import AuctionCarousel from "../../components/Auction/AuctionCarousel"
 import styled from "styled-components";
 import Button from "../../components/Auction/AuctionButton"
-import React,{useState,useEffect} from "react";
+import React,{useState,useEffect,useCallback} from "react";
 import apiClient from "../../token/AxiosConfig";
 
+// const AuctionMain = () => {
+//   const [auction, setAuction] = useState(null);
+//   const [remainingTime, setRemainingTime] = useState("");
+//   const [status, setStatus] = useState(0);
+
+
+// const updateAuctionStatus = useCallback((auctionId, status) => {
+//   apiClient
+//     .post(`/auction/edit`, { auctionId, auctionStatus: status })
+//     .then(() => {
+//       console.log(`경매 상태 변경 완료: ${status}`);
+//       setAuction((prev) => ({ ...prev, auctionStatus: status }));
+//       console.log(auction);
+//       if (status === 2) {
+//         fetchAuction();
+//       }
+//     })
+//     .catch((err) => {
+//       console.error("경매 상태 변경 실패:", err);
+//     });
+// }, []);
+
+
+// const calculateRemainingTime = useCallback((startTime, auctionId) => {
+//   const interval = setInterval(() => {
+//     const now = new Date();
+//     const start = new Date(startTime);
+//     const diff = start - now;
+
+//     if (diff > 0) {
+//       const hours = Math.floor(diff / (1000 * 60 * 60));
+//       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+//       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+//       setRemainingTime(`${hours}시간 ${minutes}분 ${seconds}초`);
+//     } else {
+//       setRemainingTime("경매 진행중");
+//       clearInterval(interval);
+//       updateAuctionStatus(auctionId, 1);
+//     }
+//   }, 1000);
+
+//   return () => clearInterval(interval);
+// }, [updateAuctionStatus]);
+
+
+// const fetchAuction = useCallback(() => {
+//   apiClient
+//     .get(`/auction/auctionNext`)
+//     .then((res) => {
+//       setAuction(res.data);
+//       setStatus(res.data.auctionStatus);
+//       calculateRemainingTime(res.data.startTime, res.data.auctionId);
+//     })
+//     .catch((err) => {
+//       console.error("경매 정보 가져오기 실패:", err);
+//     });
+// }, [calculateRemainingTime]);
+
+// useEffect(() => {
+//   fetchAuction();
+// }, [fetchAuction, status]);
+
+// useEffect(() => {
+//   if (auction) {
+//     const cleanup = calculateRemainingTime(auction.startTime, auction.auctionId);
+//     return cleanup;
+//   }
+// }, [auction, calculateRemainingTime]);
+
+
+// if (!auction) {
+//   return <div>경매 정보를 불러오는 중...</div>;
+// }
+
 const AuctionMain = () => {
-  const [auction,setAuction] = useState([]);
+  const [auction, setAuction] = useState(null);
   const [remainingTime, setRemainingTime] = useState("");
-  const [status, setStatus] = useState(0);
+  const [status, setStatus] = useState(0);  // 0: 대기, 1: 진행 중, 2: 종료
 
-  // const getAuction = () => {
-  //   apiClient
-  //     .get(`/auction/auctionNext`)
-  //     .then((res) => {
-  //       console.log(res.data);
-  //       setAuction(res.data);
-  //     })
-  //     .catch((err) => {
-  //       console.log("에러 : ", err);
-  //     });
-  // };
+  // 남은 시간 계산 함수
+  const calculateRemainingTime = useCallback((startTime, auctionId) => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      const start = new Date(startTime);
+      const diff = start - now;
 
-  // useEffect(() => {
-  //   // 컴포넌트가 마운트될 때 처음 경매 정보를 가져옵니다.
-  //   getAuction();
-    
-  //   const interval = setInterval(() => {
-  //     // 경매 상태가 1일 경우 상태 확인
-  //     if (auction && auction.status === 1) {
-  //       // 경매가 진행 중일 경우 다음 경매를 체크
-  //       getAuction();
-  //     }
-  //   }, 5000); // 5초마다 체크 (필요에 따라 시간 조정 가능)
+      if (diff > 0) {
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        setRemainingTime(`${hours}시간 ${minutes}분 ${seconds}초`);
+      } else {
+        setRemainingTime("경매 진행중");
+        clearInterval(interval);
+        if (auction?.auctionStatus === 0) {
+          updateAuctionStatus(auctionId, 1); // 경매 상태를 진행 중으로 업데이트
+        }
+      }
+    }, 1000);
 
-  //   return () => clearInterval(interval); // 컴포넌트 언마운트 시 타이머 정리
-  // }, [auction]); // auction이 변경될 때마다 useEffect를 재실행
-  
-  //     calculateRemainingTime(); // 컴포넌트가 마운트될 때 한 번 계산
-  //     const timer = setInterval(calculateRemainingTime, 1000); // 1초마다 남은 시간 갱신
-  
-  //     return () => clearInterval(timer); // 컴포넌트 언마운트 시 타이머 정리
-  // }, [auction.startTime]); // auction.startTime에 의존
-  const fetchAuction = () => {
-    apiClient
-      .get(`/auction/auctionNext`)
-      .then((res) => {
-        setAuction(res.data);
-        calculateRemainingTime(res.data.startTime, res.data.auctionId);
-      })
-      .catch((err) => {
-        console.log("에러 : ", err);
-      });
-  };
+    return () => clearInterval(interval);
+  }, [auction?.auctionStatus]);
 
-  const updateAuctionStatus = (auctionId, status) => {
+  // 경매 상태 업데이트
+  const updateAuctionStatus = useCallback((auctionId, status) => {
+    console.log("edit")
     apiClient
       .post(`/auction/edit`, { auctionId, auctionStatus: status })
       .then(() => {
-        console.log("상태 수정 완료");
+        if (status === 2) {
+          fetchNextAuction();  // 경매 종료 시 다음 경매 데이터를 가져옴
+        }
       })
       .catch((err) => {
-        console.log("실패 : ", err);
+        console.error("경매 상태 변경 실패:", err);
       });
-  };
-
-  const calculateRemainingTime = (startTime, auctionId) => {
-    const timer = setInterval(() => {
-      const now = new Date();
-      const startTimeDate = new Date(startTime);
-      const timeDiff = startTimeDate - now;
-
-      if (timeDiff <= 0) {
-        setRemainingTime("경매 진행중!");
-        updateAuctionStatus(auctionId, 1); // 경매 시작 상태로 변경
-        clearInterval(timer); // 타이머 정리
-      } else {
-        const minutes = Math.floor((timeDiff / 1000 / 60) % 60);
-        const hours = Math.floor((timeDiff / 1000 / 60 / 60) % 24);
-        const days = Math.floor(timeDiff / 1000 / 60 / 60 / 24);
-        
-        setRemainingTime(`${days}일 ${hours}시간 ${minutes + 1}분 뒤 시작!`);
-      }
-
-      // 경매가 끝나면 상태 업데이트
-      if (auction.auctionStatus === 2) {
-        fetchAuction(); // 경매 종료 상태로 변경
-      }
-    }, 1000); // 1초마다 갱신
-
-    return () => clearInterval(timer); // 컴포넌트 언마운트 시 타이머 정리
-  };
+  }, []);
 
   useEffect(() => {
-    fetchAuction(); // 컴포넌트 마운트 시 경매 데이터 가져오기
+    console.log(auction);  // auction 상태가 업데이트될 때마다 이 코드가 실행됩니다.
+  }, [auction]);
+
+  // 현재 경매 가져오기
+  const fetchCurrentAuction = useCallback(() => {
+    apiClient
+      .get(`/auction/current`)
+      .then((res) => {
+        // console.log(res.data);
+        setAuction(res.data);
+        setStatus(res.data.auctionStatus);
+        // console.log(auction);
+        calculateRemainingTime(res.data.startTime, res.data.auctionId);
+      })
+      .catch((err) => {
+        console.error("현재 경매 정보 가져오기 실패:", err);
+      });
+  }, [calculateRemainingTime]);
+
+  // 다음 경매 가져오기
+  const fetchNextAuction = useCallback(() => {
+    console.log("next")
+    apiClient
+      .get(`/auction/next`)
+      .then((res) => {
+        setAuction(res.data);
+        // console.log(auction);
+        setStatus(0);  // 다음 경매는 다시 대기 상태로 설정
+      })
+      .catch((err) => {
+        console.error("다음 경매 정보 가져오기 실패:", err);
+      });
   }, []);
-  
-  
+
+  useEffect(() => {
+    fetchCurrentAuction();  // 페이지 로드 시 현재 경매 데이터를 먼저 가져옴
+  }, []);
+
+  useEffect(() => {
+    if (auction) {
+      const cleanup = calculateRemainingTime(auction.startTime, auction.auctionId);
+      return cleanup;
+    }
+  }, [auction, calculateRemainingTime]);
+
+  if (!auction) {
+    return <div>경매 정보를 불러오는 중...</div>;
+  }
+
   return (
     <>
       <Container style={{ marginTop: "200px" }}>
