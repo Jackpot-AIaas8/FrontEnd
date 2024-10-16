@@ -251,8 +251,8 @@ const Mypage = () => {
                       text={item.text}
                       isActive={currentPage === item.text}
                       onClick={() => {
-                        handleMenuClick(item);
                         handleNavBarClick(item);
+                        handleMenuClick(item);
                       }}
                     />
                   ))}

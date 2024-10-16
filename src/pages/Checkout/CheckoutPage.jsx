@@ -9,14 +9,20 @@ const customerKey = "e6Bp3EiNGF0nTmXJ05nvg";
 
 function CheckoutPage() {
   const location = useLocation();
+
+  const { items = [], totalAmount = 0 } = location.state || {};
+
   console.log("CheckoutPage received state:", location.state);
+
   const {
     productName: name = "",
     quantity = 1,
     totalPrice = 50000,
+
     shopId = "",
   } = location.state || {};
   console.log("CheckoutPage received shopId:", shopId);
+
 
   const amount = totalPrice + 3000; // 배송비 포함 금액
 
@@ -96,9 +102,26 @@ function CheckoutPage() {
       console.log("Customer Phone:", user.phone);
       console.log("Sending amount to Toss Payments:", paymentAmount);
 
+
+      // 결제 요청 처리
+      await widgets.requestPayment({
+        orderId: orderId,
+        orderName: name,
+        orderName: items.map((item) => item.productName).join(", "),
+        successUrl: `${window.location.origin}/success`,
+        failUrl: `${window.location.origin}/fail`,
+        customerEmail: user.email,
+        customerName: user.name,
+        customerMobilePhone: user.phone,
+      });
+
+      // 결제 성공 시 sessionStorage에 결제 정보 저장
       const paymentData = {
         orderId,
+        items,
+
         shopId,
+
         orderName: name,
         quantity,
         memberId: user.memberID, 
@@ -178,9 +201,13 @@ function CheckoutPage() {
         <FlexRow>
           <SectionTitle>받는 사람 정보</SectionTitle>
           {isEditingAddress ? (
-            <SaveAddressButton onClick={handleAddressSave}>저장</SaveAddressButton>
+            <SaveAddressButton onClick={handleAddressSave}>
+              저장
+            </SaveAddressButton>
           ) : (
-            <EditAddressButton onClick={handleAddressEdit}>수정</EditAddressButton>
+            <EditAddressButton onClick={handleAddressEdit}>
+              수정
+            </EditAddressButton>
           )}
         </FlexRow>
         {isEditingAddress ? (
@@ -218,7 +245,11 @@ function CheckoutPage() {
         <InfoBox>
           <InfoRow>
             <Label>총 상품 가격</Label>
-            <Value>{totalPrice ? `${totalPrice.toLocaleString()}원` : "가격 정보 없음"}</Value>
+            <Value>
+              {totalPrice
+                ? `${totalPrice.toLocaleString()}원`
+                : "가격 정보 없음"}
+            </Value>
           </InfoRow>
           <InfoRow>
             <Label>배송비</Label>
@@ -226,7 +257,11 @@ function CheckoutPage() {
           </InfoRow>
           <TotalRow>
             <Label>총 결제 금액</Label>
-            <Value>{totalPrice ? `${(totalPrice + 3000).toLocaleString()}원` : "가격 정보 없음"}</Value>
+            <Value>
+              {totalPrice
+                ? `${(totalPrice + 3000).toLocaleString()}원`
+                : "가격 정보 없음"}
+            </Value>
           </TotalRow>
         </InfoBox>
       </Section>
@@ -386,5 +421,3 @@ const PayButton = styled.button`
   border-radius: 8px;
   cursor: pointer;
 `;
-
-
