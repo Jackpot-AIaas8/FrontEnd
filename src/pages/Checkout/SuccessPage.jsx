@@ -1,150 +1,220 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import styled from "styled-components";
+import apiClient from "../../token/AxiosConfig";
 
 export function SuccessPage() {
   const [searchParams] = useSearchParams();
-  const location = useLocation(); // CheckoutPage에서 넘어온 state를 받음
+  const [paymentInfo, setPaymentInfo] = useState(null);
   const navigate = useNavigate();
   const [isConfirming, setIsConfirming] = useState(true);
 
-  // location.state로 받은 데이터 출력
-  useEffect(() => {
-    console.log("location.state:", location.state);
-  }, [location.state]);
-
-  // searchParams로 받은 데이터 출력
-  useEffect(() => {
-    console.log("searchParams:", {
-      orderId: searchParams.get("orderId"),
-      amount: searchParams.get("amount"),
-      paymentKey: searchParams.get("paymentKey"),
-    });
-  }, [searchParams]);
+  const paymentData = JSON.parse(sessionStorage.getItem("paymentData")) || {};
 
   const {
-    orderName = "",
-    quantity = 1,
+    memberId,
     customerName = "",
     customerMobilePhone = "",
     userAddress = "",
     totalPrice = 0,
     deliveryFee = 3000,
-    amount = 0,
-  } = location.state || {};
+    orderId,
+    shopId = "" , 
+  } = paymentData;
 
   useEffect(() => {
-    // 결제 확인 요청을 서버로 보냄
+    if (!orderId) {
+      navigate(`/fail?message=결제 정보가 유실되었습니다.`);
+      return;
+    }
+
     const requestData = {
-      orderId: searchParams.get("orderId"),
+      orderId: searchParams.get("orderId") || orderId,
       amount: searchParams.get("amount"),
       paymentKey: searchParams.get("paymentKey"),
+      shopId: shopId,
+      memberId: memberId, 
+      name: customerName,
+      phone: customerMobilePhone,
+      address: userAddress,
+      products: [{ shopName: "example shop", productPrice: 5000, quantity: 1 }] // 리스트로 보내기
     };
-
-    console.log("결제 확인 요청 데이터:", requestData); // 확인용 로그 추가
 
     async function confirm() {
       try {
-        const response = await fetch("http://localhost:8181/api/confirm", {
-          method: "POST",
+        const response = await apiClient.post("http://localhost:8181/api/confirm", requestData, {
           headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestData),
+            Authorization: "Basic " + btoa("test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6:"), // 시크릿 키를 인코딩하여 포함
+            "Content-Type": "application/json"
+          }
         });
 
-        const json = await response.json();
-
-        console.log("결제 확인 응답 데이터:", json); // 응답 데이터 로그 출력
-
-        if (!response.ok) {
-          navigate(`/fail?message=${json.message}&code=${json.code}`);
+        if (response.status !== 200) {
+          navigate(`/fail?message=${response.data.message}&code=${response.data.code}`);
           return;
         }
 
-        // 결제 성공 후 확인 처리
+        setPaymentInfo(response.data);
         setIsConfirming(false);
       } catch (error) {
-        console.error("결제 확인 중 오류 발생:", error);
-        setIsConfirming(false);
+        console.error(error);
+        navigate(`/fail?message=결제 확인 중 오류가 발생했습니다.`);
       }
     }
 
     confirm();
-  }, [searchParams, navigate]);
+  }, [searchParams, navigate, orderId]);
 
   if (isConfirming) {
-    return <div>결제 확인 중...</div>; // 결제 확인 중 표시
+    return <div>결제 확인 중...</div>;
   }
+
+  if (!paymentInfo) {
+    return <div>결제 정보를 불러올 수 없습니다.</div>;
+  }
+
+  const {
+    orderName,
+    totalAmount,
+    status,
+  } = paymentInfo;
+
+  const suppliedAmount = totalAmount - deliveryFee;
 
   return (
     <PageContainer>
-      <h2>결제 성공</h2>
-      <p>{`주문번호: ${searchParams.get("orderId")}`}</p>
-      <p>{`결제 금액: ${Number(searchParams.get("amount")).toLocaleString()}원`}</p>
-      <p>{`Payment Key: ${searchParams.get("paymentKey")}`}</p>
-
-      <ProductDetails>
-        <h3>상품 정보</h3>
-        <p>{`상품명: ${orderName || "정보 없음"}`}</p>
-        <p>{`수량: ${quantity}개`}</p>
-      </ProductDetails>
-
-      <UserDetails>
-        <h3>받는 사람 정보</h3>
-        <p>{`이름: ${customerName || "정보 없음"}`}</p>
-        <p>{`전화번호: ${customerMobilePhone || "정보 없음"}`}</p>
-        <p>{`주소: ${userAddress || "정보 없음"}`}</p>
-      </UserDetails>
-
-      <PaymentDetails>
-        <h3>결제 정보</h3>
-        <p>{`총 상품 가격: ${totalPrice.toLocaleString()}원`}</p>
-        <p>{`배송비: ${deliveryFee.toLocaleString()}원`}</p>
-        <p>{`총 결제 금액: ${amount.toLocaleString()}원`}</p>
-      </PaymentDetails>
+      <Title>주문완료</Title>
+      <Subtitle>주문이 완료되었습니다. 감사합니다!</Subtitle>
+      <Section>
+        <SectionTitle>상품배송 정보</SectionTitle>
+        <InfoRow>
+          <InfoLabel>내일(화) 도착 보장 (상품 1개)</InfoLabel>
+          <InfoValue>판매자: 쿠팡</InfoValue>
+        </InfoRow>
+      </Section>
+      <InfoContainer>
+        <LeftColumn>
+          <SectionTitle>받는사람 정보</SectionTitle>
+          <InfoRow>
+            <InfoLabel>받는사람</InfoLabel>
+            <InfoValue>{customerName} / {customerMobilePhone}</InfoValue>
+          </InfoRow>
+          <InfoRow>
+            <InfoLabel>받는주소</InfoLabel>
+            <InfoValue>{userAddress}</InfoValue>
+          </InfoRow>
+        </LeftColumn>
+        <RightColumn>
+          <SectionTitle>결제 정보</SectionTitle>
+          <InfoRow>
+            <InfoLabel>주문금액</InfoLabel>
+            <InfoValue>{totalPrice.toLocaleString()} 원</InfoValue>
+          </InfoRow>
+          <InfoRow>
+            <InfoLabel>배송비</InfoLabel>
+            <InfoValue>{deliveryFee.toLocaleString()} 원</InfoValue>
+          </InfoRow>
+          <TotalRow>
+            <TotalLabel>총 결제금액</TotalLabel>
+            <TotalValue>{totalAmount.toLocaleString()} 원</TotalValue>
+          </TotalRow>
+        </RightColumn>
+      </InfoContainer>
+      <ButtonContainer>
+        <Button>주문 상세보기</Button>
+        <Button primary={true}>쇼핑 계속하기</Button>
+      </ButtonContainer>
     </PageContainer>
   );
 }
 
+// 스타일 정의는 생략
+export default SuccessPage;
+
 // 스타일 정의
 const PageContainer = styled.div`
   padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
   background-color: #f9f9f9;
-  margin-top: 200px;
+  margin-top: 100px;
 `;
 
-const ProductDetails = styled.div`
+const Title = styled.h1`
+  font-size: 28px;
+  margin-bottom: 10px;
+`;
+
+const Subtitle = styled.p`
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 20px;
+`;
+
+const Section = styled.div`
+  margin-bottom: 20px;
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+`;
+
+const InfoRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+`;
+
+const InfoLabel = styled.span`
+  font-weight: bold;
+`;
+
+const InfoValue = styled.span`
+  color: #333;
+`;
+
+const InfoContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
   margin-top: 20px;
-  h3 {
-    font-size: 18px;
-  }
-  p {
-    font-size: 16px;
-    margin: 5px 0;
-  }
 `;
 
-const UserDetails = styled.div`
-  margin-top: 20px;
-  h3 {
-    font-size: 18px;
-  }
-  p {
-    font-size: 16px;
-    margin: 5px 0;
-  }
+const LeftColumn = styled.div`
+  width: 48%;
 `;
 
-const PaymentDetails = styled.div`
-  margin-top: 20px;
-  h3 {
-    font-size: 18px;
-  }
-  p {
-    font-size: 16px;
-    margin: 5px 0;
-  }
+const RightColumn = styled.div`
+  width: 48%;
 `;
 
-export default SuccessPage;
+const TotalRow = styled(InfoRow)`
+  font-size: 18px;
+  font-weight: bold;
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+`;
+
+const TotalLabel = styled.span`
+  font-weight: bold;
+`;
+
+const TotalValue = styled.span`
+  color: #f00;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+`;
+
+const Button = styled.button`
+  padding: 10px 20px;
+  border: none;
+  background-color: ${({ primary }) => (primary ? '#0066cc' : '#ddd')};
+  color: ${({ primary }) => (primary ? '#fff' : '#333')};
+  font-size: 16px;
+  cursor: pointer;
+`;
