@@ -315,7 +315,7 @@ button[class^="btn_"] {
 }
 
 [class^="btn_"]:hover {
-  background-color: #0056b3;
+  cursor: pointer;
 }
 
 [class^="section-"] {
