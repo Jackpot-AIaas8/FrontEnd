@@ -6,7 +6,7 @@ import SideBar from "../components/Shop/SideBar";
 import MainCarousel from "../components/Shop/ShopCarousel";
 import Card from "../components/Shop/Card";
 import styled from "styled-components";
-import axios from "axios";
+import apiClient from "../token/AxiosConfig";
 
 function ShopPage() {
   const [category, setCategory] = useState(null);
@@ -39,7 +39,9 @@ function ShopPage() {
   // 카테고리나 정렬 순서 변경 시 URL 업데이트
   useEffect(() => {
     if (category !== null) {
-      navigate(`/shop?category=${category}&sortOrder=${sortOrder}`, { replace: true });
+      navigate(`/shop?category=${category}&sortOrder=${sortOrder}`, {
+        replace: true,
+      });
     } else {
       navigate(`/shop?sortOrder=${sortOrder}`, { replace: true });
     }
@@ -52,7 +54,7 @@ function ShopPage() {
         ? `http://localhost:8181/shop/category/${category}`
         : `http://localhost:8181/shop/findList`;
 
-      const response = await axios.get(endpoint, {
+      const response = await apiClient.get(endpoint, {
         params: { page, size: itemsPerPage, sortOrder },
       });
 
@@ -101,7 +103,11 @@ function ShopPage() {
           </SideBarWrapper>
           <CardSection>
             <CardWrapper>
-              <Card products={products} category={category} searchResults={searchResults} />
+              <Card
+                products={products}
+                category={category}
+                searchResults={searchResults}
+              />
             </CardWrapper>
           </CardSection>
         </ContentWrapper>
@@ -109,7 +115,9 @@ function ShopPage() {
         {/* 페이지네이션 추가 */}
         <PaginationWrapper>
           {currentPage > 1 && (
-            <button onClick={() => handlePageChange(currentPage - 1)}>&lt;</button>
+            <button onClick={() => handlePageChange(currentPage - 1)}>
+              &lt;
+            </button>
           )}
           {[...Array(totalPages)].map((_, index) => (
             <button
@@ -121,7 +129,9 @@ function ShopPage() {
             </button>
           ))}
           {currentPage < totalPages && (
-            <button onClick={() => handlePageChange(currentPage + 1)}>&gt;</button>
+            <button onClick={() => handlePageChange(currentPage + 1)}>
+              &gt;
+            </button>
           )}
         </PaginationWrapper>
       </MainContentWrapper>
@@ -147,7 +157,7 @@ const MainContentWrapper = styled.div`
   width: 100%;
   align-items: center;
   justify-content: center;
-  margin: 0 auto; 
+  margin: 0 auto;
 `;
 
 const SearchWrapper = styled.div`
@@ -194,8 +204,8 @@ const CardWrapper = styled.div`
   grid-template-columns: repeat(4, 300px);
   justify-items: center;
   width: 1200px;
-  gap:50px;
-  margin-right : 250px;
+  gap: 50px;
+  margin-right: 250px;
 
   @media (max-width: 1200px) {
     grid-template-columns: repeat(3, 300px);
@@ -214,7 +224,7 @@ const PaginationWrapper = styled.div`
   align-items: center;
   gap: 10px;
   margin-top: 20px;
-  
+
   button {
     padding: 5px 10px;
     background-color: #007bff;
@@ -228,4 +238,3 @@ const PaginationWrapper = styled.div`
     background-color: #0056b3;
   }
 `;
-

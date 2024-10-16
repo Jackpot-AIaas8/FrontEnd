@@ -2,9 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logoImage from "../static/newLogoverticalOrange.png";
 import MockMypageData from "../myPage/MockMypageData";
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import { DialogContent, DialogActions, Button } from '@mui/material';
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import { DialogContent, DialogActions, Button } from "@mui/material";
 
 import {
   StyledMypageWrapper,
@@ -31,8 +31,8 @@ const Mypage = () => {
   // MenuItems.section
   const [currentPage, setCurrentPage] = useState("내프로필");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const menuItems = [ 
-    { href: "#1", text: "개인정보수정", onClick: () => setIsDialogOpen(true)},
+  const menuItems = [
+    { href: "#1", text: "개인정보수정", onClick: () => setIsDialogOpen(true) },
     { href: "/shop/findList", text: "구매 내역" },
     { href: "#3", text: "취소/ 반품 / 환불 내역" },
     { href: "#4", text: "1:1 문의 내역" },
@@ -43,79 +43,78 @@ const Mypage = () => {
   const [oneOnOneboardList, setoneOnOneboardList] = useState([]);
   const [dogList, setDogList] = useState([]);
   const loggedInMemberId = authState?.member?.memberId || null;
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [phone, setPhone] = useState('');
-  const [name, setName] = useState('');
-  const [nickname, setNickname] = useState('');
-  const [address, setAddress] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [name, setName] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [address, setAddress] = useState("");
 
   const handleEmailCheck = () => {
-    alert('이메일 중복검사 실행');
+    alert("이메일 중복검사 실행");
   };
 
   const handleNicknameCheck = () => {
-    alert('닉네임 중복검사 실행');
+    alert("닉네임 중복검사 실행");
   };
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
   };
 
-  useEffect (() => {    
-      const shopMerchList = async () => {
-        try {
-          const response = await apiClient.get(`${SERVER_URL}shop/findList`, {
-            params: { page: 1, size: 5}, // 페이지 사이즈는 5로 너무 길지 않게
-          });
-        const memberMerchList = response.data.dtoList || [];
-        setMemberMerchList(memberMerchList);
-        // console.log(memberMerchList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
-        } catch (error){
-          console.error("구매리스트 받아오기 실패:", error);
-        }
-      };
-  
-      shopMerchList(); // 비동기 함수 호출
-  }, []);
-
-  useEffect (() => {    
-    const askBoardList = async () => {
+  useEffect(() => {
+    const shopMerchList = async () => {
       try {
-        const response = await apiClient.get(`${SERVER_URL}board/findAllAskMyPage`, {
+        const response = await apiClient.get("shop/findOrderList", {
           params: { page: 1, size: 5 }, // 페이지 사이즈는 5로 너무 길지 않게
         });
-        console.log(response.data);
-        const oneOnOneboardList = response.data || [];
-        setoneOnOneboardList(oneOnOneboardList.slice(0, 5)); 
-        console.log(oneOnOneboardList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
+        const memberMerchList = response.data || [];
+        setMemberMerchList(memberMerchList);
+        // console.log(memberMerchList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
       } catch (error) {
-        console.error("문의내역 받아오기 실패:", error);
+        // console.error("구매리스트 받아오기 실패:", error);
+      }
+    };
+
+    shopMerchList(); // 비동기 함수 호출
+  }, []);
+
+  useEffect(() => {
+    const askBoardList = async () => {
+      try {
+        const response = await apiClient.get(
+          `${SERVER_URL}board/findAllAskMyPage`,
+          {
+            params: { page: 1, size: 5 }, // 페이지 사이즈는 5로 너무 길지 않게
+          }
+        );
+        // console.log(response.data);
+        const oneOnOneboardList = response.data || [];
+        setoneOnOneboardList(oneOnOneboardList.slice(0, 5));
+        // console.log(oneOnOneboardList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
+      } catch (error) {
+        // console.error("문의내역 받아오기 실패:", error);
       }
     };
 
     askBoardList(); // 비동기 함수 호출
-}, []);
+  }, []);
 
+  useEffect(() => {
+    const dogFund = async () => {
+      try {
+        const response = await apiClient.get("dog/fundListMyPage", {});
+        console.log(response.data);
+        const dogList = response.data || [];
+        setDogList(dogList.slice(0, 5));
+        console.log(dogList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
+      } catch (error) {
+        console.error("펀딩내역 받아오기 실패:", error);
+      }
+    };
 
-
-
-useEffect (() => {    
-  const dogFund = async () => {
-    try {
-      const response = await apiClient.get(`${SERVER_URL}dog/fundListMyPage`, {
-      });
-      console.log(response.data.dogList);
-      const dogList = response.data.dogList || [];
-      setDogList(dogList.slice(0, 5)); 
-      // console.log(dogList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
-    } catch (error) {
-      console.error("펀딩내역 받아오기 실패:", error);
-    }
-  };
-
-  dogFund(); // 비동기 함수 호출
-}, []);
+    dogFund(); // 비동기 함수 호출
+  }, []);
 
   const handleMenuClick = (item) => {
     if (item.onClick) {
@@ -134,7 +133,12 @@ useEffect (() => {
             <div className="section-nav h-full flex flex-column">
               <div className="logoArea flex flex-row justify-start align-center">
                 <a href="/" className="logo flex">
-                  <img className="logo-image" src={logoImage} alt="로고이미지" style={{ height: '50px', width: 'auto'}} />
+                  <img
+                    className="logo-image"
+                    src={logoImage}
+                    alt="로고이미지"
+                    style={{ height: "50px", width: "auto" }}
+                  />
                 </a>
                 <a href="/myPage" className="logo_title flex">
                   <h1 className="text">
@@ -158,57 +162,57 @@ useEffect (() => {
                 </div>
               </StyledProFileArea>
               <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
-                  <DialogTitle>개인정보 수정</DialogTitle>
-                  <DialogContent>          
-                    <input
-                      type="text"
-                      placeholder="이메일 수정"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <Button onClick={handleEmailCheck} color="primary">
-                      이메일 중복검사
-                    </Button>
-                    <input
-                      type="password"
-                      placeholder="비밀번호 수정"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      placeholder="전화번호 수정"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      placeholder="이름 수정"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      placeholder="닉네임 수정"
-                      value={nickname}
-                      onChange={(e) => setNickname(e.target.value)}
-                    />
-                    <Button onClick={handleNicknameCheck} color="primary">
-                      닉네임 중복검사
-                    </Button>
-                    <input
-                      type="text"
-                      placeholder="주소 수정"
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value)}
-                    />
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={handleCloseDialog} color="primary">
-                      닫기
-                    </Button>
-                  </DialogActions>
-                </Dialog>
+                <DialogTitle>개인정보 수정</DialogTitle>
+                <DialogContent>
+                  <input
+                    type="text"
+                    placeholder="이메일 수정"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <Button onClick={handleEmailCheck} color="primary">
+                    이메일 중복검사
+                  </Button>
+                  <input
+                    type="password"
+                    placeholder="비밀번호 수정"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    placeholder="전화번호 수정"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    placeholder="이름 수정"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    placeholder="닉네임 수정"
+                    value={nickname}
+                    onChange={(e) => setNickname(e.target.value)}
+                  />
+                  <Button onClick={handleNicknameCheck} color="primary">
+                    닉네임 중복검사
+                  </Button>
+                  <input
+                    type="text"
+                    placeholder="주소 수정"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseDialog} color="primary">
+                    닫기
+                  </Button>
+                </DialogActions>
+              </Dialog>
               <StyledMypageMenu
                 role="menu"
                 className="flex flex-column align-start justify-center "
@@ -222,10 +226,9 @@ useEffect (() => {
                       text={item.text}
                       isActive={currentPage === item.text}
                       onClick={() => handleMenuClick(item)}
-                    />  
+                    />
                   ))}
                 </ul>
-                
               </StyledMypageMenu>
             </div>
           </StyledNavBar>
@@ -263,7 +266,7 @@ useEffect (() => {
             </div>
 
             <div className="section-mypage flex w-full flex-column">
-              <h2 className="text-left p-2">구매내역</h2> 
+              <h2 className="text-left p-2">구매내역</h2>
               <table>
                 <thead>
                   <tr>
@@ -275,7 +278,7 @@ useEffect (() => {
                     <th>리뷰보기</th>
                     <th>장바구니 담기</th>
                   </tr>
-                </thead>                
+                </thead>
                 <tbody>
                   {memberMerchList.map((shopDTO) => (
                     <tr key={shopDTO.shopId}>
@@ -285,7 +288,9 @@ useEffect (() => {
                       <td>{shopDTO.category}</td>
                       <td>{shopDTO.price}</td>
                       <td>
-                        <a href={`/mypage/${shopDTO.shopId}/review`}>리뷰보기</a>
+                        <a href={`/mypage/${shopDTO.shopId}/review`}>
+                          리뷰보기
+                        </a>
                       </td>
                       <td>
                         <button onClick={() => alert("장바구니에 담겼습니다.")}>
@@ -295,41 +300,40 @@ useEffect (() => {
                     </tr>
                   ))}
                 </tbody>
-         </table>
-        </div>
+              </table>
+            </div>
 
-
-        <div className="section-mypage flex w-full flex-column">
-  <h2 className="text-left p-2">취소/반품/환불내역</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>상품 ID</th>
-        <th>상품명</th>
-        <th>카테고리</th>
-        <th>가격</th>
-        <th>주문상태</th>
-        <th>장바구니 담기</th>
-      </tr>
-    </thead>
-    <tbody>
-      {mockMypageData.returnItems.map((item) => (
-        <tr key={item.shopId}>
-          <td>{item.shopId}</td>
-          <td>{item.name}</td>
-          <td>{item.category}</td>
-          <td>{item.price} 원</td>
-          <td>{item.status}</td>
-          <td>
-            <button onClick={() => alert("장바구니에 담겼습니다.")}>
-              장바구니 담기
-            </button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+            <div className="section-mypage flex w-full flex-column">
+              <h2 className="text-left p-2">취소/반품/환불내역</h2>
+              <table>
+                <thead>
+                  <tr>
+                    <th>상품 ID</th>
+                    <th>상품명</th>
+                    <th>카테고리</th>
+                    <th>가격</th>
+                    <th>주문상태</th>
+                    <th>장바구니 담기</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {mockMypageData.returnItems.map((item) => (
+                    <tr key={item.shopId}>
+                      <td>{item.shopId}</td>
+                      <td>{item.name}</td>
+                      <td>{item.category}</td>
+                      <td>{item.price} 원</td>
+                      <td>{item.status}</td>
+                      <td>
+                        <button onClick={() => alert("장바구니에 담겼습니다.")}>
+                          장바구니 담기
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
             <div className="section-mypage flex w-full flex-column">
               <h2 className="text-left p-2">1:1문의내역</h2>
@@ -337,50 +341,50 @@ useEffect (() => {
                 <thead>
                   <tr>
                     <th>글번호</th>
-                    <th>문의글 제목</th>              
+                    <th>문의글 제목</th>
                     <th>작성일</th>
                     <th>작성자</th>
                   </tr>
-                </thead>                
+                </thead>
                 <tbody>
-                {oneOnOneboardList.map((boardDTO) => (
+                  {oneOnOneboardList.map((boardDTO) => (
                     <tr key={boardDTO.boardId}>
                       <td>{boardDTO.boardId}</td>
                       <td>{boardDTO.title}</td>
                       <td>{boardDTO.regDate}</td>
                       <td>{boardDTO.memberId}</td>
                     </tr>
-                    ))}
+                  ))}
                 </tbody>
-         </table>
-        </div>
-        <div className="section-mypage flex w-full flex-column">
-            <h2 className="text-left p-2">펀딩내역</h2>
-            <table>
-              <thead style={{ borderBottom: '1px solid lightOrange' }}>
-                <tr>
-                  <th>펀딩 번호</th>
-                  <th>유기견 번호</th>
-                  {/* <th>펀딩 금액</th> */}
-                </tr>
-              </thead>
-              <tbody>
-                {/* {mockMypageData.fundingItems.map((fundDTO) => (
+              </table>
+            </div>
+            <div className="section-mypage flex w-full flex-column">
+              <h2 className="text-left p-2">펀딩내역</h2>
+              <table>
+                <thead style={{ borderBottom: "1px solid lightOrange" }}>
+                  <tr>
+                    <th>펀딩 번호</th>
+                    <th>유기견 번호</th>
+                    {/* <th>펀딩 금액</th> */}
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* {mockMypageData.fundingItems.map((fundDTO) => (
                   <tr key={fundDTO.fundId}>
                     <td>{fundDTO.fundId}</td>
                     <td>{fundDTO.dogId}</td>
                     <td>{fundDTO.amount} 원</td>
                   </tr>
                 ))} */}
-                {oneOnOneboardList.map((fundDTO) => (
-                              <tr key={fundDTO.fundId}>
-                                <td>{fundDTO.fundId}</td>
-                                <td>{fundDTO.dogId}</td>
-                              </tr>
-                              ))}
-              </tbody>
-            </table>
-          </div>
+                  {dogList.map((fundDTO) => (
+                    <tr key={fundDTO.fundId}>
+                      <td>{fundDTO.fundId}</td>
+                      <td>{fundDTO.dogId}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </StyeldRightSection>
         </StyledMypageWrapper>
       </div>
