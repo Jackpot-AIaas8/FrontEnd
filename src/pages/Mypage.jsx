@@ -5,7 +5,7 @@ import MockMypageData from "../myPage/MockMypageData";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import { DialogContent, DialogActions, Button } from "@mui/material";
-
+import MypagePwModal from "../myPage/MypagePwModal";
 import {
   StyledMypageWrapper,
   StyledNavBar,
@@ -49,6 +49,31 @@ const Mypage = () => {
   const [name, setName] = useState("");
   const [nickname, setNickname] = useState("");
   const [address, setAddress] = useState("");
+  const [isPasswordCheckOpen, setIsPasswordCheckOpen] = useState(false);
+
+  const handleNavBarClick = (item) => {
+    if (item.onClick) {
+      setIsPasswordCheckOpen(true);
+      navigate(item.href);
+    }
+  };
+
+  const handlePasswordConfirm = async (password) => {
+    try {
+      const response = await apiClient.post("/auth/checkPassword", {
+        password,
+      });
+      if (response.data.isValid) {
+        logout();
+      } else {
+        alert("비밀번호가 일치하지 않습니다.");
+      }
+    } catch (error) {
+      console.error("비밀번호 확인 실패:", error);
+    } finally {
+      setIsPasswordCheckOpen(false);
+    }
+  };
 
   const handleEmailCheck = () => {
     alert("이메일 중복검사 실행");
@@ -225,13 +250,21 @@ const Mypage = () => {
                       href={item.href}
                       text={item.text}
                       isActive={currentPage === item.text}
-                      onClick={() => handleMenuClick(item)}
+                      onClick={() => {
+                        handleMenuClick(item);
+                        handleNavBarClick(item);
+                      }}
                     />
                   ))}
                 </ul>
               </StyledMypageMenu>
             </div>
           </StyledNavBar>
+          <MypagePwModal
+            open={isPasswordCheckOpen}
+            onClose={() => setIsPasswordCheckOpen(false)}
+            onConfirm={handlePasswordConfirm}
+          />
 
           <StyeldRightSection className="right-section flex flex-column w-full ">
             <div className="section-mypage flex align-start justify-start w-full">
