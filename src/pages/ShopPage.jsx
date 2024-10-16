@@ -129,6 +129,8 @@ function ShopPage() {
   );
 }
 
+export default ShopPage;
+
 // 스타일 정의
 const PageContainer = styled.div`
   display: flex;
@@ -227,4 +229,3 @@ const PaginationWrapper = styled.div`
   }
 `;
 
-export default ShopPage;
