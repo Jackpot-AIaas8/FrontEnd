@@ -7,17 +7,20 @@ import Footer from "./Main/Footer";
 import Sidebar from "./Shop/SideBar";
 import Grid from "@mui/material/Grid2";
 import logo from "../static/newLogoverticalOrange.png";
+import Button from "@mui/material/Button";
+import { useNavigate } from "react-router-dom"; // useNavigate 임포트 수정
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0); // 총 금액 상태 추가
+  const navigate = useNavigate();
 
   const fetchCartItems = async () => {
     try {
       const response = await apiClient.get("cart/findAll");
       const itemsWithQuantity = response.data.map((item) => ({
         ...item,
-        quantity: 1, // 기본 수량을 1로 설정
+        quantity: 1,
       }));
       setCartItems(itemsWithQuantity);
       calculateTotalPrice(itemsWithQuantity);
@@ -48,6 +51,23 @@ const Cart = () => {
   useEffect(() => {
     fetchCartItems();
   }, []);
+
+  // 결제 페이지로 상품 정보 및 총 결제 금액 전달
+  const handlePurchase = () => {
+    const purchaseItems = cartItems.map((item) => ({
+      productName: item.shopName,
+      productPrice: item.shopPrice,
+      quantity: item.quantity,
+      totalPrice: item.shopPrice * item.quantity, // 총 금액 계산
+    }));
+
+    navigate("/Checkout", {
+      state: {
+        items: purchaseItems, // 구매 상품 리스트 전달
+        totalAmount: totalPrice + 3000, // 총 결제 금액 (배송비 포함)
+      },
+    });
+  };
 
   return (
     <div className="container">
@@ -127,7 +147,7 @@ const Cart = () => {
               <label className="title">주문 예상 금액</label>
               <div className="details">
                 <span>총 상품 가격</span>
-                <span>{totalPrice.toLocaleString()}원</span>{" "}
+                <span>{totalPrice.toLocaleString()}원</span>
                 <span>총 할인</span>
                 <span>- 0원</span>
                 <span>총 배송비</span>
@@ -135,8 +155,14 @@ const Cart = () => {
               </div>
               <div className="checkout--footer">
                 <label>합계</label>
-                <span>{(totalPrice + 3000).toLocaleString()}원</span>{" "}
-                <button>결제하기</button>
+                <span>{(totalPrice + 3000).toLocaleString()}원</span>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handlePurchase}
+                >
+                  결제하기
+                </Button>
               </div>
             </div>
           </StyledWrapper>
@@ -145,6 +171,7 @@ const Cart = () => {
     </div>
   );
 };
+
 export default Cart;
 
 const StyledWrapper = styled.div`
@@ -263,7 +290,7 @@ const StyledWrapper = styled.div`
   /* Checkout */
   .checkout {
     border-radius: 9px 9px 19px 19px;
-    width: 100%;
+    width: 71%;
     margin-top: -80px;
     margin-left: -300px;
   }
