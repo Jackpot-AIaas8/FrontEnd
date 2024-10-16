@@ -35,6 +35,7 @@ const DogTables = () => {
             const response = await apiClient.get("/admin/dog/dogList", {
                 params: pageInfo,
             });
+            console.log(response.data);
             setDogsData(response.data);
 
             setTotalPages(Math.ceil(response.data.totalDogNum / pageInfo.size));
