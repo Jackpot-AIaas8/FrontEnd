@@ -127,3 +127,4 @@ const FreeBoardList = ({ boards }) => {
 };
 
 export default FreeBoardList;
+

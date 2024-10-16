@@ -165,10 +165,10 @@ const CarouselWrapper = styled.div`
 
 const ContentWrapper = styled.div`
   display: flex;
-  width: 1350px;
+  width: 1200px;
   padding: 20px;
-  justify-content: space-between;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
 `;
 
 const SideBarWrapper = styled.div`
@@ -183,15 +183,15 @@ const CardSection = styled.div`
   justify-content: center;
   align-items: center;
   width: 60%;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
 `;
 
 const CardWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 300px);
-  justify-content: center;
-  width: 1350px;
+  justify-items: center;
+  width: 1200px;
   gap:50px;
   margin-right : 250px;
 

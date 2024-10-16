@@ -63,7 +63,7 @@ const DogListPage = () => {
   return (
     <div className="container flex flex-column align-center justify-center">
       <StyledImageBox className=" section-Image flex">
-        <img src={image} alt="대표 사진 " />
+        <img src={image} alt="대표 사진 " style={{ width : '1200px'}} />
       </StyledImageBox>
 
       <Container disableGutters>
@@ -88,6 +88,7 @@ const DogListPage = () => {
       <PageComponent
         pageInfo={pageInfo}
         totalPages={totalPages}
+        
         onPageChange={handlePageChange}
         onPrev={() => handlePageChange(Math.max(pageInfo.page - 1, 1))}
         onNext={() => handlePageChange(Math.min(pageInfo.page + 1, totalPages))}

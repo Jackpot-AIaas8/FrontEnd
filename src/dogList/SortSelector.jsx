@@ -5,7 +5,7 @@ const SortSelector = (props) => {
   const { value, onChange } = props;
 
   return (
-    <Stack direction="row" justifyContent="flex-end" mb={2} padding={'24px'}>
+    <Stack direction="row" justifyContent="flex-end" mb={2} padding={'5px'} marginTop={'11px'}>
       <ToggleButtonGroup
         value={value}
         exclusive
