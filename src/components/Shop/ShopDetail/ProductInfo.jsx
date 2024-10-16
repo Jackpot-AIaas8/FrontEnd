@@ -15,7 +15,9 @@ const ProductInfo = ({ productId }) => {
   // 상품 정보 가져오기
   const fetchProduct = async () => {
     try {
-      const response = await axios.get(`http://localhost:8181/shop/findOne/${productId}`);
+      const response = await axios.get(
+        `http://localhost:8181/shop/findOne/${productId}`
+      );
       setProduct(response.data);
     } catch (error) {
       console.error("상품 정보를 불러오는 중 오류 발생:", error);
@@ -42,22 +44,28 @@ const ProductInfo = ({ productId }) => {
 
   const totalPrice = quantity * product.price;
 
-// 결제 페이지로 상품 정보만 전달
-const handlePurchase = () => {
-  navigate("/Checkout", {
-    state: {
-      productName: product.name,
-      productPrice: product.price,
-      totalPrice: totalPrice,
-      quantity: quantity,
-    },
-  });
-};
+  // 결제 페이지로 상품 정보만 전달
+  const handlePurchase = () => {
+    navigate("/Checkout", {
+      state: {
+        name: product.name,
+        productPrice: product.price,
+        totalPrice: totalPrice,
+        quantity: quantity,
+      },
+    });
+  };
 
   return (
     <TopSection className="flex flex-row justify-between">
       <LeftSection className="flex flex-column align-start">
-        <img src={product.imageUrl || "https://img.biteme.co.kr/product/750/2308ae4a580a9e017ad5b07084b8cc51.jpg"} alt={product.name} />
+        <img
+          src={
+            product.imageUrl ||
+            "https://img.biteme.co.kr/product/750/2308ae4a580a9e017ad5b07084b8cc51.jpg"
+          }
+          alt={product.name}
+        />
       </LeftSection>
 
       <RightSection className="flex flex-column align-start justify-center">
@@ -65,11 +73,16 @@ const handlePurchase = () => {
           {product.name}
         </Typography>
 
-        <Typography variant="body1" style={{ marginTop: "4px", color: "red", fontSize: "24px" }}>
+        <Typography
+          variant="body1"
+          style={{ marginTop: "4px", color: "red", fontSize: "24px" }}
+        >
           판매가: {product.price.toLocaleString()}원
         </Typography>
 
-        <div style={{ display: "flex", alignItems: "center", marginTop: "16px" }}>
+        <div
+          style={{ display: "flex", alignItems: "center", marginTop: "16px" }}
+        >
           <QuantityContainer>
             <Button onClick={handleDecrement} variant="outlined" size="small">
               -
@@ -93,10 +106,19 @@ const handlePurchase = () => {
         </Typography>
 
         <ButtonSection>
-          <Button variant="contained" sx={{ marginRight: 1 }} startIcon={<FavoriteBorderIcon />}>
+          <Button
+            variant="contained"
+            sx={{ marginRight: 1 }}
+            startIcon={<FavoriteBorderIcon />}
+          >
             장바구니 담기
           </Button>
-          <Button variant="contained" color="primary" startIcon={<ShareIcon />} onClick={handlePurchase}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<ShareIcon />}
+            onClick={handlePurchase}
+          >
             바로구매
           </Button>
         </ButtonSection>

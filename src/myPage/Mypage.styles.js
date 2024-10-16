@@ -88,38 +88,12 @@ export const StyledNavBar = styled.div`
   }
 `;
 
-export const StyledProFileArea = styled.div`
-  background-color: white;
-  padding: 20px 0;
-  height: 30%;
-`;
-
 export const StyeldRightSection = styled.div`
   flex: 2;
   gap: 30px;
   .section-mypage {
     height: fit-content;
     padding: 20px;
-  }
-`;
-export const StyledProfileContainer = styled.div`
-  padding: 20px;
-  background-color: ${(props) => props.theme.colors.white};
-  .point-view {
-    margin-right: 30px;
-  }
-`;
-
-export const StyledProfileInfo = styled.div`
-  margin-left: 20px;
-`;
-
-export const StyledImage = styled.div`
-  width: 85px;
-  height: 85px;
-
-  img {
-    border-radius: 50%;
   }
 `;
 
@@ -141,5 +115,49 @@ export const StyledMypageSection = styled.div`
 
   span {
     display: block;
+  }
+`;
+
+export const StyledPurchaseSection = styled.div`
+  .left-section {
+    flex-wrap: wrap;
+    height: fit-content;
+    text-align: left;
+    padding: 30px;
+
+    > h2 {
+      width: 100%;
+    }
+
+    > .thumbnail {
+      width: 64px;
+      height: 64px;
+    }
+
+    > .product-section {
+      width: calc(100% - 194px);
+    }
+
+    > .productPrice,
+    .quntity {
+    }
+
+    > .btn_detailed {
+      width: 100px;
+    }
+  }
+
+  .btn_detailed {
+    flex: 1;
+    align-self: center;
+    height: 30%;
+  }
+
+  .productInfo {
+    margin: 20px 0;
+  }
+
+  .product-section {
+    margin-left: 20px;
   }
 `;

@@ -5,10 +5,11 @@ import {
   StyledMypageWrapper,
   StyeldRightSection,
   StyledMypageSection,
+  StyledPurchaseSection,
 } from "../myPage/Mypage.styles";
 
 import { AuthContext } from "../token/AuthContext";
-import mockMypageData from "../myPage/MockMypageData";
+import mockMypageData, { MockShopData } from "../myPage/MockMypageData";
 import apiClient from "../token/AxiosConfig";
 import { SERVER_URL } from "../config/Constants";
 import Grid2 from "@mui/material/Grid2";
@@ -27,10 +28,6 @@ import {
 import MypageSideBar from "../myPage/MyPageSideBar";
 
 const Mypage = () => {
-  const { authState } = useContext(AuthContext);
-
-  const [rank, setRank] = useState("브론즈");
-
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [memberMerchList, setMemberMerchList] = useState([]);
@@ -43,6 +40,7 @@ const Mypage = () => {
   const [name, setName] = useState("");
   const [nickname, setNickname] = useState("");
   const [address, setAddress] = useState("");
+
   const editUser = () => {
     return (
       <>
@@ -108,6 +106,16 @@ const Mypage = () => {
     setIsDialogOpen(false);
   };
 
+  const shopHeaders = [
+    "상품 ID",
+    "상품명",
+    "카테고리",
+    "가격",
+    "리뷰보기",
+    "장바구니 담기",
+  ];
+  const [shopData, setShopData] = useState([]);
+
   useEffect(() => {
     const shopMerchList = async () => {
       try {
@@ -125,6 +133,17 @@ const Mypage = () => {
   }, []);
 
   useEffect(() => {
+    const apiShopData = async () => {
+      const response = MockShopData;
+      console.log(response.data);
+      setShopData(response.data);
+    };
+
+    apiShopData();
+    console.log(shopData);
+  }, [shopData]);
+
+  useEffect(() => {
     const askBoardList = async () => {
       try {
         const response = await apiClient.get(
@@ -133,10 +152,9 @@ const Mypage = () => {
             params: { page: 1, size: 5 }, // 페이지 사이즈는 5로 너무 길지 않게
           }
         );
-        console.log(response.data);
+
         const oneOnOneboardList = response.data || [];
         setoneOnOneboardList(oneOnOneboardList.slice(0, 5));
-        console.log(oneOnOneboardList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
       } catch (error) {
         console.error("문의내역 받아오기 실패:", error);
       }
@@ -152,7 +170,7 @@ const Mypage = () => {
           `${SERVER_URL}dog/fundListMyPage`,
           {}
         );
-        console.log(response.data.dogList);
+
         const dogList = response.data.dogList || [];
         setDogList(dogList.slice(0, 5));
         console.log(dogList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
@@ -167,6 +185,31 @@ const Mypage = () => {
   const handleMypage = (e) => {
     e.preventDefault();
     // 조건이 눌렸을 경우 개인정보 수정 창이 떠야한다.
+  };
+
+  const PurchaseHistory = () => {
+    return (
+      <Card sx={{ display: "block", borderRadius: ".5rem" }}>
+        <StyledPurchaseSection>
+          {/* left-section */}
+
+          <div className="left-section flex">
+            <h2 className="status">배송상태</h2>
+            <img
+              src="https://cdn.univ20.com/wp-content/uploads/2016/03/06df40100dc3614b1f183f7a1b4e41c1-17.png"
+              className="thumbnail"
+              alt="품목"
+            />
+            <div className="product-section align-center">
+              <p className="productTitle">이름.</p>
+              <span className="productPrice">가격</span>
+              <span className="quntity">개수</span>
+            </div>
+            <button className="btn_detailed">상세정보</button>
+          </div>
+        </StyledPurchaseSection>
+      </Card>
+    );
   };
 
   return (
@@ -211,7 +254,7 @@ const Mypage = () => {
                         <span>이메일 || *******처리</span>
                       </li>
                       <li>
-                        <h3 info-title>Phone</h3>
+                        <h3 className="info-title">Phone</h3>
                         <span>000-000-0000</span>
                       </li>
 
@@ -229,43 +272,8 @@ const Mypage = () => {
               </StyledMypageSection>
             </>
 
-            <Card sx={{ display: "block", borderRadius: ".5rem" }}>
-              <h2 className="text-left p-2">구매내역</h2>
-              <table>
-                <thead>
-                  <tr>
-                    <th>상품 ID</th>
-                    <th>상품명</th>
-                    {/* <th>디테일</th> */}
-                    <th>카테고리</th>
-                    <th>가격</th>
-                    <th>리뷰보기</th>
-                    <th>장바구니 담기</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {memberMerchList.map((shopDTO) => (
-                    <tr key={shopDTO.shopId}>
-                      <td>{shopDTO.shopId}</td>
-                      <td>{shopDTO.name}</td>
-                      {/* <td>{shopDTO.detail}</td> */}
-                      <td>{shopDTO.category}</td>
-                      <td>{shopDTO.price}</td>
-                      <td>
-                        <a href={`/mypage/${shopDTO.shopId}/review`}>
-                          리뷰보기
-                        </a>
-                      </td>
-                      <td>
-                        <button onClick={() => alert("장바구니에 담겼습니다.")}>
-                          장바구니 담기
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </Card>
+            <h4 className="text-left p-0 m-0">구매내역</h4>
+            <PurchaseHistory />
 
             <div className="section-mypage flex w-full flex-column">
               <h2 className="text-left p-2">취소/반품/환불내역</h2>
