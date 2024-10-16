@@ -4,104 +4,32 @@ import { useNavigate } from "react-router-dom";
 import {
   StyledMypageWrapper,
   StyeldRightSection,
-  StyledProfileContainer,
-  StyledProfileInfo,
-  StyledImage,
+  StyledMypageSection,
 } from "../myPage/Mypage.styles";
 
 import { AuthContext } from "../token/AuthContext";
 import mockMypageData from "../myPage/MockMypageData";
 import apiClient from "../token/AxiosConfig";
 import { SERVER_URL } from "../config/Constants";
+import Grid2 from "@mui/material/Grid2";
 import {
+  Avatar,
   Button,
+  Card,
+  CardContent,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
+  Typography,
 } from "@mui/material";
 import MypageSideBar from "../myPage/MyPageSideBar";
-
-import {
-  MDBCol,
-  MDBRow,
-  MDBCard,
-  MDBCardText,
-  MDBCardBody,
-  MDBCardImage,
-  MDBTypography,
-} from "mdb-react-ui-kit";
-
-export function MDBui() {
-  return (
-    <MDBRow className="justify-content-center align-items-center h-100 w-100">
-      <MDBCol lg="6" className=" mb-lg-0 p-0 w-100">
-        <MDBCard className="flex" style={{ borderRadius: ".5rem" }}>
-          <MDBRow className="g-0">
-            <MDBCol
-              md="4"
-              className="flex flex-column text-black justify-center align-center"
-              style={{
-                borderTopLeftRadius: ".5rem",
-                borderBottomLeftRadius: ".5rem",
-              }}
-            >
-              <MDBCardImage
-                src="https://static.nid.naver.com/images/web/user/default.png"
-                alt="Avatar"
-                className="my-3"
-                style={{ width: "80px", borderRadius: "50%" }}
-                fluid
-              />
-              <MDBTypography tag="h5">전세계</MDBTypography>
-              <MDBCardText>Gold</MDBCardText>
-            </MDBCol>
-            <MDBCol md="8">
-              <MDBCardBody className="p-4">
-                <MDBTypography tag="h6">Information</MDBTypography>
-                <hr className="mt-0 mb-4" />
-                <MDBRow className="pt-1">
-                  <MDBCol size="6" className="mb-3">
-                    <MDBTypography tag="h6">Email</MDBTypography>
-                    <MDBCardText className="text-muted">
-                      이메일 || *******처리
-                    </MDBCardText>
-                  </MDBCol>
-                  <MDBCol size="6" className="mb-3">
-                    <MDBTypography tag="h6">Phone</MDBTypography>
-                    <MDBCardText className="text-muted">
-                      000-000-0000
-                    </MDBCardText>
-                  </MDBCol>
-                </MDBRow>
-
-                <MDBTypography tag="h6">Information</MDBTypography>
-                <hr className="mt-0 mb-4" />
-                <MDBRow className="pt-1">
-                  <MDBCol size="6" className="mb-3">
-                    <MDBTypography tag="h6">닉네임</MDBTypography>
-                    <MDBCardText className="text-muted">nickName</MDBCardText>
-                  </MDBCol>
-                  <MDBCol size="6" className="mb-3">
-                    <MDBTypography tag="h6">address</MDBTypography>
-                    <MDBCardText className="text-muted">집 주소</MDBCardText>
-                  </MDBCol>
-                </MDBRow>
-              </MDBCardBody>
-            </MDBCol>
-          </MDBRow>
-        </MDBCard>
-      </MDBCol>
-    </MDBRow>
-  );
-}
 
 const Mypage = () => {
   const { authState } = useContext(AuthContext);
 
   const [rank, setRank] = useState("브론즈");
-
-  // MenuItems.section
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -236,14 +164,72 @@ const Mypage = () => {
     dogFund(); // 비동기 함수 호출
   }, []);
 
+  const handleMypage = (e) => {
+    e.preventDefault();
+    // 조건이 눌렸을 경우 개인정보 수정 창이 떠야한다.
+  };
+
   return (
     <>
       <div className="container flex justify-center">
         <StyledMypageWrapper className="flex flex-row">
           <MypageSideBar />
-          <StyeldRightSection className="right-section flex flex-column w-full  align-center justify-center ">
-            <MDBui />
-            <div className="section-mypage flex w-full flex-column">
+          <StyeldRightSection className="right-section flex flex-column  w-full    ">
+            <>
+              <StyledMypageSection className="w-full">
+                <Card sx={{ display: "flex", borderRadius: ".5rem" }}>
+                  {/* Left Section */}
+
+                  <Grid2
+                    onClick={handleMypage}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: 5,
+                      backgroundColor: "#f5f5f5",
+                      borderRadius: ".5rem 0 0 .5rem",
+                    }}
+                  >
+                    <Avatar
+                      src="https://static.nid.naver.com/images/web/user/default.png"
+                      sx={{ width: 100, height: 100, mb: 2 }}
+                    />
+                    <Typography variant="h5">전세계</Typography>
+                    <Typography variant="body2">Gold</Typography>
+                  </Grid2>
+
+                  {/* Right Section */}
+
+                  <CardContent className="w-full">
+                    <Typography variant="h6">Information</Typography>
+                    <Divider sx={{ my: 2 }} />
+                    <ul className="flex justify-around">
+                      <li>
+                        <h3 className="info-title">Email</h3>
+                        <span>이메일 || *******처리</span>
+                      </li>
+                      <li>
+                        <h3 info-title>Phone</h3>
+                        <span>000-000-0000</span>
+                      </li>
+
+                      <li>
+                        <h3 className="info-title">닉네임</h3>
+                        <span>nickName</span>
+                      </li>
+                      <li>
+                        <h3 className="info-title">Address</h3>
+                        <span>집 주소</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </StyledMypageSection>
+            </>
+
+            <Card sx={{ display: "block", borderRadius: ".5rem" }}>
               <h2 className="text-left p-2">구매내역</h2>
               <table>
                 <thead>
@@ -279,7 +265,7 @@ const Mypage = () => {
                   ))}
                 </tbody>
               </table>
-            </div>
+            </Card>
 
             <div className="section-mypage flex w-full flex-column">
               <h2 className="text-left p-2">취소/반품/환불내역</h2>

@@ -305,21 +305,32 @@ h3 {
   cursor: wait;
 }
 
-a[class^="btn_"],
-button[class^="btn_"] {
+[class^="btn_"] {
   font-size: 16px;
   line-height: 1;
   text-align: center;
-  transition: 0.2s ease-in;
+  transition: opacity 0.3s ease-in-out; /* opacity에만 부드러운 애니메이션 적용 */
   cursor: pointer;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px; /* 버튼 모서리 둥글게 설정 */
+  opacity: 0.8; /* 기본 상태에서 약간 투명하게 설정 */
 }
 
+/* 호버 시 페이드 인 효과 */
 [class^="btn_"]:hover {
-  cursor: pointer;
+  background-color: rgba(
+    128,
+    128,
+    128,
+    0.5
+  ); /* 회색으로 오파시티가 적용된 배경색 */
+  opacity: 0.8; /* 호버 시 약간 투명하게 설정 */
 }
 
 [class^="section-"] {
   border-radius: 8px;
   border: 1px solid #bbbbbb;
   box-shadow: 10px 10px 5px rgb(0, 0, 0, 0.2);
+  overflow: hidden;
 }

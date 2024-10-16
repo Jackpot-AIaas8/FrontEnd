@@ -8,6 +8,8 @@ export const StyledMypageWrapper = styled.div`
 `;
 
 export const StyledNavBar = styled.div`
+  position: sticky;
+  top: 0;
   flex: 1;
   padding: 0 20px;
   max-width: 400px;
@@ -38,16 +40,15 @@ export const StyledNavBar = styled.div`
     display: inline-block;
     font-size: 0.8em;
   }
-`;
+  .profile_inner {
+    background-color: white;
 
-export const StyledProFileArea = styled.div`
-  background-color: white;
-  padding: 20px 0;
-  height: 30%;
-
-  .photo {
+    height: 30%;
+  }
+  .btn_photo {
     box-sizing: border-box;
     display: inline-block; /* 자식 요소 크기만큼 부모 크기를 지정 */
+    background: ${({ theme }) => theme.colors.white} !important;
   }
 
   img {
@@ -64,28 +65,38 @@ export const StyledProFileArea = styled.div`
     word-break: break-all;
     margin: 0;
   }
-`;
-
-export const StyledMypageMenu = styled.div`
-  margin-top: 20px;
-  padding: 10px 30px;
 
   .menu_list {
-    gap: 30px;
+    height: fit-content;
   }
 
   .menu_item {
-    font-size: 20px;
+    display: block;
+    text-align: left;
+    font-size: 1rem;
     font-weight: 700;
     color: #1e1e23;
     letter-spacing: -1.18px;
     line-height: 26px;
+    margin: 8% 0;
   }
+
+  .menu_item.active {
+    background-color: #ff7f50;
+    color: white;
+    font-weight: bold;
+  }
+`;
+
+export const StyledProFileArea = styled.div`
+  background-color: white;
+  padding: 20px 0;
+  height: 30%;
 `;
 
 export const StyeldRightSection = styled.div`
   flex: 2;
-  gap: 20px;
+  gap: 30px;
   .section-mypage {
     height: fit-content;
     padding: 20px;
@@ -109,5 +120,26 @@ export const StyledImage = styled.div`
 
   img {
     border-radius: 50%;
+  }
+`;
+
+export const StyledMypageSection = styled.div`
+  ul {
+    margin: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 0;
+  }
+
+  li {
+    width: 50%;
+  }
+
+  .info-title {
+    font-weight: 600;
+  }
+
+  span {
+    display: block;
   }
 `;
