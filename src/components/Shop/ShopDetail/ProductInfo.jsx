@@ -45,6 +45,7 @@ const ProductInfo = ({ productId }) => {
 
   const totalPrice = quantity * product.price;
 
+  
   // 결제 페이지로 상품 정보만 전달
   const handlePurchase = () => {
     navigate("/Checkout", {
@@ -112,6 +113,7 @@ const ProductInfo = ({ productId }) => {
             variant="contained"
             sx={{ marginRight: 1 }}
             startIcon={<FavoriteBorderIcon />}
+            onClick={handlePurchase}
           >
             장바구니 담기
           </Button>
