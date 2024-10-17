@@ -155,7 +155,7 @@ const Mypage = () => {
       try {
         const response = await apiClient.get("dog/fundListMyPage");
 
-        const dogList = response.data.dogList || [];
+        const dogList = response.data || [];
         setDogList(dogList.slice(0, 5));
         console.log(dogList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
       } catch (error) {

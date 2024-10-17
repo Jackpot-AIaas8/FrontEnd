@@ -290,7 +290,7 @@ const StyledWrapper = styled.div`
   /* Checkout */
   .checkout {
     border-radius: 9px 9px 19px 19px;
-    width: 71%;
+    width: 80%;
     margin-top: -80px;
     margin-left: -300px;
   }
