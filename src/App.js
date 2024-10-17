@@ -19,7 +19,7 @@ import FailPage from "./pages/Checkout/FailPage";
 
 import { Routes, Route, useLocation } from "react-router-dom";
 
-import "./config/Utility.css";
+import GlobalStyle from "./config/GlobalStyle";
 import SignIn from "./pages/SignIn";
 import Button from "./components/Button";
 import SignUp from "./pages/SignUp";
@@ -45,7 +45,7 @@ function App() {
   const { isAdmin } = useContext(AuthContext) || {};
   const { setLoading } = useLoading();
   const location = useLocation();
-  const hideNavAndHeader = location.pathname === "/admin";
+  const hideNavAndFotter = location.pathname === "/admin";
   // axios 초기 설정 선언
   useEffect(() => {
     setupInterceptors(setLoading);
@@ -56,8 +56,9 @@ function App() {
     <>
       {/* 로그인 전역 상태 관리 */}
       <div className="App">
+        <GlobalStyle />
         <GlobalLoading />
-        {!isAdmin && <NavBar />}
+        {!hideNavAndFotter && <NavBar />}
 
         <Routes>
           {/* 메인 Page  */}
@@ -97,8 +98,8 @@ function App() {
             </Route> */}
         </Routes>
 
-        {!isAdmin && <Button />}
-        {!isAdmin && <Footer />}
+        {!hideNavAndFotter && <Button />}
+        {!hideNavAndFotter && <Footer />}
       </div>
       <Routes>
         <Route element={<ProtectedRoute allowedRoles={["ROLE_ADMIN"]} />}>

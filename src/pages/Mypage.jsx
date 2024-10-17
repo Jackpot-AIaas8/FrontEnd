@@ -4,9 +4,9 @@ import {
   StyledMypageWrapper,
   StyeldRightSection,
   StyledMypageSection,
-  StyledPurchaseSection,
+  StyledOneBoard,
 } from "../myPage/Mypage.styles";
-
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import mockMypageData, { MockShopData } from "../myPage/MockMypageData";
 import apiClient from "../token/AxiosConfig";
 
@@ -24,6 +24,7 @@ import {
   Typography,
 } from "@mui/material";
 import MypageSideBar from "../myPage/MyPageSideBar";
+import PurchaseHistory from "../myPage/ShopPurchase";
 
 const Mypage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -38,6 +39,7 @@ const Mypage = () => {
   const [name, setName] = useState("");
   const [nickname, setNickname] = useState("");
   const [address, setAddress] = useState("");
+  const [shopDatas, setShopDatas] = useState([]) || {};
 
   const editUser = () => {
     return (
@@ -104,66 +106,14 @@ const Mypage = () => {
     setIsDialogOpen(false);
   };
 
-  const [shopData, setShopData] = useState([]);
-
   useEffect(() => {
-    const shopMerchList = async () => {
-      try {
-        const response = await apiClient.get("shop/findOrderList", {
-          params: { page: 1, size: 5 }, // 페이지 사이즈는 5로 너무 길지 않게
-        });
-        const memberMerchList = response.data || [];
-        setMemberMerchList(memberMerchList);
-      } catch (error) {
-        // console.error("구매리스트 받아오기 실패:", error);
-      }
-    };
-
-    shopMerchList(); // 비동기 함수 호출
-  }, []);
-
-  useEffect(() => {
-    const apiShopData = async () => {
+    const apiShopDatas = () => {
       const response = MockShopData;
-      console.log(response.data);
-      setShopData(response.data);
+
+      setShopDatas(response.data);
     };
 
-    apiShopData();
-    console.log(shopData);
-  }, [shopData]);
-
-  useEffect(() => {
-    const askBoardList = async () => {
-      try {
-        const response = await apiClient.get("board/findAllAskMyPage", {
-          params: { page: 1, size: 5 }, // 페이지 사이즈는 5로 너무 길지 않게
-        });
-
-        const oneOnOneboardList = response.data || [];
-        setoneOnOneboardList(oneOnOneboardList.slice(0, 5));
-      } catch (error) {
-        // console.error("문의내역 받아오기 실패:", error);
-      }
-    };
-
-    askBoardList(); // 비동기 함수 호출
-  }, []);
-
-  useEffect(() => {
-    const dogFund = async () => {
-      try {
-        const response = await apiClient.get("dog/fundListMyPage");
-
-        const dogList = response.data.dogList || [];
-        setDogList(dogList.slice(0, 5));
-        console.log(dogList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
-      } catch (error) {
-        console.error("펀딩내역 받아오기 실패:", error);
-      }
-    };
-
-    dogFund(); // 비동기 함수 호출
+    apiShopDatas();
   }, []);
 
   const handleMypage = (e) => {
@@ -171,38 +121,16 @@ const Mypage = () => {
     // 조건이 눌렸을 경우 개인정보 수정 창이 떠야한다.
   };
 
-  const PurchaseHistory = () => {
-    return (
-      <Card sx={{ display: "block", borderRadius: ".5rem" }}>
-        <StyledPurchaseSection>
-          {/* left-section */}
-
-          <div className="left-section flex">
-            <h2 className="status">배송상태</h2>
-            <img
-              src="https://cdn.univ20.com/wp-content/uploads/2016/03/06df40100dc3614b1f183f7a1b4e41c1-17.png"
-              className="thumbnail"
-              alt="품목"
-            />
-            <div className="product-section align-center">
-              <p className="productTitle">이름.</p>
-              <span className="productPrice">가격</span>
-              <span className="quntity">개수</span>
-            </div>
-            <button className="btn_detailed">상세정보</button>
-          </div>
-        </StyledPurchaseSection>
-      </Card>
-    );
-  };
-
   return (
     <>
       <div className="container flex justify-center">
         <StyledMypageWrapper className="flex flex-row">
+          {/* sidebar */}
           <MypageSideBar />
+          {/* MainContent */}
           <StyeldRightSection className="right-section flex flex-column  w-full    ">
             <>
+              <h4 className="text-left p-0 m-0">프로필</h4>
               <StyledMypageSection className="w-full">
                 <Card sx={{ display: "flex", borderRadius: ".5rem" }}>
                   {/* Left Section */}
@@ -257,96 +185,29 @@ const Mypage = () => {
             </>
 
             <h4 className="text-left p-0 m-0">구매내역</h4>
-            <PurchaseHistory />
+            {shopDatas.slice(0, 3).map((shopData) => (
+              <PurchaseHistory key={shopData.id} shopData={shopData} />
+            ))}
 
-            <div className="section-mypage flex w-full flex-column">
-              <h2 className="text-left p-2">취소/반품/환불내역</h2>
-              <table>
-                <thead>
-                  <tr>
-                    <th>상품 ID</th>
-                    <th>상품명</th>
-                    <th>카테고리</th>
-                    <th>가격</th>
-                    <th>주문상태</th>
-                    <th>장바구니 담기</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {mockMypageData.returnItems.map((item) => (
-                    <tr key={item.shopId}>
-                      <td>{item.shopId}</td>
-                      <td>{item.name}</td>
-                      <td>{item.category}</td>
-                      <td>{item.price} 원</td>
-                      <td>{item.status}</td>
-                      <td>
-                        <button onClick={() => alert("장바구니에 담겼습니다.")}>
-                          장바구니 담기
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <StyledOneBoard className="btn_section">
+              <h4 className="text-left p-0 m-0">1:1문의내역</h4>{" "}
+              <div className="section-oneBoard flex flex-row justify-between">
+                <span className="left-oneBoard flex flex-row w-half ">
+                  <LockOutlinedIcon />
+                  1대1문의 내역입니다.
+                </span>
 
-            <div className="section-mypage flex w-full flex-column">
-              <h2 className="text-left p-2">1:1문의내역</h2>
-              <table>
-                <thead>
-                  <tr>
-                    <th>글번호</th>
-                    <th>문의글 제목</th>
-                    <th>작성일</th>
-                    <th>작성자</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {oneOnOneboardList.map((boardDTO) => (
-                    <tr key={boardDTO.boardId}>
-                      <td>{boardDTO.boardId}</td>
-                      <td>{boardDTO.title}</td>
-                      <td>{boardDTO.regDate}</td>
-                      <td>{boardDTO.memberId}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="section-mypage flex w-full flex-column">
-              <h2 className="text-left p-2">펀딩내역</h2>
-              <table>
-                <thead style={{ borderBottom: "1px solid lightOrange" }}>
-                  <tr>
-                    <th>펀딩 번호</th>
-                    <th>유기견 번호</th>
-                    {/* <th>펀딩 금액</th> */}
-                  </tr>
-                </thead>
-                <tbody>
-                  {/* {mockMypageData.fundingItems.map((fundDTO) => (
-                  <tr key={fundDTO.fundId}>
-                    <td>{fundDTO.fundId}</td>
-                    <td>{fundDTO.dogId}</td>
-                    <td>{fundDTO.amount} 원</td>
-                  </tr>
-                ))} */}
-                  {dogList.map((fundDTO) => (
-                    <tr key={fundDTO.fundId}>
-                      <td>{fundDTO.fundId}</td>
-                      <td>{fundDTO.dogId}</td>
-                    </tr>
-                  ))}
-                  {/* {fund.map((fundDTO) => (
-                              <tr key={fundDTO.fundId}>
-                                <td>{fundDTO.fundId}</td>
-                                <td>{fundDTO.dogId}</td>
-                              </tr>
-                              ))} */}
-                </tbody>
-              </table>
-            </div>
+                <span>regData</span>
+                <span>몇 일전 </span>
+                <button className="btn_show">보러가기</button>
+              </div>
+            </StyledOneBoard>
+            <styledFundHistory>
+              <h4 className="text-left p-0 m-0">펀딩내역</h4>
+              <div className="section-fund flex w-full flex-column">
+                <span></span>
+              </div>
+            </styledFundHistory>
           </StyeldRightSection>
         </StyledMypageWrapper>
       </div>

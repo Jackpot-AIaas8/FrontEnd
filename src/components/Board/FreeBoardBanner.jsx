@@ -1,6 +1,6 @@
 import React from "react";
 import Banner1 from "../../static/Banner1mod.png";
-import "../../config/Utility.css";
+
 import "./css/FreeBoardBanner.css";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +12,7 @@ const FreeBoardBanner = () => {
       <Button
         className="oneOnOneButton relative"
         variant="text"
-        style={{ color: '#ff7600' }}
+        style={{ color: "#ff7600" }}
         onClick={() => {
           navigate("/oneOnOneBoard");
         }}
@@ -20,7 +20,11 @@ const FreeBoardBanner = () => {
         1:1 문의 게시판으로 가기 →
       </Button>
       <div className="banner-container relative banner-margin-0">
-        <img src={Banner1} alt="자유게시판 배너 이미지" className="banner-img"/>
+        <img
+          src={Banner1}
+          alt="자유게시판 배너 이미지"
+          className="banner-img"
+        />
       </div>
     </div>
   );
