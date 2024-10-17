@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import apiClient from "../../token/AxiosConfig";
+import { AuthContext } from "../../token/AuthContext";
 
 const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 const customerKey = "e6Bp3EiNGF0nTmXJ05nvg";
@@ -15,27 +16,28 @@ function CheckoutPage() {
   console.log("CheckoutPage received state:", location.state);
 
   const {
-    productName: name = "",
+    name: productName = "",
+    productPrice = 0,
     quantity = 1,
     totalPrice = 50000,
 
     shopId = "",
   } = location.state || {};
-  console.log("CheckoutPage received shopId:", shopId);
 
+  const name = productName;
 
   const amount = totalPrice + 3000; // 배송비 포함 금액
 
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState(null);
+
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [user, setUser] = useState({});
 
-  // 사용자 정보 불러오기
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await apiClient.get("/member/myPage");
+        const response = await apiClient.get("member/myPage");
         setUser(response.data);
         console.log("Fetched User Info:", response.data); // 확인용 로그 추가
       } catch (error) {
@@ -82,8 +84,9 @@ function CheckoutPage() {
   }, [widgets, amount]);
 
   const handlePayment = async () => {
-    const paymentAmount = parseInt(amount, 10);
-    const orderId = `order_${Date.now()}`;
+    const paymentAmount = parseInt(amount, 10); // 숫자로 변환
+    const orderId = `order_${Date.now()}`; // 고유한 orderId 생성
+    console.log("Amount:", paymentAmount); // 디버깅 로그 추가
 
     if (!ready) {
       alert("결제 준비가 완료되지 않았습니다.");
@@ -95,19 +98,17 @@ function CheckoutPage() {
       console.log("Order ID:", orderId);
       console.log("shopId:", shopId);
       console.log("Order Name:", name);
-      console.log("Amount:", paymentAmount);
-      console.log("Member ID:", user.memberID);
+      console.log("Amount:", paymentAmount); // 숫자로 변환된 금액 확인
       console.log("Customer Email:", user.email);
       console.log("Customer Name:", user.name);
       console.log("Customer Phone:", user.phone);
       console.log("Sending amount to Toss Payments:", paymentAmount);
 
-
       // 결제 요청 처리
       await widgets.requestPayment({
         orderId: orderId,
         orderName: name,
-        orderName: items.map((item) => item.productName).join(", "),
+
         successUrl: `${window.location.origin}/success`,
         failUrl: `${window.location.origin}/fail`,
         customerEmail: user.email,
@@ -124,7 +125,7 @@ function CheckoutPage() {
 
         orderName: name,
         quantity,
-        memberId: user.memberID, 
+        memberId: user.memberID,
         customerName: user.name,
         customerMobilePhone: user.phone,
         userAddress: user.address,
@@ -140,7 +141,7 @@ function CheckoutPage() {
       await widgets.requestPayment({
         orderId: orderId,
         orderName: name,
-        successUrl: `${window.location.origin}/success?orderId=${orderId}`, 
+        successUrl: `${window.location.origin}/success?orderId=${orderId}`,
         failUrl: `${window.location.origin}/fail`,
         customerEmail: user.email,
         customerName: user.name,
@@ -150,6 +151,7 @@ function CheckoutPage() {
       console.log("결제 요청 완료");
     } catch (error) {
       console.error("결제 요청 중 오류 발생:", error);
+
       alert("결제 요청 중 오류가 발생했습니다. 다시 시도해 주세요.");
     }
   };
@@ -281,8 +283,6 @@ function CheckoutPage() {
     </PageContainer>
   );
 }
-
-export default CheckoutPage;
 
 const PageContainer = styled.div`
   width: 40%;
@@ -421,3 +421,4 @@ const PayButton = styled.button`
   border-radius: 8px;
   cursor: pointer;
 `;
+export default CheckoutPage;

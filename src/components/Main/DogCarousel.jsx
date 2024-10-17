@@ -12,7 +12,7 @@ function DogCarousel() {
   useEffect(() => {
     const dogListAPI = async () => {
       try {
-        const response = await apiNoToken.get("/dog/dogList", {
+        const response = await apiClient.get("dog/dogList", {
           params: {
             page: 1,
             size: 10,
@@ -20,7 +20,6 @@ function DogCarousel() {
           },
         });
         setDogs(response.data.dogList);
-        
       } catch (err) {
         console.error(err);
       }
