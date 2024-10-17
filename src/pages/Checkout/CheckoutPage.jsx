@@ -23,6 +23,8 @@ function CheckoutPage() {
     shopId = "",
   } = location.state || {};
 
+  const name = productName;
+
   const amount = totalPrice + 3000; // 배송비 포함 금액
 
   const [ready, setReady] = useState(false);
@@ -418,3 +420,4 @@ const PayButton = styled.button`
   border-radius: 8px;
   cursor: pointer;
 `;
+export default CheckoutPage;
