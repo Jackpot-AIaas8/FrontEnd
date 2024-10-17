@@ -54,7 +54,7 @@ const Cart = () => {
 
   // 결제 페이지로 상품 정보 및 총 결제 금액 전달
   const handlePurchase = () => {
-    const purchaseItems = cartItems.map((item) => ({
+    const productNames = cartItems.map((item) => ({
       productName: item.shopName,
       productPrice: item.shopPrice,
       quantity: item.quantity,
@@ -63,7 +63,7 @@ const Cart = () => {
 
     navigate("/Checkout", {
       state: {
-        items: purchaseItems, // 구매 상품 리스트 전달
+        name: productNames, // 구매 상품 리스트 전달
         totalAmount: totalPrice + 3000, // 총 결제 금액 (배송비 포함)
       },
     });
