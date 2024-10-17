@@ -10,7 +10,7 @@ const customerKey = "e6Bp3EiNGF0nTmXJ05nvg";
 function CheckoutPage() {
   const location = useLocation();
 
-  const { items = [], totalAmount = 0 } = location.state || {};
+  const { productNames = [], totalAmount = 0 } = location.state || {};
 
   console.log("CheckoutPage received state:", location.state);
 
@@ -100,24 +100,6 @@ function CheckoutPage() {
       console.log("Customer Name:", user.name);
       console.log("Customer Phone:", user.phone);
       console.log("Sending amount to Toss Payments:", paymentAmount);
-      // 결제 성공 시 sessionStorage에 결제 정보 저장
-      const paymentData = {
-        orderId,
-        items,
-        shopId,
-        orderName: name,
-        quantity,
-        memberID: user.memberID,
-        customerName: user.name,
-        customerMobilePhone: user.phone,
-        userAddress: user.address,
-        totalPrice,
-        deliveryFee: 3000,
-        amount: paymentAmount,
-      };
-
-      sessionStorage.setItem("paymentData", JSON.stringify(paymentData));
-      console.log("SuccessPage로 전달할 데이터:", paymentData);
 
       // 결제 요청 처리
       await widgets.requestPayment({
@@ -129,8 +111,30 @@ function CheckoutPage() {
         customerName: user.name,
         customerMobilePhone: user.phone,
       });
-
       console.log("결제 요청 완료");
+
+      // 결제 성공 시 sessionStorage에 결제 정보 저장
+   const paymentData = {
+        orderId,
+        productNames,
+        shopId,
+        // orderName: name,
+        // quantity,
+        orderName: productNames.map((item) => item.productName).join(", "),
+        quantity: productNames.reduce((acc, item) => acc + item.quantity, 0),
+        memberId: user.memberID,
+        customerName: user.name,
+        customerMobilePhone: user.phone,
+        userAddress: user.address,
+        totalPrice: totalAmount - 3000, // 합계가격에서 배송비를 빼야 토탈프라이스임
+        deliveryFee: 3000,
+        amount: paymentAmount,
+      };
+
+      sessionStorage.setItem("paymentData", JSON.stringify(paymentData));
+      console.log("SuccessPage로 전달할 데이터:", paymentData);
+
+
     } catch (error) {
       console.error("결제 요청 중 오류 발생:", error);
 

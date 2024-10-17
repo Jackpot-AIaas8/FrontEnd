@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 
 import {
   StyledMypageWrapper,
@@ -8,10 +7,9 @@ import {
   StyledPurchaseSection,
 } from "../myPage/Mypage.styles";
 
-import { AuthContext } from "../token/AuthContext";
 import mockMypageData, { MockShopData } from "../myPage/MockMypageData";
 import apiClient from "../token/AxiosConfig";
-import { SERVER_URL } from "../config/Constants";
+
 import Grid2 from "@mui/material/Grid2";
 import {
   Avatar,
@@ -106,14 +104,6 @@ const Mypage = () => {
     setIsDialogOpen(false);
   };
 
-  const shopHeaders = [
-    "상품 ID",
-    "상품명",
-    "카테고리",
-    "가격",
-    "리뷰보기",
-    "장바구니 담기",
-  ];
   const [shopData, setShopData] = useState([]);
 
   useEffect(() => {
