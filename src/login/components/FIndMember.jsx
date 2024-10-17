@@ -23,7 +23,7 @@ const initialUserState = {
   name: "",
   email: "",
   code: "",
-  password: "",
+  pwd: "",
   confirmPassword: "",
 };
 
@@ -148,7 +148,8 @@ const FindMember = () => {
 
   const handleVerifyAuthCode = async () => {
     try {
-      await verifyAuthCode(user.email, user.code);
+      console.log(user.name, user.code, user.email);
+      await verifyAuthCode(user.name, user.code, user.email);
       alert("인증이 완료되었습니다.");
       setIsAuthVerified(true);
     } catch (error) {
@@ -157,17 +158,23 @@ const FindMember = () => {
   };
 
   const handleResetPassword = async () => {
-    if (user.password !== user.confirmPassword) {
+    if (user.pwd !== user.confirmPassword) {
       alert("비밀번호가 일치하지 않습니다.");
       return;
     }
+
     try {
-      await resetPassword(user.email, user.password);
-      alert("비밀번호가 성공적으로 변경되었습니다.");
-      navigate("/signIn");
-      closeDialog();
+      const result = await resetPassword(user.email, user.pwd);
+
+      if (result.success) {
+        alert(result.message); // 성공 메시지
+        navigate("/signIn");
+        closeDialog();
+      } else {
+        alert(result.message); // 실패 메시지
+      }
     } catch (error) {
-      alert(error.message);
+      alert(error.message); // 네트워크 오류 또는 예외 처리
     }
   };
 
@@ -244,6 +251,14 @@ const FindMember = () => {
             <>
               <TextField
                 margin="dense"
+                label="이름"
+                name="name"
+                value={user.name}
+                onChange={handleChange}
+                fullWidth
+              />
+              <TextField
+                margin="dense"
                 label="이메일"
                 name="email"
                 type="email"
@@ -291,9 +306,9 @@ const FindMember = () => {
                   <TextField
                     margin="dense"
                     label="새 비밀번호"
-                    name="password"
+                    name="pwd"
                     type="password"
-                    value={user.password}
+                    value={user.pwd}
                     onChange={handleChange}
                     fullWidth
                   />

@@ -96,7 +96,7 @@ export default function NavBar() {
           }}
         />
         <Box
-          className="btn_section align-center flex flex-row"
+          className=" align-center flex flex-row"
           sx={{
             justifyContent: "flex-end",
           }}

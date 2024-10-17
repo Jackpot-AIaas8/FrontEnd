@@ -15,11 +15,9 @@ const ProductInfo = ({ productId }) => {
   // 상품 정보 가져오기
   const fetchProduct = async () => {
     try {
-
-      const response = await axios.get(`http://localhost:8181/shop/findOne/${productId}`);
-      console.log("Fetched Product Data:", response.data); //
-
-
+      const response = await axios.get(
+        `http://localhost:8181/shop/findOne/${productId}`
+      );
       setProduct(response.data);
       console.log(product);
     } catch (error) {
@@ -47,28 +45,18 @@ const ProductInfo = ({ productId }) => {
 
   const totalPrice = quantity * product.price;
 
-
-// 결제 페이지로 상품 정보만 전달
-const handlePurchase = () => {
-  console.log("Navigating to CheckoutPage with state:", {
-    shopId: product.shopId,
-    productName: product.name,
-    productPrice: product.price,
-    totalPrice: totalPrice,
-    quantity: quantity,
-  });
-
-  navigate("/Checkout", {
-    state: {
-      shopId: product.shopId,
-      productName: product.name,
-      productPrice: product.price,
-      totalPrice: totalPrice,
-      quantity: quantity,
-    },
-  });
-};
-
+  // 결제 페이지로 상품 정보만 전달
+  const handlePurchase = () => {
+    navigate("/Checkout", {
+      state: {
+        shopId: product.shopId,
+        name: product.name,
+        productPrice: product.price,
+        totalPrice: totalPrice,
+        quantity: quantity,
+      },
+    });
+  };
 
   return (
     <TopSection className="flex flex-row justify-between">
