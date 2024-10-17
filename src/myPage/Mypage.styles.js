@@ -177,4 +177,4 @@ export const StyledOneBoard = styled.div`
   }
 `;
 
-export const styledFundHistory = styled.div``;
+export const StyledFundHistory = styled.div``;

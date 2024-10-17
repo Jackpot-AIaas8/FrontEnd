@@ -12,7 +12,7 @@ import logo from "../../static/newLogoHorizontalOrange.png";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../token/AuthContext";
 import styled from "styled-components";
-import MypagePwModal from "../../myPage/MypagePwModal";
+// import MypagePwModal from "../../myPage/MypagePwModal";
 
 const LogoButton = styled.button`
   background-color: transparent;
@@ -35,7 +35,7 @@ export default function NavBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const { isAuthenticated, logout } = useContext(AuthContext);
   const open = Boolean(anchorEl);
-  const [isPwModalOpen, setIsPwModalOpen] = useState(false);
+  // const [isPwModalOpen, setIsPwModalOpen] = useState(false);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -45,13 +45,13 @@ export default function NavBar() {
     setAnchorEl(null);
   };
 
-  const handleMypageClick = () => {
-    setIsPwModalOpen(true);
-  };
+  // const handleMypageClick = () => {
+  //   setIsPwModalOpen(true);
+  // };
 
-  const handleCloseModal = () => {
-    setIsPwModalOpen(false);
-  };
+  // const handleCloseModal = () => {
+  //   setIsPwModalOpen(false);
+  // };
 
   return (
     <Fragment>
@@ -284,7 +284,7 @@ export default function NavBar() {
       >
         <MenuItem
           onClick={() => {
-            handleMypageClick();
+            // handleMypageClick();
             navigate("/mypage");
             handleClose();
           }}
@@ -307,7 +307,7 @@ export default function NavBar() {
           로그아웃
         </MenuItem>
       </Menu>
-      <MypagePwModal open={isPwModalOpen} onClose={handleCloseModal} />
+      {/* <MypagePwModal open={isPwModalOpen} onClose={handleCloseModal} /> */}
     </Fragment>
   );
 }
