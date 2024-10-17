@@ -11,7 +11,7 @@ const customerKey = "e6Bp3EiNGF0nTmXJ05nvg";
 function CheckoutPage() {
   const location = useLocation();
 
-  const { items = [], totalAmount = 0 } = location.state || {};
+  const { productNames = [], totalAmount = 0 } = location.state || {};
 
   console.log("CheckoutPage received state:", location.state);
 
@@ -30,7 +30,7 @@ function CheckoutPage() {
 
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState(null);
-
+  const [paymentAmount, setPaymentAmount] = useState(totalAmount);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [user, setUser] = useState({});
 
@@ -119,17 +119,17 @@ function CheckoutPage() {
       // 결제 성공 시 sessionStorage에 결제 정보 저장
       const paymentData = {
         orderId,
-        items,
-
+        productNames,
         shopId,
-
-        orderName: name,
-        quantity,
+        // orderName: name,
+        // quantity,
+        orderName: productNames.map((item) => item.productName).join(", "),
+        quantity: productNames.reduce((acc, item) => acc + item.quantity, 0),
         memberId: user.memberID,
         customerName: user.name,
         customerMobilePhone: user.phone,
         userAddress: user.address,
-        totalPrice,
+        totalPrice: totalAmount - 3000, // 합계가격에서 배송비를 빼야 토탈프라이스임
         deliveryFee: 3000,
         amount: paymentAmount,
       };
@@ -228,16 +228,20 @@ function CheckoutPage() {
 
       <Section>
         <SectionTitle>상품 정보</SectionTitle>
-        <ProductInfoBox>
-          <ProductRow>
-            <Label>상품명</Label>
-            <Value>{name || "상품명 불러오기 실패"}</Value>
-          </ProductRow>
-          <ProductRow>
-            <Label>수량</Label>
-            <Value>{quantity || 1}개</Value>
-          </ProductRow>
-        </ProductInfoBox>
+        {productNames.map((item, index) => (
+          <ProductInfoBox key={index}>
+            <ProductRow>
+              <Label>상품명</Label>
+              <Value>
+                {item.productName || name || "상품명 불러오기 실패"}
+              </Value>
+            </ProductRow>
+            <ProductRow>
+              <Label>수량</Label>
+              <Value>{item.quantity || quantity || 1}개</Value>
+            </ProductRow>
+          </ProductInfoBox>
+        ))}{" "}
       </Section>
 
       <Divider />
@@ -248,8 +252,8 @@ function CheckoutPage() {
           <InfoRow>
             <Label>총 상품 가격</Label>
             <Value>
-              {totalPrice
-                ? `${totalPrice.toLocaleString()}원`
+              {totalAmount - 3000
+                ? `${(totalAmount - 3000).toLocaleString()}원`
                 : "가격 정보 없음"}
             </Value>
           </InfoRow>
@@ -260,8 +264,8 @@ function CheckoutPage() {
           <TotalRow>
             <Label>총 결제 금액</Label>
             <Value>
-              {totalPrice
-                ? `${(totalPrice + 3000).toLocaleString()}원`
+              {totalAmount
+                ? `${totalAmount.toLocaleString()}원`
                 : "가격 정보 없음"}
             </Value>
           </TotalRow>
