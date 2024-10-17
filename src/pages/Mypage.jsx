@@ -119,13 +119,13 @@ const Mypage = () => {
   useEffect(() => {
     const shopMerchList = async () => {
       try {
-        const response = await apiClient.get(`${SERVER_URL}shop/findList`, {
+        const response = await apiClient.get("shop/findOrderList", {
           params: { page: 1, size: 5 }, // 페이지 사이즈는 5로 너무 길지 않게
         });
-        const memberMerchList = response.data.dtoList || [];
+        const memberMerchList = response.data || [];
         setMemberMerchList(memberMerchList);
       } catch (error) {
-        console.error("구매리스트 받아오기 실패:", error);
+        // console.error("구매리스트 받아오기 실패:", error);
       }
     };
 
@@ -146,17 +146,14 @@ const Mypage = () => {
   useEffect(() => {
     const askBoardList = async () => {
       try {
-        const response = await apiClient.get(
-          `${SERVER_URL}board/findAllAskMyPage`,
-          {
-            params: { page: 1, size: 5 }, // 페이지 사이즈는 5로 너무 길지 않게
-          }
-        );
+        const response = await apiClient.get("board/findAllAskMyPage", {
+          params: { page: 1, size: 5 }, // 페이지 사이즈는 5로 너무 길지 않게
+        });
 
         const oneOnOneboardList = response.data || [];
         setoneOnOneboardList(oneOnOneboardList.slice(0, 5));
       } catch (error) {
-        console.error("문의내역 받아오기 실패:", error);
+        // console.error("문의내역 받아오기 실패:", error);
       }
     };
 
@@ -166,10 +163,7 @@ const Mypage = () => {
   useEffect(() => {
     const dogFund = async () => {
       try {
-        const response = await apiClient.get(
-          `${SERVER_URL}dog/fundListMyPage`,
-          {}
-        );
+        const response = await apiClient.get("dog/fundListMyPage");
 
         const dogList = response.data.dogList || [];
         setDogList(dogList.slice(0, 5));
@@ -337,15 +331,21 @@ const Mypage = () => {
                   <tr>
                     <th>펀딩 번호</th>
                     <th>유기견 번호</th>
-                    <th>펀딩 금액</th>
+                    {/* <th>펀딩 금액</th> */}
                   </tr>
                 </thead>
                 <tbody>
-                  {mockMypageData.fundingItems.map((fundDTO) => (
+                  {/* {mockMypageData.fundingItems.map((fundDTO) => (
+                  <tr key={fundDTO.fundId}>
+                    <td>{fundDTO.fundId}</td>
+                    <td>{fundDTO.dogId}</td>
+                    <td>{fundDTO.amount} 원</td>
+                  </tr>
+                ))} */}
+                  {dogList.map((fundDTO) => (
                     <tr key={fundDTO.fundId}>
                       <td>{fundDTO.fundId}</td>
                       <td>{fundDTO.dogId}</td>
-                      <td>{fundDTO.amount} 원</td>
                     </tr>
                   ))}
                   {/* {fund.map((fundDTO) => (

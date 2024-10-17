@@ -141,9 +141,6 @@ const Card = ({ category, searchResults }) => {
           </div>
         ))}
       </div>
-      
-      
-      
     </StyledWrapper>
   );
 };
@@ -153,11 +150,12 @@ const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1600px;
+  height: 90%;
+  max-width: 1200px;
   margin: 0 auto;
   box-sizing: border-box;
-  justify-content: center; /* 수정 부분 */
-  
+  justify-content: center;
+  align-items: center;
 
   .controls {
     display: flex;
@@ -178,9 +176,9 @@ const StyledWrapper = styled.div`
   .products-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 50px;
+    gap: 45px;
     width: 300px;
-
+    max-width: 1200px;
 
     @media (max-width: 1200px) {
       grid-template-columns: repeat(3, 1fr);
@@ -201,8 +199,9 @@ const StyledWrapper = styled.div`
     background-color: #f9f9f9;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 300px;
-    height: 400px;
+    width: 266px;
+    height: 355px;
+    align-items: center;
     transition: transform 0.2s;
     cursor: pointer;
   }
@@ -244,16 +243,14 @@ const StyledWrapper = styled.div`
     color: #333;
   }
 
-.pagination {
-  display: flex;
-  justify-content: center;  /* 버튼들을 중앙에 배치 */
-  align-items: center;
-  gap: 10px;
-  margin-top: 20px;
-  width: 100%;  /* pagination 너비를 100%로 설정 */
-}
-
-
+  .pagination {
+    display: flex;
+    justify-content: center; /* 버튼들을 중앙에 배치 */
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    width: 100%; /* pagination 너비를 100%로 설정 */
+  }
 
   .pagination button {
     padding: 5px 10px;

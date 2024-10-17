@@ -1,4 +1,4 @@
-.board-table {
+.board-table-reg {
   border-collapse: collapse;
   width: 1200px;
   height: 300px; /* 높이를 고정하여 정사각형 형태 유지 */
@@ -6,27 +6,32 @@
   border: 1px solid #ccc; /* 테이블 전체에 보더 추가 */
 }
 
-.board-table thead td {
+.board-table-reg thead td {
   border-top: 1px solid #ccc;
-  border-left: none; /* 좌측 경계선 제거 */
-  border-right: none; /* 우측 경계선 제거 */
-  border-bottom: none; /* 아래 경계선 제거 */
+  border-left: none; 
+  border-right: none; 
+  border-bottom: none;
   background-color: #ffffff;
   padding: 5px; /* 패딩을 줄여서 왼쪽 끝에 가깝게 설정 */
 }
 
-.board-table tbody {
+.board-table-reg tbody {
   padding: 10px;
   height: 100%; /* tbody가 부모 요소의 높이를 차지하게 설정 */
 }
 
-.board-table tbody td {
+.board-table-reg tbody tr:first-child {
+  border-top: 2px solid #ff7600;
+}
+
+
+.board-table-reg tbody td {
   border: 1px solid #ccc; /* 각 셀에 보더 추가 */
   padding: 10px; /* 셀 내부 여백 */
 }
 
 /* 호버 시 배경색을 흰색으로 변경 */
-.board-table tbody td:hover {
+.board-table-reg tbody td:hover {
   background-color: white; /* 호버 시 배경색 흰색 */
 }
 
@@ -49,14 +54,14 @@
 }
 
 .save-button {
-  background-color: white;
-  color: #ff7600;
+  background-color: #ff7600 !important; 
+  color: #ffffff !important;
   transition: background-color 0.3s, color 0.3s;
 }
 
 .save-button:hover {
-  background-color: #ff7600;
-  color: white;
+  background-color: #ffffff !important;
+  color: #ff7600 !important;
 }
 
 input, textarea {

@@ -19,6 +19,7 @@ const ProductInfo = ({ productId }) => {
         `http://localhost:8181/shop/findOne/${productId}`
       );
       setProduct(response.data);
+      console.log(product);
     } catch (error) {
       console.error("상품 정보를 불러오는 중 오류 발생:", error);
     }
@@ -48,6 +49,7 @@ const ProductInfo = ({ productId }) => {
   const handlePurchase = () => {
     navigate("/Checkout", {
       state: {
+        shopId: product.shopId,
         name: product.name,
         productPrice: product.price,
         totalPrice: totalPrice,
@@ -127,6 +129,8 @@ const ProductInfo = ({ productId }) => {
   );
 };
 
+export default ProductInfo;
+
 // 스타일 정의
 const TopSection = styled.div`
   display: flex;
@@ -162,5 +166,3 @@ const ButtonSection = styled.div`
   display: flex;
   gap: 16px;
 `;
-
-export default ProductInfo;

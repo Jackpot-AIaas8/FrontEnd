@@ -1,236 +1,220 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import styled from "styled-components";
-import { useSearchParams } from "react-router-dom";
+import apiClient from "../../token/AxiosConfig";
 
-function SuccessPage() {
+export function SuccessPage() {
   const [searchParams] = useSearchParams();
+  const [paymentInfo, setPaymentInfo] = useState(null);
+  const navigate = useNavigate();
+  const [isConfirming, setIsConfirming] = useState(true);
 
-  const orderId = searchParams.get("orderId");
-  const amount = searchParams.get("amount");
-  const paymentKey = searchParams.get("paymentKey");
+  const paymentData = JSON.parse(sessionStorage.getItem("paymentData")) || {};
+
+  const {
+    memberId,
+    customerName = "",
+    customerMobilePhone = "",
+    userAddress = "",
+    totalPrice = 0,
+    deliveryFee = 3000,
+    orderId,
+    shopId = "" , 
+  } = paymentData;
+
+  useEffect(() => {
+    if (!orderId) {
+      navigate(`/fail?message=결제 정보가 유실되었습니다.`);
+      return;
+    }
+
+    const requestData = {
+      orderId: searchParams.get("orderId") || orderId,
+      amount: searchParams.get("amount"),
+      paymentKey: searchParams.get("paymentKey"),
+      shopId: shopId,
+      memberId: memberId, 
+      name: customerName,
+      phone: customerMobilePhone,
+      address: userAddress,
+      products: [{ shopName: "example shop", productPrice: 5000, quantity: 1 }] // 리스트로 보내기
+    };
+
+    async function confirm() {
+      try {
+        const response = await apiClient.post("http://localhost:8181/api/confirm", requestData, {
+          headers: {
+            Authorization: "Basic " + btoa("test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6:"), // 시크릿 키를 인코딩하여 포함
+            "Content-Type": "application/json"
+          }
+        });
+
+        if (response.status !== 200) {
+          navigate(`/fail?message=${response.data.message}&code=${response.data.code}`);
+          return;
+        }
+
+        setPaymentInfo(response.data);
+        setIsConfirming(false);
+      } catch (error) {
+        console.error(error);
+        navigate(`/fail?message=결제 확인 중 오류가 발생했습니다.`);
+      }
+    }
+
+    confirm();
+  }, [searchParams, navigate, orderId]);
+
+  if (isConfirming) {
+    return <div>결제 확인 중...</div>;
+  }
+
+  if (!paymentInfo) {
+    return <div>결제 정보를 불러올 수 없습니다.</div>;
+  }
+
+  const {
+    orderName,
+    totalAmount,
+    status,
+  } = paymentInfo;
+
+  const suppliedAmount = totalAmount - deliveryFee;
 
   return (
     <PageContainer>
-      <OrderCompleteBox>
-        <OrderHeader>
-          <Step>01 주문/결제</Step>
-          <StepHighlight>02 주문완료</StepHighlight>
-        </OrderHeader>
-
-        <OrderCompleteHeader>주문완료</OrderCompleteHeader>
-        <OrderMessage>주문이 완료되었습니다. 감사합니다!</OrderMessage>
-
-        {/* 상품 배송 정보 */}
+      <Title>주문완료</Title>
+      <Subtitle>주문이 완료되었습니다. 감사합니다!</Subtitle>
+      <Section>
         <SectionTitle>상품배송 정보</SectionTitle>
-        <DeliveryBox>
-          <DeliveryStatus>
-            <DeliveryText>
-              내일(화) 도착 보장(상품 1개)
-            </DeliveryText>
-          </DeliveryStatus>
-        </DeliveryBox>
-
-        {/* 받는 사람 정보 */}
-        <SectionTitle>받는사람 정보</SectionTitle>
-        <InfoWrapper>
-          <InfoBox>
-            <InfoRow>
-              <Label>받는사람</Label>
-              <Value>박우람 / 010-4826-7085</Value>
-            </InfoRow>
-            <InfoRow>
-              <Label>받는주소</Label>
-              <Value>
-                광주광역시 북구 일동 632 2차 국제미소래아파트 201동 1508호
-              </Value>
-              <ModifyLink>변경하기</ModifyLink>
-            </InfoRow>
-            <InfoRow>
-              <Label>배송요청사항</Label>
-              <Value>문 앞 (15*********)</Value>
-              <ModifyLink>변경하기</ModifyLink>
-            </InfoRow>
-          </InfoBox>
-
-          {/* 결제 정보 */}
-          <SectionTitle>결제 정보</SectionTitle> {/* 박스 바깥으로 이동 */}
-          <InfoBox>
-            <InfoRow>
-              <Label>주문금액</Label>
-              <Value>4,890원</Value>
-            </InfoRow>
-            <InfoRow>
-              <Label>배송비</Label>
-              <Value>+0원</Value>
-            </InfoRow>
-            <TotalRow>
-              <Label>총 결제금액</Label>
-              <TotalValue>4,8920원</TotalValue>
-            </TotalRow>
-          </InfoBox>
-        </InfoWrapper>
-
-        {/* 버튼 섹션 */}
-        <ButtonSection>
-          <OrderButton>주문 상세보기</OrderButton>
-          <ContinueShoppingButton>쇼핑 계속하기</ContinueShoppingButton>
-        </ButtonSection>
-      </OrderCompleteBox>
+        <InfoRow>
+          <InfoLabel>내일(화) 도착 보장 (상품 1개)</InfoLabel>
+          <InfoValue>판매자: 쿠팡</InfoValue>
+        </InfoRow>
+      </Section>
+      <InfoContainer>
+        <LeftColumn>
+          <SectionTitle>받는사람 정보</SectionTitle>
+          <InfoRow>
+            <InfoLabel>받는사람</InfoLabel>
+            <InfoValue>{customerName} / {customerMobilePhone}</InfoValue>
+          </InfoRow>
+          <InfoRow>
+            <InfoLabel>받는주소</InfoLabel>
+            <InfoValue>{userAddress}</InfoValue>
+          </InfoRow>
+        </LeftColumn>
+        <RightColumn>
+          <SectionTitle>결제 정보</SectionTitle>
+          <InfoRow>
+            <InfoLabel>주문금액</InfoLabel>
+            <InfoValue>{totalPrice.toLocaleString()} 원</InfoValue>
+          </InfoRow>
+          <InfoRow>
+            <InfoLabel>배송비</InfoLabel>
+            <InfoValue>{deliveryFee.toLocaleString()} 원</InfoValue>
+          </InfoRow>
+          <TotalRow>
+            <TotalLabel>총 결제금액</TotalLabel>
+            <TotalValue>{totalAmount.toLocaleString()} 원</TotalValue>
+          </TotalRow>
+        </RightColumn>
+      </InfoContainer>
+      <ButtonContainer>
+        <Button>주문 상세보기</Button>
+        <Button primary={true}>쇼핑 계속하기</Button>
+      </ButtonContainer>
     </PageContainer>
   );
 }
 
+// 스타일 정의는 생략
 export default SuccessPage;
 
 // 스타일 정의
 const PageContainer = styled.div`
-  margin-top: 150px;
-  display: flex;
-  flex-direction: column;
-  min-height: 80vh;
-`;
-
-const OrderCompleteBox = styled.div`
-  width: 60%; /* 중앙에 배치하기 위해 너비를 60%로 설정 */
-  margin: 20px auto;
-  border: 1px solid #ddd;
-  border-radius: 8px;
   padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
   background-color: #f9f9f9;
+  margin-top: 100px;
 `;
 
-const OrderHeader = styled.div`
-  display: flex;
-  justify-content: flex-end;
+const Title = styled.h1`
+  font-size: 28px;
+  margin-bottom: 10px;
+`;
+
+const Subtitle = styled.p`
+  font-size: 18px;
+  color: #666;
   margin-bottom: 20px;
 `;
 
-const Step = styled.span`
-  color: #888;
-  margin-right: 20px;
+const Section = styled.div`
+  margin-bottom: 20px;
 `;
 
-const StepHighlight = styled.span`
-  color: #000;
-  font-weight: bold;
-`;
-
-const OrderCompleteHeader = styled.h2`
-  text-align: left;
-  font-size: 24px;
+const SectionTitle = styled.h2`
+  font-size: 20px;
   border-bottom: 1px solid #ddd;
   padding-bottom: 10px;
-  margin-bottom: 20px;
-`;
-
-const OrderMessage = styled.p`
-  text-align: center;
-  font-size: 18px;
-  margin: 20px 0;
-  font-weight: bold;
-
-`;
-
-const SectionTitle = styled.h3`
-  text-align: left;
-  font-size: 20px;
-  margin-bottom: 10px;
-  margin-top: 20px; /* 각 섹션 타이틀이 상단에 떨어지게 여백 추가 */
-`;
-
-const DeliveryBox = styled.div`
-  border: 1px solid #ddd;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  background-color: white;
-`;
-
-const DeliveryStatus = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const DeliveryText = styled.p`
-  font-size: 18px;
-  margin: 0;
-  span {
-    color: #888;
-    font-size: 16px;
-    margin-left: 10px;
-  }
-`;
-
-const InfoWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 20px;
-`;
-
-const InfoBox = styled.div`
-  width: 48%; /* 두 박스를 동일한 크기로 설정 */
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 20px;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 `;
 
 const InfoRow = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
-  word-wrap: break-word; /* 긴 텍스트가 줄바꿈되도록 설정 */
-  word-break: break-all;
+  padding: 10px 0;
 `;
 
-const Label = styled.span`
+const InfoLabel = styled.span`
   font-weight: bold;
 `;
 
-const Value = styled.span`
-  max-width: 60%; /* 긴 주소에 대한 줄바꿈 처리 */
-  word-wrap: break-word;
+const InfoValue = styled.span`
+  color: #333;
 `;
 
-const ModifyLink = styled.a`
-  color: #007bff;
-  cursor: pointer;
+const InfoContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+`;
+
+const LeftColumn = styled.div`
+  width: 48%;
+`;
+
+const RightColumn = styled.div`
+  width: 48%;
 `;
 
 const TotalRow = styled(InfoRow)`
   font-size: 18px;
   font-weight: bold;
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+`;
+
+const TotalLabel = styled.span`
+  font-weight: bold;
 `;
 
 const TotalValue = styled.span`
-  color: red;
+  color: #f00;
 `;
 
-const ButtonSection = styled.div`
+const ButtonContainer = styled.div`
   display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 20px;
+  justify-content: space-between;
+  margin-top: 30px;
 `;
 
-const OrderButton = styled.button`
+const Button = styled.button`
   padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
-`;
-
-const ContinueShoppingButton = styled.button`
-  padding: 10px 20px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 5px;
+  background-color: ${({ primary }) => (primary ? '#0066cc' : '#ddd')};
+  color: ${({ primary }) => (primary ? '#fff' : '#333')};
+  font-size: 16px;
   cursor: pointer;
 `;
