@@ -4,7 +4,6 @@ import Banner1 from "../components/Board/FreeBoardBanner";
 import BoardSearchBox from "../components/Board/BoardSearchBox";
 import BoardList from "../components/Board/FreeBoardList";
 import MoveBoardRegisterButton from "../components/Board/MoveBoardRegisterButton";
-
 import "../components/Board/css/FreeBoardBanner.css";
 
 function FreeBoardPage() {

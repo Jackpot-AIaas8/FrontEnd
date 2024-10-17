@@ -1,6 +1,5 @@
 import React from "react";
 import Banner1 from "../../static/Banner1mod.png";
-
 import "./css/FreeBoardBanner.css";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
