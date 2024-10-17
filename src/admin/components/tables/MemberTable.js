@@ -90,7 +90,7 @@ const MemberTables = () => {
                   <td>{member.nickName}</td>
                   <td>{member.address}</td>
                   <td>{member.phone}</td>
-                  <td>{member.isAdmin === 1 ? "관리자" : "회원"}</td>
+                  <td>{member.grade === 1 ? "관리자" : "회원"}</td>
                   <td>
                     <button
                       onClick={() =>

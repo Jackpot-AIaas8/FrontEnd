@@ -1,9 +1,8 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import apiClient from "../../token/AxiosConfig";
-import { AuthContext } from "../../token/AuthContext";
 
 const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 const customerKey = "e6Bp3EiNGF0nTmXJ05nvg";
@@ -17,7 +16,6 @@ function CheckoutPage() {
 
   const {
     name: productName = "",
-    productPrice = 0,
     quantity = 1,
     totalPrice = 50000,
 
@@ -30,14 +28,14 @@ function CheckoutPage() {
 
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState(null);
-  const [paymentAmount, setPaymentAmount] = useState(totalAmount);
+
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [user, setUser] = useState({});
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await apiClient.get("member/myPage");
+        const response = await apiClient.get("/member/myPage");
         setUser(response.data);
         console.log("Fetched User Info:", response.data); // 확인용 로그 추가
       } catch (error) {
@@ -84,10 +82,9 @@ function CheckoutPage() {
   }, [widgets, amount]);
 
   const handlePayment = async () => {
-    const paymentAmount = parseInt(amount, 10); // 숫자로 변환
-    const orderId = `order_${Date.now()}`; // 고유한 orderId 생성
-    console.log("Amount:", paymentAmount); // 디버깅 로그 추가
-
+    const paymentAmount = parseInt(amount, 10);
+    const orderId = `order_${Date.now()}`; 
+    console.log("Amount:", paymentAmount); 
     if (!ready) {
       alert("결제 준비가 완료되지 않았습니다.");
       return;
@@ -98,7 +95,7 @@ function CheckoutPage() {
       console.log("Order ID:", orderId);
       console.log("shopId:", shopId);
       console.log("Order Name:", name);
-      console.log("Amount:", paymentAmount); // 숫자로 변환된 금액 확인
+      console.log("Amount:", paymentAmount); 
       console.log("Customer Email:", user.email);
       console.log("Customer Name:", user.name);
       console.log("Customer Phone:", user.phone);
@@ -108,16 +105,16 @@ function CheckoutPage() {
       await widgets.requestPayment({
         orderId: orderId,
         orderName: name,
-
-        successUrl: `${window.location.origin}/success`,
+        successUrl: `${window.location.origin}/success?orderId=${orderId}`,
         failUrl: `${window.location.origin}/fail`,
         customerEmail: user.email,
         customerName: user.name,
         customerMobilePhone: user.phone,
       });
+      console.log("결제 요청 완료");
 
       // 결제 성공 시 sessionStorage에 결제 정보 저장
-      const paymentData = {
+   const paymentData = {
         orderId,
         productNames,
         shopId,
@@ -137,18 +134,7 @@ function CheckoutPage() {
       sessionStorage.setItem("paymentData", JSON.stringify(paymentData));
       console.log("SuccessPage로 전달할 데이터:", paymentData);
 
-      // 결제 요청 처리
-      await widgets.requestPayment({
-        orderId: orderId,
-        orderName: name,
-        successUrl: `${window.location.origin}/success?orderId=${orderId}`,
-        failUrl: `${window.location.origin}/fail`,
-        customerEmail: user.email,
-        customerName: user.name,
-        customerMobilePhone: user.phone,
-      });
 
-      console.log("결제 요청 완료");
     } catch (error) {
       console.error("결제 요청 중 오류 발생:", error);
 
@@ -228,20 +214,16 @@ function CheckoutPage() {
 
       <Section>
         <SectionTitle>상품 정보</SectionTitle>
-        {productNames.map((item, index) => (
-          <ProductInfoBox key={index}>
-            <ProductRow>
-              <Label>상품명</Label>
-              <Value>
-                {item.productName || name || "상품명 불러오기 실패"}
-              </Value>
-            </ProductRow>
-            <ProductRow>
-              <Label>수량</Label>
-              <Value>{item.quantity || quantity || 1}개</Value>
-            </ProductRow>
-          </ProductInfoBox>
-        ))}{" "}
+        <ProductInfoBox>
+          <ProductRow>
+            <Label>상품명</Label>
+            <Value>{name || "상품명 불러오기 실패"}</Value>
+          </ProductRow>
+          <ProductRow>
+            <Label>수량</Label>
+            <Value>{quantity || 1}개</Value>
+          </ProductRow>
+        </ProductInfoBox>
       </Section>
 
       <Divider />
@@ -252,8 +234,8 @@ function CheckoutPage() {
           <InfoRow>
             <Label>총 상품 가격</Label>
             <Value>
-              {totalAmount - 3000
-                ? `${(totalAmount - 3000).toLocaleString()}원`
+              {totalPrice
+                ? `${totalPrice.toLocaleString()}원`
                 : "가격 정보 없음"}
             </Value>
           </InfoRow>
@@ -264,8 +246,8 @@ function CheckoutPage() {
           <TotalRow>
             <Label>총 결제 금액</Label>
             <Value>
-              {totalAmount
-                ? `${totalAmount.toLocaleString()}원`
+              {totalPrice
+                ? `${(totalPrice + 3000).toLocaleString()}원`
                 : "가격 정보 없음"}
             </Value>
           </TotalRow>
