@@ -3,18 +3,23 @@ import { Typography, Button } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom"; // 라우팅을 위해 useNavigate 사용
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 const ProductInfo = ({ productId }) => {
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState(null);
-  const navigate = useNavigate(); // useNavigate 훅 사용
+  const navigate = useNavigate();
+  const location = useLocation(); // useLocation을 사용하여 현재 위치 정보를 가져옵니다.
 
+  // 상품 정보 가져오기
   const fetchProduct = async () => {
     try {
-      const response = await axios.get(`http://localhost:8181/shop/findOne/${productId}`);
+      const response = await axios.get(
+        `http://localhost:8181/shop/findOne/${productId}`
+      );
       setProduct(response.data);
+      console.log(product);
     } catch (error) {
       console.error("상품 정보를 불러오는 중 오류 발생:", error);
     }
@@ -40,38 +45,29 @@ const ProductInfo = ({ productId }) => {
 
   const totalPrice = quantity * product.price;
 
+  // 결제 페이지로 상품 정보만 전달
   const handlePurchase = () => {
-    const accessToken = localStorage.getItem("jwtToken");
-    console.log("Access Token:", accessToken); // 토큰 값을 콘솔에 출력하여 확인
-
-    
-    if (accessToken) {
-      // 로그인된 경우 결제 페이지로 이동
-      navigate("/checkout", {
-        state: {
-          name: product.name,
-          price: product.price,
-          totalPrice: totalPrice,
-        },
-      });
-    } else {
-      // 로그인되지 않은 경우 로그인 페이지로 이동
-      alert("로그인이 필요합니다.");
-      navigate("/SignIn?redirect=/checkout", {
-        state: {
-          name: product.name,
-          price: product.price,
-          totalPrice: totalPrice,
-        },
-      });
-    }
+    navigate("/Checkout", {
+      state: {
+        shopId: product.shopId,
+        name: product.name,
+        productPrice: product.price,
+        totalAmount: totalPrice,
+        quantity: quantity,
+      },
+    });
   };
-  
 
   return (
     <TopSection className="flex flex-row justify-between">
       <LeftSection className="flex flex-column align-start">
-        <img src={product.imageUrl || "https://img.biteme.co.kr/product/750/2308ae4a580a9e017ad5b07084b8cc51.jpg"} alt={product.name} />
+        <img
+          src={
+            product.imageUrl ||
+            "https://img.biteme.co.kr/product/750/2308ae4a580a9e017ad5b07084b8cc51.jpg"
+          }
+          alt={product.name}
+        />
       </LeftSection>
 
       <RightSection className="flex flex-column align-start justify-center">
@@ -79,11 +75,16 @@ const ProductInfo = ({ productId }) => {
           {product.name}
         </Typography>
 
-        <Typography variant="body1" style={{ marginTop: "4px", color: "red", fontSize: "24px" }}>
+        <Typography
+          variant="body1"
+          style={{ marginTop: "4px", color: "red", fontSize: "24px" }}
+        >
           판매가: {product.price.toLocaleString()}원
         </Typography>
 
-        <div style={{ display: "flex", alignItems: "center", marginTop: "16px" }}>
+        <div
+          style={{ display: "flex", alignItems: "center", marginTop: "16px" }}
+        >
           <QuantityContainer>
             <Button onClick={handleDecrement} variant="outlined" size="small">
               -
@@ -107,10 +108,19 @@ const ProductInfo = ({ productId }) => {
         </Typography>
 
         <ButtonSection>
-          <Button variant="contained" sx={{ marginRight: 1 }} startIcon={<FavoriteBorderIcon />}>
+          <Button
+            variant="contained"
+            sx={{ marginRight: 1 }}
+            startIcon={<FavoriteBorderIcon />}
+          >
             장바구니 담기
           </Button>
-          <Button variant="contained" color="primary" startIcon={<ShareIcon />} onClick={handlePurchase}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<ShareIcon />}
+            onClick={handlePurchase}
+          >
             바로구매
           </Button>
         </ButtonSection>
@@ -118,6 +128,8 @@ const ProductInfo = ({ productId }) => {
     </TopSection>
   );
 };
+
+export default ProductInfo;
 
 // 스타일 정의
 const TopSection = styled.div`
@@ -154,5 +166,3 @@ const ButtonSection = styled.div`
   display: flex;
   gap: 16px;
 `;
-
-export default ProductInfo;

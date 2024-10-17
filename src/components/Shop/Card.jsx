@@ -14,20 +14,17 @@ const Card = ({ category, searchResults }) => {
   const [isLoading, setIsLoading] = useState(true);
   const itemsPerPage = 12;
 
+  // URL의 쿼리 파라미터를 읽어와 정렬 순서와 페이지를 설정합니다.
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const sortOrderFromUrl = queryParams.get("sortOrder");
     const pageFromUrl = queryParams.get("page");
 
-    if (sortOrderFromUrl) {
-      setSortOrder(sortOrderFromUrl);
-    }
-
-    if (pageFromUrl) {
-      setCurrentPage(parseInt(pageFromUrl));
-    }
+    if (sortOrderFromUrl) setSortOrder(sortOrderFromUrl);
+    if (pageFromUrl) setCurrentPage(parseInt(pageFromUrl, 10));
   }, [location]);
 
+  // URL 파라미터를 업데이트하여 정렬 순서 및 페이지를 관리합니다.
   const updateUrlParams = (sortOrder, page) => {
     const queryParams = new URLSearchParams();
 
@@ -40,30 +37,24 @@ const Card = ({ category, searchResults }) => {
     });
   };
 
+  // 상품 데이터를 가져옵니다.
   useEffect(() => {
     const fetchProducts = async () => {
       setIsLoading(true);
       try {
-        let response;
-        if (category !== null) {
-          response = await axios.get(
-            `http://localhost:8181/shop/category/${category}`,
-            {
-              params: { page: currentPage, size: itemsPerPage, sortOrder: sortOrder },
-            }
-          );
-        } else {
-          response = await axios.get("http://localhost:8181/shop/findList", {
-            params: { page: currentPage, size: itemsPerPage, sortOrder: sortOrder },
-          });
-        }
+        const endpoint = category
+          ? `http://localhost:8181/shop/category/${category}`
+          : "http://localhost:8181/shop/findList";
 
-        if (Array.isArray(response.data.dtoList)) {
-          setProducts(response.data.dtoList);
-        } else {
-          setProducts([]);
-        }
+        const response = await axios.get(endpoint, {
+          params: {
+            page: currentPage,
+            size: itemsPerPage,
+            sortOrder,
+          },
+        });
 
+        setProducts(response.data.dtoList || []);
         setTotalPages(Math.ceil(response.data.total / itemsPerPage));
       } catch (error) {
         console.error("상품 데이터를 가져오는 중 오류 발생:", error);
@@ -73,24 +64,27 @@ const Card = ({ category, searchResults }) => {
     };
 
     fetchProducts();
-  }, [category, searchResults, currentPage, sortOrder]);
+  }, [category, currentPage, sortOrder]);
 
+  // 페이지 변경 처리
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
     updateUrlParams(sortOrder, newPage);
   };
 
+  // 정렬 순서 변경 처리
   const handleSortChange = (newSortOrder) => {
     setSortOrder(newSortOrder);
     updateUrlParams(newSortOrder, currentPage);
   };
 
+  // 상품 클릭 시 상세 페이지로 이동
   const handleProductClick = (shopId) => {
     navigate(`/shop/${shopId}`);
   };
 
   if (isLoading) {
-    return null;
+    return <StyledWrapper>로딩 중...</StyledWrapper>;
   }
 
   if (products.length === 0) {
@@ -127,56 +121,41 @@ const Card = ({ category, searchResults }) => {
       </div>
 
       <div className="products-container">
-        {products.map((product, index) => (
+        {products.map((product) => (
           <div
             className="card"
-            key={index}
+            key={product.shopId}
             onClick={() => handleProductClick(product.shopId)}
           >
             <div className="image-container">
-              <img src={product.imageUrl || "기본이미지경로"} alt={product.name} />
+              <img
+                src={product.imageUrl || "기본이미지경로"}
+                alt={product.name}
+              />
             </div>
             <div className="card-content">
               <h3>{product.name}</h3>
               <p>{product.detail}</p>
-              <p className="price">{product.price}</p>
+              <p className="price">{product.price.toLocaleString()}원</p>
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="pagination">
-        {currentPage > 1 && (
-          <button onClick={() => handlePageChange(currentPage - 1)}>&lt;</button>
-        )}
-        {[...Array(totalPages)].map((_, index) => {
-          const pageNumber = index + 1;
-          return (
-            <button
-              key={pageNumber}
-              onClick={() => handlePageChange(pageNumber)}
-              className={currentPage === pageNumber ? "active" : ""}
-            >
-              {pageNumber}
-            </button>
-          );
-        })}
-        {currentPage < totalPages && (
-          <button onClick={() => handlePageChange(currentPage + 1)}>&gt;</button>
-        )}
       </div>
     </StyledWrapper>
   );
 };
 
+// 스타일 정의는 그대로 유지합니다.
 const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1600px;
+  height: 90%;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
   box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
 
   .controls {
     display: flex;
@@ -197,14 +176,16 @@ const StyledWrapper = styled.div`
   .products-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 50px;
+    gap: 45px;
+    width: 300px;
+    max-width: 1200px;
 
     @media (max-width: 1200px) {
-      grid-template-columns: repeat(3, 1fr); /* 3열 */
+      grid-template-columns: repeat(3, 1fr);
     }
 
     @media (max-width: 768px) {
-      grid-template-columns: repeat(3, 1fr); /* 3열 */
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 
@@ -218,8 +199,9 @@ const StyledWrapper = styled.div`
     background-color: #f9f9f9;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 300px; /* 고정된 카드 크기 */
-    height: 400px;
+    width: 266px;
+    height: 355px;
+    align-items: center;
     transition: transform 0.2s;
     cursor: pointer;
   }
@@ -261,15 +243,13 @@ const StyledWrapper = styled.div`
     color: #333;
   }
 
-  /* 페이지네이션 스타일 */
   .pagination {
     display: flex;
-    justify-content: center; /* 버튼을 수평 중앙으로 정렬 */
+    justify-content: center; /* 버튼들을 중앙에 배치 */
     align-items: center;
     gap: 10px;
     margin-top: 20px;
-    width: 100%; /* 부모 컨테이너의 너비 */
-    text-align: center; /* 중앙 정렬 */
+    width: 100%; /* pagination 너비를 100%로 설정 */
   }
 
   .pagination button {
@@ -289,7 +269,5 @@ const StyledWrapper = styled.div`
     background-color: #0056b3;
   }
 `;
-
-
 
 export default Card;

@@ -1,22 +1,76 @@
-import React from "react";
-import { Typography, Button, Grid2 } from "@mui/material";
+import React, { useEffect, useState, useRef } from "react";
+import { Typography, Button, Grid2, TextField } from "@mui/material";
+import { Autocomplete } from "@mui/material";
+
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import Categories from "./Categories";
 import styled from "styled-components";
 import MainImage from "./MainImage";
+import getTimeAgo from "./GetTImeAgo";
+import useHeart from "../dogList/heart/useHeart";
+import { useNavigate } from "react-router-dom";
 
-const DogInfo = () => {
-  const infoItems = [
-    { label: "달성률", value: "223%", extra: "목표금액 50,002,000원" },
-    { label: "남은기간", value: "10일", extra: "2024-10-02에 종료" },
-    { label: "fundMemberNum,", value: "Int Value" },
-  ];
+const DogInfo = ({ dogData: initialDogData }) => {
+  const [data, setData] = useState({
+    dogId: 0,
+    name: "",
+    gender: "",
+    age: "",
+    regDate: "",
+    fundCollection: 0,
+    fundMemberNum: 0,
+    heart: 0,
+  });
 
-  const categories = ["채권형", "소득공제가능", "선착순"]; // '채권형', '소득공제가능', '선착순' 카테고리
-  const title = "증액 예정 | 소득공제 | 전환 사채 주거 구독";
+  useEffect(() => {
+    if (initialDogData) {
+      const {
+        dogId,
+        name,
+        gender,
+        age,
+        regDate,
+        fundCollection,
+        fundMemberNum,
+        heart,
+      } = initialDogData;
+      setData({
+        dogId,
+        name,
+        gender: gender === 1 ? "남성" : "여성",
+        age: `${age}세`,
+        regDate,
+        fundCollection,
+        fundMemberNum,
+        heart,
+      });
+    }
+    // console.log(data);
+  }, [initialDogData]);
+
+  const { heart: currentHeart, updateHeart } = useHeart(data, (newHeart) => {
+    setData((prev) => ({ ...prev, heart: newHeart }));
+  });
+
+  const infoItems = data.regDate
+    ? [
+        {
+          label: "등록시간",
+          value: getTimeAgo(data.regDate),
+          extra: `${data.regDate.slice(0, 10)}에 등록됨`,
+        },
+        { label: "참여자 수", value: `${data.fundMemberNum}` },
+      ]
+    : [];
+
+  const categories = [data.name, data.gender, data.age]; // '이름', '성별', '나이' 카테고리
+
+  const title = "길을 잃어 죽기 직전인 뽀삐를 살려주세요";
+
   const imgSrc =
-    "//image-se.ycrowdy.com/20240909/CROWDY_202409091318250233_oSBCe.jpg/ycrowdy/resize/!740x!417";
+    "https://newsimg.hankookilbo.com/2017/11/14/201711141165118317_1.jpg";
 
   const WarningMessage = () => {
     return (
@@ -32,7 +86,7 @@ const DogInfo = () => {
           fontSize: "12px",
           padding: "5px 12px",
           lineHeight: "18px",
-          textAlign: "center",
+          textAlign: "start",
         }}
       >
         크라우드펀딩 투자는 <b>투자금액 전부</b>를 잃을 수 있는 <b>높은 위험</b>
@@ -42,6 +96,59 @@ const DogInfo = () => {
     );
   };
 
+  const [inputValue, setInputValue] = useState(""); // 입력된 값 (항상 문자열)
+  const [selectedOption, setSelectedOption] = useState(""); // 드롭다운에서 선택된 값 (항상 문자열)
+
+  const priceOptions = ["10000", "20000", "30000", "직접 입력"]; // 드롭다운 옵션
+
+  // 드롭다운에서 선택 시 처리
+  const handleSelectChange = (event, newValue) => {
+    if (newValue === "직접 입력") {
+      setSelectedOption("직접 입력"); // '직접 입력' 모드로 전환
+      setInputValue(""); // 입력 필드 초기화
+    } else if (newValue) {
+      setSelectedOption(newValue); // 선택된 값 설정
+      setInputValue(newValue); // 입력 필드에 값 설정
+    } else {
+      // newValue가 null인 경우 처리
+      setSelectedOption("");
+      setInputValue("");
+    }
+  };
+
+  // 입력 값 변경 시 처리
+  const handleInputChange = (event, newInputValue) => {
+    if (selectedOption === "직접 입력") {
+      // 숫자만 입력되도록 제한
+      if (/^\d*$/.test(newInputValue)) {
+        setInputValue(newInputValue);
+      }
+    } else {
+      // '직접 입력'이 아닐 때는 입력 불가 (읽기 전용)
+      setInputValue(selectedOption);
+    }
+  };
+
+  const navigate = useNavigate();
+
+  const handlePurchase = () => {
+    if (!inputValue || parseInt(inputValue, 10) <= 0) {
+      alert("가격을 입력해 주세요."); // 알림 표시
+      return;
+    }
+
+    const parsedPrice = parseInt(inputValue, 10);
+    console.log(data.name);
+
+    navigate("/Checkout", {
+      state: {
+        name: data.name,
+        productPrice: parsedPrice,
+        totalPrice: parsedPrice,
+        quantity: 1,
+      },
+    });
+  };
   return (
     <TopSection className="flex flex-row justify-between">
       {/* 왼쪽 영역 */}
@@ -58,7 +165,7 @@ const DogInfo = () => {
 
         {/* 펀딩 금액 */}
         <div className="flex align-center">
-          <FundingAmount>fundcollection원</FundingAmount>
+          <FundingAmount>{data.fundCollection}원</FundingAmount>
           <span className="flex text-small">펀딩중</span>
         </div>
 
@@ -68,6 +175,7 @@ const DogInfo = () => {
           container
           spacing={2}
           flexDirection="column"
+          textAlign="start"
           sx={{ marginTop: 2 }}
         >
           {infoItems.map((item, index) => (
@@ -79,17 +187,62 @@ const DogInfo = () => {
             </Grid2>
           ))}
         </Grid2>
+        <StyledPriceContainer>
+          <Autocomplete
+            className="w-full"
+            freeSolo
+            options={priceOptions}
+            value={selectedOption}
+            inputValue={inputValue}
+            onChange={handleSelectChange}
+            onInputChange={handleInputChange}
+            openOnFocus
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="가격 선택 또는 입력"
+                placeholder="가격을 선택하거나 입력하세요"
+                InputProps={{
+                  ...params.InputProps,
+                  readOnly: selectedOption !== "직접 입력", // '직접 입력'일 때만 입력 가능
+                  inputMode:
+                    selectedOption === "직접 입력" ? "numeric" : "none",
+                  pattern:
+                    selectedOption === "직접 입력" ? "[0-9]*" : undefined,
+                  onKeyPress: (event) => {
+                    if (
+                      selectedOption === "직접 입력" &&
+                      !/[0-9]/.test(event.key)
+                    ) {
+                      event.preventDefault(); // 숫자가 아닌 입력 차단
+                    }
+                  },
+                }}
+              />
+            )}
+          />
+        </StyledPriceContainer>
         {/* 버튼들 */}
         <Grid2 sx={{ marginTop: 2 }} xs={12}>
           <Button
             variant="outlined"
             sx={{ marginRight: 1 }}
-            startIcon={<FavoriteBorderIcon />}
+            startIcon={
+              currentHeart === 1 ? <FavoriteIcon /> : <FavoriteBorderIcon />
+            }
+            onClick={(e) => {
+              e.stopPropagation();
+              updateHeart();
+            }}
           >
-            명이 관심있어요
+            {data.heart}명이 관심있어요
           </Button>
-          <Button variant="outlined" startIcon={<ShareIcon />}>
-            공유하기
+          <Button
+            variant="outlined"
+            startIcon={<ShareIcon />}
+            onClick={handlePurchase}
+          >
+            결제하기
           </Button>
         </Grid2>
 
@@ -125,6 +278,13 @@ const FundingAmount = styled.span`
   font-size: 24px;
   font-weight: bold;
   margin-right: 8px;
+`;
+const StyledPriceContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 10px 0;
 `;
 
 export default DogInfo;

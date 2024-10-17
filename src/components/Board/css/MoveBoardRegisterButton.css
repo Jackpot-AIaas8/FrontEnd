@@ -2,14 +2,14 @@
 .register-button-container {
     display: flex;
     justify-content: flex-end;
-    width: 80%;
+    width: 75%;
 }
 
 /* 버튼 스타일 */
 .register-button {
     display: flex;
     align-items: center;
-    padding: 5px 10px;
+    padding: 5px;
     border: none;
     background-color: transparent;
     cursor: pointer;

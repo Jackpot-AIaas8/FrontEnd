@@ -8,38 +8,40 @@ import Divider from "@mui/material/Divider";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Logout from "@mui/icons-material/Logout";
 import Button from "@mui/material/Button";
-import logo from "../../static/newLogoHorizontal.png";
+import logo from "../../static/newLogoHorizontalOrange.png";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../token/AuthContext";
 import styled from "styled-components";
+
+const LogoButton = styled.button`
+  background-color: transparent;
+  border: none;
+  left: 200px;
+  z-index: 100;
+  align-self: center;
+  width: 150px;
+  margin: 10px;
+
+  img {
+    width: 100%;
+    height: 4%;
+    background-color: transparent;
+  }
+`;
 
 export default function NavBar() {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const { isAuthenticated, logout } = useContext(AuthContext);
   const open = Boolean(anchorEl);
-  // const handleClick = (event) => {
-  //     setAnchorEl(event.currentTarget);
-  // };
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const LogoButton = styled.button`
-    background-color: transparent;
-    border: none;
-    left: 200px;
-    z-index: 100;
-    align-self: center;
-    width: 150px;
-    margin: 10px;
-
-    img {
-      width: 100%;
-      height: 4%;
-      background-color: transparent;
-    }
-  `;
 
   return (
     <Fragment>
@@ -62,7 +64,8 @@ export default function NavBar() {
         }}
       >
         <LogoButton
-          className="flex align-center pointer" style={{ cursor: "pointer" }}
+          className="flex align-center pointer"
+          style={{ cursor: "pointer" }}
           onClick={() => navigate("/")}
         >
           <img className="flex " src={logo} alt="로고" />
@@ -93,14 +96,33 @@ export default function NavBar() {
           }}
         />
         <Box
-          className="btn_section align-center flex flex-row"
+          className=" align-center flex flex-row"
           sx={{
             justifyContent: "flex-end",
           }}
         >
+          {/* <Button
+            variant="text"
+            style={{
+              color: "black",
+              fontSize: "18px",
+              right: "1rem",
+              top: "0.2rem",
+            }}
+            onClick={() => {
+              navigate("/mypage");
+            }}
+          >
+            마이페이지
+          </Button> */}
           <Button
             variant="text"
-            style={{ color: "gray" }}
+            style={{
+              color: "black",
+              fontSize: "18px",
+              right: "1rem",
+              top: "0.2rem",
+            }}
             onClick={() => {
               navigate("/dogList");
             }}
@@ -110,7 +132,12 @@ export default function NavBar() {
 
           <Button
             variant="text"
-            style={{ color: "gray" }}
+            style={{
+              color: "black",
+              fontSize: "18px",
+              right: "1rem",
+              top: "0.2rem",
+            }}
             onClick={() => {
               navigate("/shop");
             }}
@@ -120,14 +147,20 @@ export default function NavBar() {
 
           <Button
             variant="text"
-            style={{ color: "gray" }}
+            style={{
+              color: "black",
+              fontSize: "18px",
+              right: "1rem",
+              top: "0.2rem",
+            }}
             onClick={() => {
               navigate("/freeBoard");
             }}
           >
             게시판
           </Button>
-          {isAuthenticated ? (
+
+          {/* {isAuthenticated ? (
             <Button
               variant="contained"
               style={{
@@ -146,7 +179,79 @@ export default function NavBar() {
               variant="contained"
               style={{
                 fontWeight: "bold",
-                backgroundColor: "skyblue",
+                backgroundColor: "#d64229",
+              }}
+              onClick={() => {
+                navigate("/signIn");
+              }}
+            >
+              로그인
+            </Button>
+          )} */}
+          {isAuthenticated ? (
+            <>
+              <Button
+                variant="contained"
+                style={{
+                  fontWeight: "bold",
+                  backgroundColor: "black",
+                  color: "white",
+                }}
+                onClick={handleClick} // 버튼 클릭 시 드롭다운 메뉴 열기
+              >
+                회원 메뉴
+              </Button>
+
+              <Menu
+                anchorEl={anchorEl}
+                id="account-menu"
+                open={open}
+                onClose={handleClose}
+                onClick={handleClose}
+                slotProps={{
+                  paper: {
+                    elevation: 0,
+                    sx: {
+                      overflow: "visible",
+                      filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                      mt: 1.5,
+                    },
+                  },
+                }}
+                transformOrigin={{ horizontal: "right", vertical: "top" }}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+              >
+                <MenuItem
+                  onClick={() => {
+                    navigate("/mypage");
+                    handleClose();
+                  }}
+                >
+                  <ListItemIcon>
+                    <AccountBoxIcon fontSize="small" />
+                  </ListItemIcon>
+                  내정보
+                </MenuItem>
+                <Divider />
+                <MenuItem
+                  onClick={() => {
+                    logout(); // 로그아웃 처리
+                    handleClose();
+                  }}
+                >
+                  <ListItemIcon>
+                    <ShoppingCartIcon fontSize="small" />
+                  </ListItemIcon>
+                  로그아웃
+                </MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <Button
+              variant="contained"
+              style={{
+                fontWeight: "bold",
+                backgroundColor: "#d64229",
               }}
               onClick={() => {
                 navigate("/signIn");
@@ -186,7 +291,7 @@ export default function NavBar() {
                 width: 10,
                 height: 10,
                 bgcolor: "background.paper",
-                transform: "translateY(-50%) rotate(45deg)",
+                transform: "translateY(-25%) rotate(45deg)",
                 zIndex: 0,
               },
             },
@@ -195,24 +300,28 @@ export default function NavBar() {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            navigate("/mypage");
+            handleClose();
+          }}
+        >
           <ListItemIcon>
             <AccountBoxIcon fontSize="small" />
           </ListItemIcon>
-          내정보
+          마이페이지
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <ShoppingCartIcon fontSize="small" />
-          </ListItemIcon>
-          장바구니
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            logout(); // 로그아웃 처리
+            handleClose();
+          }}
+        >
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
-          Logout
+          로그아웃
         </MenuItem>
       </Menu>
     </Fragment>

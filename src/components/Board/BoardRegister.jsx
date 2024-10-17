@@ -1,40 +1,36 @@
 import React, { useState, useEffect } from "react";
-import apiClient from "../../token/AxiosConfig"; // apiClient 임포트
+import apiClient from "../../token/AxiosConfig";
 import { useNavigate } from "react-router-dom";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid"; // Grid 임포트
-import Container from "@mui/material/Container"; // Container 임포트
-import Typography from "@mui/material/Typography"; // Typography 임포트
-import "./css/BoardRegister.css"; // 필요 시 CSS 파일 추가
+import Button from "@mui/material/Button"; // Material-UI의 Button 컴포넌트
+import "./css/BoardRegister.css";
 
 const BoardRegister = () => {
-  const [title, setTitle] = useState(""); // 게시글 제목 상태
-  const [content, setContent] = useState(""); // 게시글 내용 상태
-  const [type, setType] = useState("2"); // 글 유형 상태 (2: 자유, 3: 문의)
-  const [currentDateTime, setCurrentDateTime] = useState(""); // 현재 시간 상태
-  const navigate = useNavigate(); // 페이지 이동을 위한 navigate
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [type, setType] = useState("2");
+  const [currentDateTime, setCurrentDateTime] = useState("");
+  const navigate = useNavigate();
 
-  // 현재 시간과 날짜를 가져오는 함수
   useEffect(() => {
     const now = new Date();
-    const formattedDateTime = now.toISOString(); // 현재 시간을 ISO 형식으로 변환
-    setCurrentDateTime(formattedDateTime); // 상태 업데이트
+    const formattedDateTime = now.toISOString();
+    setCurrentDateTime(formattedDateTime);
   }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // 기본 폼 제출 방지
+    e.preventDefault();
 
     try {
       const response = await apiClient.post("/board/register", {
         title: title,
         content: content,
-        type: type, // 글 유형 ('자유' -> 2, '문의' -> 3)
-        regDate: currentDateTime, // 현재 시간
+        type: type,
+        regDate: currentDateTime,
       });
 
       console.log("게시글 작성 성공:", response.data);
       alert("게시글이 저장되었습니다.");
-      if (response.data.status === 200) {
+      if (response.data.status === 200 || response.status === 200) {
         navigate("/freeBoard");
       }
     } catch (error) {
@@ -43,64 +39,71 @@ const BoardRegister = () => {
   };
 
   return (
-    <Container maxWidth="md">
-      {" "}
-      {/* Container로 감싸서 레이아웃 조정 */}
-      <Grid container spacing={2} alignItems="center" direction="column">
-        {" "}
-        {/* Grid 컨테이너 설정 */}
-        <Grid item>
-          <Typography variant="h4" gutterBottom>
-            게시글 작성
-          </Typography>{" "}
-          {/* 제목 설정 */}
-        </Grid>
-        <Grid item xs={12} sm={8}>
-          {" "}
-          {/* 게시글 폼의 너비 조정 */}
-          <form onSubmit={handleSubmit}>
-            <Grid container spacing={2}>
-              {" "}
-              {/* 내부 Grid 설정 */}
-              <Grid item xs={12}>
-                <label>제목:</label>
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <label>내용:</label>
-                <textarea
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  required
-                  style={{ width: "100%", minHeight: "100px" }} // 스타일 조정
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <label>글 유형:</label>
-                <select
-                  value={type}
-                  onChange={(e) => setType(e.target.value)} // 글 유형 상태 업데이트
-                  required
-                >
-                  <option value="2">자유</option>
-                  <option value="3">문의</option>
-                </select>
-              </Grid>
-              <Grid item xs={12}>
-                <Button type="submit" variant="contained" color="primary">
-                  게시글 등록
-                </Button>
-              </Grid>
-            </Grid>
-          </form>
-        </Grid>
-      </Grid>
-    </Container>
+    <div className="flex flex-column align-center">
+      <form onSubmit={handleSubmit}>
+        <div className="flex justify-between items-center w-half p-2"> 
+          <h2 className="align-left p-2">게시글 작성하기</h2>
+        </div>
+
+        <div className="m-auto">
+          <table className="board-table-reg w-full">
+            <thead>
+              <tr>
+                <td>
+                  <input
+                    className="w-full p-2"
+                    type="text"
+                    placeholder="제목"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    required
+                  />
+                </td>
+                <td className='w-thirty' style={{ padding: "10px", borderTopRightRadius: "8px" }}>
+                  <select
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
+                    required
+                    style={{ width: "90%", height: "40px" }}
+                  >
+                    <option value="2">자유게시판</option>
+                    <option value="3">문의게시판</option>
+                  </select>
+                </td>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td colSpan={2} className="">
+                  <h4 className="text-left" style={{ marginLeft: '10px' }}>아래에 본문 작성</h4> 
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={2} style={{ padding: "8px", borderBottom: "1px solid #ccc" }}>
+                  <textarea
+                    className="w-full contentArea"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    required
+                    placeholder="내용"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style={{ marginTop: '16px', textAlign: 'right' }}> 
+          <Button
+            type="submit"
+            variant="contained"
+            className="save-button"
+          >
+            저장하기
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 };
 

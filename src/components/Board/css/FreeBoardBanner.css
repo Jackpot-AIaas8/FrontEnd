@@ -1,61 +1,54 @@
-/* 네비바와 배너 사이의 여백, 페이지스 디렉토리에 프리보드페이지 파일에서 사용함*/
-.banner-spacing-top {
-  margin-top: 140px;
-}
+  /* 네비바와 배너 사이의 여백, 페이지스 디렉토리에 프리보드페이지 파일에서 사용함*/
+  .box{
+    height:75vh;
+  }
 
-.banner-spacing-top2 {
-  margin-top: 60px;
-}
+  .banner-spacing-top2 {
+    margin-top: 60px;
+  }
 
-/* 글 조회 테이블과 푸터사이 간격 여백 만들기. 보드파인드원페이지 파일에서 사용함 */
-.findOne-spacing-below {
-  margin-bottom: 100px;
-}
+  .banner-margin-0 {
+    margin: 0 auto;
+  }
 
+  /* 1:1 문의 게시판으로 가기 */
+  .oneOnOneButton {
+    position: absolute;
+    top: 5%;
+    left: 68%;
+    padding: 5px 10px;
+    width: 200px;
+    cursor: pointer;
+    background-color: transparent;
+    color: #ff7600;
+    z-index: 10;
+  }
 
-.banner-margin-0 {
-  margin: 0 auto;
-}
+  /* 배너 이미지 크기 1200px로 조정 */
+  .banner-container {
+    width: 50%;
+    margin: 0 auto; /* 중앙 정렬 */
+    position: relative; /* 배너 내 텍스트 배치를 위한 상대적 위치 */
+    z-index: 1;
+  }
 
-/* 리스트 아래 우측으로 글작성 버튼 위치 조정, 페이지스 디렉토리에 프리보드페이지 파일에서 사용함*/
-.MoveBoardRegisterButton{
-  color: black;
-  left: 70%;
-}
+  /* 배너 이미지 */
+  .banner-img {
+    width: 100%; /* 배너 컨테이너 안에서 100% 크기 */
+    height: auto; /* 이미지 비율을 유지하면서 크기 조정 */
+  }
 
-/* 1:1 문의 게시판으로 가기*/
-.oneOnOneButton {
-  color: orange;
-  right: 20%;
-  padding: 5px 10px; /* 위아래는 5px, 좌우는 10px의 여백 */
-  width: 200px;
-  cursor: pointer;
-}
+  /* 자유게시판 */
+  .banner-text {
+    left: 50px;
+    top: 110px;
+    font-size: 36px;
+    font-weight: bold;
+  }
 
-/* 배너 이미지 크기 60%로 조정 */
-.banner-container {
-  width: 60%; /* 페이지 너비의 60%를 차지 */
-  margin: 0 auto; /* 중앙 정렬 */
-  position: relative; /* 배너 내 텍스트 배치를 위한 상대적 위치 */
-}
-
-/* 배너 이미지 */
-.banner-img {
-  width: 100%; /* 배너 컨테이너 안에서 100% 크기 */
-  height: auto; /* 이미지 비율을 유지하면서 크기 조정 */
-}
-
-/* 자유게시판 */
-.banner-text {
-  left: 50px;
-  top: 110px;
-  font-size: 36px;
-  font-weight: bold;
-}
-
-/* 자유롭게 글을 쓰는 곳입니다. */
-.banner-description {
-  left: 52px;
-  top: 195px;
-  font-size: 16px;
-}
+  /* 자유롭게 글을 쓰는 곳입니다. */
+  .banner-description {
+    left: 52px;
+    top: 195px;
+    font-size: 16px;
+  }

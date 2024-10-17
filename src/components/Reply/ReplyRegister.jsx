@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import apiClient from "../../token/AxiosConfig";
 import { useNavigate } from "react-router-dom";
+import "./css/ReplyRegister.css"
 
 const ReplyForm = ({ boardId, onReplySubmit }) => {
   const [replyContent, setReplyContent] = useState("");
@@ -28,16 +29,23 @@ const ReplyForm = ({ boardId, onReplySubmit }) => {
   };
 
   return (
-    <div>
-      <textarea
-        value={replyContent}
-        onChange={(e) => setReplyContent(e.target.value)}
-      />
-      <Button variant="text" style={{ color: "gray" }} onClick={handleSubmit}>
-        댓글 등록
-      </Button>
-    </div>
+    <div className="w-full flex align-center justify-center">
+    <textarea
+      className="reply-textarea h-full"
+      value={replyContent}
+      onChange={(e) => setReplyContent(e.target.value)}
+      placeholder="댓글을 입력하세요."
+    />
+    <Button 
+      variant="text" 
+      className="reply-button flex align-center justify-center" 
+      onClick={handleSubmit}
+    >
+      댓글 등록
+    </Button>
+  </div>
   );
 };
 
 export default ReplyForm;
+
