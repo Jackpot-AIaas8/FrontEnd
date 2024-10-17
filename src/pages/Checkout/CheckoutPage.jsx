@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import apiClient from "../../token/AxiosConfig";
+import { AuthContext } from "../../token/AuthContext";
 
 const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 const customerKey = "e6Bp3EiNGF0nTmXJ05nvg";
@@ -36,7 +37,7 @@ function CheckoutPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await apiClient.get("/member/myPage");
+        const response = await apiClient.get("member/myPage");
         setUser(response.data);
         console.log("Fetched User Info:", response.data); // 확인용 로그 추가
       } catch (error) {
@@ -107,7 +108,7 @@ function CheckoutPage() {
       await widgets.requestPayment({
         orderId: orderId,
         orderName: name,
-        orderName: items.map((item) => item.productName).join(", "),
+
         successUrl: `${window.location.origin}/success`,
         failUrl: `${window.location.origin}/fail`,
         customerEmail: user.email,
