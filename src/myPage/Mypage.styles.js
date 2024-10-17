@@ -90,7 +90,13 @@ export const StyledNavBar = styled.div`
 
 export const StyeldRightSection = styled.div`
   flex: 2;
-  gap: 30px;
+  gap: 15px;
+
+  h4 {
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+  }
+
   .section-mypage {
     height: fit-content;
     padding: 20px;
@@ -119,7 +125,7 @@ export const StyledMypageSection = styled.div`
 `;
 
 export const StyledPurchaseSection = styled.div`
-  .left-section {
+  .section-left {
     flex-wrap: wrap;
     height: fit-content;
     text-align: left;
@@ -161,3 +167,14 @@ export const StyledPurchaseSection = styled.div`
     margin-left: 20px;
   }
 `;
+
+export const StyledOneBoard = styled.div`
+  .section-oneBoard {
+    padding: 30px;
+  }
+  .left-oneBoard {
+    align-self: center;
+  }
+`;
+
+export const styledFundHistory = styled.div``;

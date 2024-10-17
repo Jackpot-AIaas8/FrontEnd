@@ -1,7 +1,7 @@
 // src/config/AxiosConfig.js
 import axios from "axios";
-import { SERVER_URL } from "../config/Constants.js";
-import { logout } from "./Logout.js";
+import { SERVER_URL } from "../config/Constants";
+import { logout } from "./Logout";
 
 // Named export: 토큰 없이 사용하는 API 인스턴스
 export const apiNoToken = axios.create({
