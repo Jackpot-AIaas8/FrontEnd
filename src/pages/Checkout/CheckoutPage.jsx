@@ -5,24 +5,34 @@ import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import apiClient from "../../token/AxiosConfig";
 
 const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
-const customerKey = "6JqYbn-tMjCQIrq9p4xLN";
+const customerKey = "e6Bp3EiNGF0nTmXJ05nvg";
 
 function CheckoutPage() {
   const location = useLocation();
+
+  const { items = [], totalAmount = 0 } = location.state || {};
+
+  console.log("CheckoutPage received state:", location.state);
+
   const {
-    productName: name = "",
+    name: productName = "",
+    productPrice = 0,
     quantity = 1,
     totalPrice = 50000,
+
+    shopId = "",
   } = location.state || {};
+
+  const name = productName;
 
   const amount = totalPrice + 3000; // 배송비 포함 금액
 
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState(null);
+
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [user, setUser] = useState({});
 
-  // 사용자 정보 불러오기
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -73,8 +83,9 @@ function CheckoutPage() {
   }, [widgets, amount]);
 
   const handlePayment = async () => {
-    const paymentAmount = parseInt(amount, 10);
-    const orderId = `order_${Date.now()}`; // 주문 ID 생성
+    const paymentAmount = parseInt(amount, 10); // 숫자로 변환
+    const orderId = `order_${Date.now()}`; // 고유한 orderId 생성
+    console.log("Amount:", paymentAmount); // 디버깅 로그 추가
 
     if (!ready) {
       alert("결제 준비가 완료되지 않았습니다.");
@@ -84,8 +95,9 @@ function CheckoutPage() {
     try {
       console.log("결제 요청 시작");
       console.log("Order ID:", orderId);
+      console.log("shopId:", shopId);
       console.log("Order Name:", name);
-      console.log("Amount:", paymentAmount);
+      console.log("Amount:", paymentAmount); // 숫자로 변환된 금액 확인
       console.log("Customer Email:", user.email);
       console.log("Customer Name:", user.name);
       console.log("Customer Phone:", user.phone);
@@ -95,7 +107,40 @@ function CheckoutPage() {
       await widgets.requestPayment({
         orderId: orderId,
         orderName: name,
-        successUrl: `${window.location.origin}/success?orderId=${orderId}`, // 민감한 정보는 제외하고 주문 ID만 포함
+        orderName: items.map((item) => item.productName).join(", "),
+        successUrl: `${window.location.origin}/success`,
+        failUrl: `${window.location.origin}/fail`,
+        customerEmail: user.email,
+        customerName: user.name,
+        customerMobilePhone: user.phone,
+      });
+
+      // 결제 성공 시 sessionStorage에 결제 정보 저장
+      const paymentData = {
+        orderId,
+        items,
+
+        shopId,
+
+        orderName: name,
+        quantity,
+        memberId: user.memberID,
+        customerName: user.name,
+        customerMobilePhone: user.phone,
+        userAddress: user.address,
+        totalPrice,
+        deliveryFee: 3000,
+        amount: paymentAmount,
+      };
+
+      sessionStorage.setItem("paymentData", JSON.stringify(paymentData));
+      console.log("SuccessPage로 전달할 데이터:", paymentData);
+
+      // 결제 요청 처리
+      await widgets.requestPayment({
+        orderId: orderId,
+        orderName: name,
+        successUrl: `${window.location.origin}/success?orderId=${orderId}`,
         failUrl: `${window.location.origin}/fail`,
         customerEmail: user.email,
         customerName: user.name,
@@ -105,6 +150,7 @@ function CheckoutPage() {
       console.log("결제 요청 완료");
     } catch (error) {
       console.error("결제 요청 중 오류 발생:", error);
+
       alert("결제 요청 중 오류가 발생했습니다. 다시 시도해 주세요.");
     }
   };
@@ -156,9 +202,13 @@ function CheckoutPage() {
         <FlexRow>
           <SectionTitle>받는 사람 정보</SectionTitle>
           {isEditingAddress ? (
-            <SaveAddressButton onClick={handleAddressSave}>저장</SaveAddressButton>
+            <SaveAddressButton onClick={handleAddressSave}>
+              저장
+            </SaveAddressButton>
           ) : (
-            <EditAddressButton onClick={handleAddressEdit}>수정</EditAddressButton>
+            <EditAddressButton onClick={handleAddressEdit}>
+              수정
+            </EditAddressButton>
           )}
         </FlexRow>
         {isEditingAddress ? (
@@ -196,7 +246,11 @@ function CheckoutPage() {
         <InfoBox>
           <InfoRow>
             <Label>총 상품 가격</Label>
-            <Value>{totalPrice ? `${totalPrice.toLocaleString()}원` : "가격 정보 없음"}</Value>
+            <Value>
+              {totalPrice
+                ? `${totalPrice.toLocaleString()}원`
+                : "가격 정보 없음"}
+            </Value>
           </InfoRow>
           <InfoRow>
             <Label>배송비</Label>
@@ -204,7 +258,11 @@ function CheckoutPage() {
           </InfoRow>
           <TotalRow>
             <Label>총 결제 금액</Label>
-            <Value>{totalPrice ? `${(totalPrice + 3000).toLocaleString()}원` : "가격 정보 없음"}</Value>
+            <Value>
+              {totalPrice
+                ? `${(totalPrice + 3000).toLocaleString()}원`
+                : "가격 정보 없음"}
+            </Value>
           </TotalRow>
         </InfoBox>
       </Section>
@@ -225,7 +283,6 @@ function CheckoutPage() {
   );
 }
 
-// 스타일 정의 부분은 그대로 유지
 const PageContainer = styled.div`
   width: 40%;
   margin: 0 auto;
@@ -363,5 +420,4 @@ const PayButton = styled.button`
   border-radius: 8px;
   cursor: pointer;
 `;
-
 export default CheckoutPage;

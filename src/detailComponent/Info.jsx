@@ -138,8 +138,9 @@ const DogInfo = ({ dogData: initialDogData }) => {
     }
 
     const parsedPrice = parseInt(inputValue, 10);
+    console.log(data.name);
 
-    navigate("/OrderConfirmation", {
+    navigate("/Checkout", {
       state: {
         name: data.name,
         productPrice: parsedPrice,

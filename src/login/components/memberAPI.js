@@ -41,13 +41,12 @@ export const sendAuthCode = async (email) => {
 };
 
 // 인증 코드 확인 API 호출 함수
-export const verifyAuthCode = async (email, code) => {
+export const verifyAuthCode = async (name, code, email) => {
   try {
-    const response = await apiNoToken.get("/checkVerificationCode", {
-      params: {
-        email,
-        code,
-      },
+    const response = await apiNoToken.post("/checkVerificationCode", {
+      name,
+      code,
+      email,
     });
 
     if (response.status === 200) {
@@ -56,16 +55,33 @@ export const verifyAuthCode = async (email, code) => {
       throw new Error("인증 코드가 일치하지 않습니다.");
     }
   } catch (error) {
+    console.error(error);
     throw new Error("인증에 실패했습니다. 다시 시도해주세요.");
   }
 };
 
 // 비밀번호 재설정 API 호출 함수
-export const resetPassword = async (email, password) => {
+export const resetPassword = async (email, pwd) => {
   try {
-    await apiNoToken.post("member/resetPwd", { email, password });
-    return true; // 비밀번호 변경 성공
+    const response = await apiNoToken.patch("member/resetPwd", { email, pwd });
+
+    if (response.status === 200) {
+      return {
+        success: true,
+        message: "비밀번호가 성공적으로 변경되었습니다.",
+      };
+    } else if (response.status === 400) {
+      return {
+        success: false,
+        message: "잘못된 요청입니다. 이메일을 확인하세요.",
+      };
+    } else {
+      return { success: false, message: "알 수 없는 오류가 발생했습니다." };
+    }
   } catch (error) {
-    throw new Error("비밀번호 변경에 실패했습니다. 다시 시도해주세요.");
+    return {
+      success: false,
+      message: "비밀번호 변경에 실패했습니다. 다시 시도해주세요.",
+    };
   }
 };
