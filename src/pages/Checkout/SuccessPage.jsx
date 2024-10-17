@@ -12,14 +12,15 @@ export function SuccessPage() {
   const paymentData = JSON.parse(sessionStorage.getItem("paymentData")) || {};
 
   const {
-    memberId,
+    memberID,
     customerName = "",
     customerMobilePhone = "",
     userAddress = "",
     totalPrice = 0,
     deliveryFee = 3000,
     orderId,
-    shopId = "" , 
+    shopId = "" ,
+    orderName: name, 
   } = paymentData;
 
   useEffect(() => {
@@ -32,13 +33,15 @@ export function SuccessPage() {
       orderId: searchParams.get("orderId") || orderId,
       amount: searchParams.get("amount"),
       paymentKey: searchParams.get("paymentKey"),
-      shopId: shopId,
-      memberId: memberId, 
+      shopId: shopId,       
+      orderName: name,
+      memberID: memberID, 
       name: customerName,
       phone: customerMobilePhone,
       address: userAddress,
       products: [{ shopName: "example shop", productPrice: 5000, quantity: 1 }] // 리스트로 보내기
     };
+    console.log("결제 완료 후 백엔드로 전달할 데이터:", requestData);
 
     async function confirm() {
       try {
@@ -88,8 +91,7 @@ export function SuccessPage() {
       <Section>
         <SectionTitle>상품배송 정보</SectionTitle>
         <InfoRow>
-          <InfoLabel>내일(화) 도착 보장 (상품 1개)</InfoLabel>
-          <InfoValue>판매자: 쿠팡</InfoValue>
+          <InfoLabel>{name || "상품 정보 없음"}</InfoLabel>
         </InfoRow>
       </Section>
       <InfoContainer>

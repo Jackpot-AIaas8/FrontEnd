@@ -16,7 +16,6 @@ function CheckoutPage() {
 
   const {
     name: productName = "",
-    productPrice = 0,
     quantity = 1,
     totalPrice = 50000,
 
@@ -83,10 +82,9 @@ function CheckoutPage() {
   }, [widgets, amount]);
 
   const handlePayment = async () => {
-    const paymentAmount = parseInt(amount, 10); // 숫자로 변환
-    const orderId = `order_${Date.now()}`; // 고유한 orderId 생성
-    console.log("Amount:", paymentAmount); // 디버깅 로그 추가
-
+    const paymentAmount = parseInt(amount, 10);
+    const orderId = `order_${Date.now()}`; 
+    console.log("Amount:", paymentAmount); 
     if (!ready) {
       alert("결제 준비가 완료되지 않았습니다.");
       return;
@@ -97,34 +95,19 @@ function CheckoutPage() {
       console.log("Order ID:", orderId);
       console.log("shopId:", shopId);
       console.log("Order Name:", name);
-      console.log("Amount:", paymentAmount); // 숫자로 변환된 금액 확인
+      console.log("Amount:", paymentAmount); 
       console.log("Customer Email:", user.email);
       console.log("Customer Name:", user.name);
       console.log("Customer Phone:", user.phone);
       console.log("Sending amount to Toss Payments:", paymentAmount);
-
-      // 결제 요청 처리
-      await widgets.requestPayment({
-        orderId: orderId,
-        orderName: name,
-        orderName: items.map((item) => item.productName).join(", "),
-        successUrl: `${window.location.origin}/success`,
-        failUrl: `${window.location.origin}/fail`,
-        customerEmail: user.email,
-        customerName: user.name,
-        customerMobilePhone: user.phone,
-      });
-
       // 결제 성공 시 sessionStorage에 결제 정보 저장
       const paymentData = {
         orderId,
         items,
-
         shopId,
-
         orderName: name,
         quantity,
-        memberId: user.memberID,
+        memberID: user.memberID,
         customerName: user.name,
         customerMobilePhone: user.phone,
         userAddress: user.address,
