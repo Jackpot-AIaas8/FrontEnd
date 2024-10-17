@@ -11,8 +11,65 @@ import {
     Input,
 } from "reactstrap";
 import "../../assets/scss/style.scss";
+import React,{useState} from "react";
+import apiClient from "../../../token/AxiosConfig";
 
 const DogAddFrom = () => {
+
+    const [dog, setDog] = useState({
+        name: '',
+        species: '',
+        age: 0,
+        gender: 0,
+        heart: 0,
+        videoUrl: '',
+        dogDetail: '',
+        title: ''
+    });
+
+    const [files, setFiles] = useState({
+        mainImage : File,
+        detailImage1 : File,
+        detailImage2 : File,
+        detailImage3 : File,
+        detailImage4 : File
+});
+
+    const handleInputChange = (e) => {
+        const {name, value} = e.target;
+        setDog({
+            ...dog,
+            [name]: value,
+        });
+    };
+
+    const handleFileChange = (e) =>{
+        const {name, files: fileList} = e.target;
+        setFiles({
+            ...files,
+            [name]: fileList[0],
+        });
+    }
+
+    const addDog = () => {
+        const formData = new FormData();
+        formData.append('dogData', new Blob([JSON.stringify(dog)]));
+        for (const key in files){
+            if (files[key]){
+                formData.append('files', files[key]);
+            }
+        }
+
+        apiClient.post('/admin/dog/register', formData)
+            .then(response => {
+                alert("유기견이 등록되었습니다.");
+                window.location.href = '/admin/dogtable';
+            })
+            .catch(error => {
+                console.error('유기견 등록 실패:', error);
+            });
+    };
+
     return (
         <Row>
             <Col>
@@ -31,6 +88,7 @@ const DogAddFrom = () => {
                                     id="title"
                                     name="title"
                                     placeholder="제목"
+                                    onChange={handleInputChange}
                                 />
                             </FormGroup>
                             <FormGroup>
@@ -39,6 +97,7 @@ const DogAddFrom = () => {
                                     id="name"
                                     name="name"
                                     placeholder="강아지 이름"
+                                    onChange={handleInputChange}
                                 />
                             </FormGroup>
                             <FormGroup>
@@ -47,11 +106,13 @@ const DogAddFrom = () => {
                                     id="species"
                                     name="species"
                                     placeholder="강아지 종"
+                                    onChange={handleInputChange}
                                 />
                             </FormGroup>
                             <FormGroup>
                                 <Label for="age">나이</Label>
-                                <Input id="age" name="age" placeholder="강아지 나이">
+                                <Input id="age" name="age" placeholder="강아지 나이"
+                                    onChange={handleInputChange}>
                                 </Input>
                             </FormGroup>
                             <FormGroup>
@@ -60,36 +121,52 @@ const DogAddFrom = () => {
                                     id="gender"
                                     name="gender"
                                     type="select"
+                                    onChange={handleInputChange}
                                 >
                                     <option value={0}>수컷</option>
                                     <option value={1}>암컷</option>
                                 </Input>
                             </FormGroup>
                             <FormGroup>
-                                <Label for="detail">설명</Label>
-                                <Input id="detail" name="detail" type="textarea"/>
+                                <Label for="videoUrl">영상URL</Label>
+                                <Input
+                                    id="videoUrl"
+                                    name="videoUrl"
+                                    placeholder="https://www.videoUrl.com"
+                                    onChange={handleInputChange}
+                                />
                             </FormGroup>
                             <FormGroup>
-                                <Label for="img">메인 사진</Label>
-                                <Input id="img" name="mainImage" type="file"/>
+                                <Label for="dogDetail">설명</Label>
+                                <Input id="dogDetail" name="dogDetail" type="textarea"
+                                    onChange={handleInputChange}/>
                             </FormGroup>
                             <FormGroup>
-                                <Label for="img">세부 사진1</Label>
-                                <Input id="img" name="detailImage1" type="file"/>
+                                <Label for="mainImage">메인 사진</Label>
+                                <Input id="mainImage" name="mainImage" type="file"
+                                    onChange={handleFileChange}/>
                             </FormGroup>
                             <FormGroup>
-                                <Label for="img">세부 사진2</Label>
-                                <Input id="img" name="detailImage2" type="file"/>
+                                <Label for="detailImage1">세부 사진1</Label>
+                                <Input id="detailImage1" name="detailImage1" type="file"
+                                    onChange={handleFileChange}/>
                             </FormGroup>
                             <FormGroup>
-                                <Label for="img">세부 사진3</Label>
-                                <Input id="img" name="detailImage3" type="file"/>
+                                <Label for="detailImage2">세부 사진2</Label>
+                                <Input id="detailImage2" name="detailImage2" type="file"
+                                    onChange={handleFileChange}/>
                             </FormGroup>
                             <FormGroup>
-                                <Label for="img">세부 사진4</Label>
-                                <Input id="img" name="detailImage4" type="file"/>
+                                <Label for="detailImage3">세부 사진3</Label>
+                                <Input id="detailImage3" name="detailImage3" type="file"
+                                    onChange={handleFileChange}/>
                             </FormGroup>
-                            <Button>등록</Button>
+                            <FormGroup>
+                                <Label for="detailImage4">세부 사진4</Label>
+                                <Input id="detailImage4" name="detailImage4" type="file"
+                                    onChange={handleFileChange}/>
+                            </FormGroup>
+                            <Button onClick={addDog}>등록</Button>
                         </Form>
                     </CardBody>
                 </Card>
