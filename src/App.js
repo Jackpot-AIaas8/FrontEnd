@@ -17,7 +17,7 @@ import ShopDetailPage from "./pages/ShopDetailPage";
 import SuccessPage from "./pages/Checkout/SuccessPage";
 import FailPage from "./pages/Checkout/FailPage";
 
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import "./config/Utility.css";
 import SignIn from "./pages/SignIn";
@@ -44,7 +44,9 @@ import { useLoading } from "./config/LodingContext";
 function App() {
   const { isAdmin } = useContext(AuthContext) || {};
   const { setLoading } = useLoading();
-
+  const location = useLocation();
+  const hideNavAndHeader = location.pathname === "/admin";
+  // axios 초기 설정 선언
   useEffect(() => {
     setupInterceptors(setLoading);
     setupNoTokenInterceptors(setLoading); // 인터셉터 초기화
