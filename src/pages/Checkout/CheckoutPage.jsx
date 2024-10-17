@@ -1,9 +1,8 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import apiClient from "../../token/AxiosConfig";
-import { AuthContext } from "../../token/AuthContext";
 
 const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 const customerKey = "e6Bp3EiNGF0nTmXJ05nvg";
@@ -11,13 +10,12 @@ const customerKey = "e6Bp3EiNGF0nTmXJ05nvg";
 function CheckoutPage() {
   const location = useLocation();
 
-  const { items = [], totalAmount = 0 } = location.state || {};
+  const { productNames = [], totalAmount = 0 } = location.state || {};
 
   console.log("CheckoutPage received state:", location.state);
 
   const {
     name: productName = "",
-    productPrice = 0,
     quantity = 1,
     totalPrice = 50000,
 
@@ -37,7 +35,7 @@ function CheckoutPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await apiClient.get("member/myPage");
+        const response = await apiClient.get("/member/myPage");
         setUser(response.data);
         console.log("Fetched User Info:", response.data); // 확인용 로그 추가
       } catch (error) {
@@ -84,10 +82,9 @@ function CheckoutPage() {
   }, [widgets, amount]);
 
   const handlePayment = async () => {
-    const paymentAmount = parseInt(amount, 10); // 숫자로 변환
-    const orderId = `order_${Date.now()}`; // 고유한 orderId 생성
-    console.log("Amount:", paymentAmount); // 디버깅 로그 추가
-
+    const paymentAmount = parseInt(amount, 10);
+    const orderId = `order_${Date.now()}`; 
+    console.log("Amount:", paymentAmount); 
     if (!ready) {
       alert("결제 준비가 완료되지 않았습니다.");
       return;
@@ -98,44 +95,11 @@ function CheckoutPage() {
       console.log("Order ID:", orderId);
       console.log("shopId:", shopId);
       console.log("Order Name:", name);
-      console.log("Amount:", paymentAmount); // 숫자로 변환된 금액 확인
+      console.log("Amount:", paymentAmount); 
       console.log("Customer Email:", user.email);
       console.log("Customer Name:", user.name);
       console.log("Customer Phone:", user.phone);
       console.log("Sending amount to Toss Payments:", paymentAmount);
-
-      // 결제 요청 처리
-      await widgets.requestPayment({
-        orderId: orderId,
-        orderName: name,
-
-        successUrl: `${window.location.origin}/success`,
-        failUrl: `${window.location.origin}/fail`,
-        customerEmail: user.email,
-        customerName: user.name,
-        customerMobilePhone: user.phone,
-      });
-
-      // 결제 성공 시 sessionStorage에 결제 정보 저장
-      const paymentData = {
-        orderId,
-        items,
-
-        shopId,
-
-        orderName: name,
-        quantity,
-        memberId: user.memberID,
-        customerName: user.name,
-        customerMobilePhone: user.phone,
-        userAddress: user.address,
-        totalPrice,
-        deliveryFee: 3000,
-        amount: paymentAmount,
-      };
-
-      sessionStorage.setItem("paymentData", JSON.stringify(paymentData));
-      console.log("SuccessPage로 전달할 데이터:", paymentData);
 
       // 결제 요청 처리
       await widgets.requestPayment({
@@ -147,8 +111,30 @@ function CheckoutPage() {
         customerName: user.name,
         customerMobilePhone: user.phone,
       });
-
       console.log("결제 요청 완료");
+
+      // 결제 성공 시 sessionStorage에 결제 정보 저장
+   const paymentData = {
+        orderId,
+        productNames,
+        shopId,
+        // orderName: name,
+        // quantity,
+        orderName: productNames.map((item) => item.productName).join(", "),
+        quantity: productNames.reduce((acc, item) => acc + item.quantity, 0),
+        memberId: user.memberID,
+        customerName: user.name,
+        customerMobilePhone: user.phone,
+        userAddress: user.address,
+        totalPrice: totalAmount - 3000, // 합계가격에서 배송비를 빼야 토탈프라이스임
+        deliveryFee: 3000,
+        amount: paymentAmount,
+      };
+
+      sessionStorage.setItem("paymentData", JSON.stringify(paymentData));
+      console.log("SuccessPage로 전달할 데이터:", paymentData);
+
+
     } catch (error) {
       console.error("결제 요청 중 오류 발생:", error);
 

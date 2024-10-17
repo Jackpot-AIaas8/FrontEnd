@@ -10,10 +10,10 @@ export const AuthProvider = ({ children }) => {
   const token = sessionStorage.getItem("accessToken");
   const decodedToken = token ? jwtDecode(token) : null;
 
-  const initialRole = decodedToken?.role || "guest";
+  const initialRole = decodedToken?.role || "";
   const initialIsAuthenticated = Boolean(token);
   const initialIsAdmin = initialRole === "ROLE_ADMIN";
-  const initialIsPremium = initialRole === "premium";
+  const initialIsPremium = initialRole === "ROLE_PREMIUM";
 
   const [isAuthenticated, setIsAuthenticated] = useState(
     initialIsAuthenticated
@@ -25,11 +25,12 @@ export const AuthProvider = ({ children }) => {
   const login = (accessToken, redirectPath = "/") => {
     sessionStorage.setItem("accessToken", accessToken);
     const decoded = jwtDecode(accessToken);
+    console.log(decoded);
     setIsAuthenticated(true);
     setUserRole(decoded.role || "ROLE_USER");
     setIsAdmin(decoded.role === "ROLE_ADMIN");
     setIsPremium(decoded.role === "ROLE_PREMIUM");
-    navigate(decoded.role === "ROLE_ADMIN" ? "/admin" : redirectPath, {
+    navigate(decoded.role === "ROLE_ADMIN" ? "/admin" :"/", redirectPath, {
       replace: true,
     });
   };
@@ -38,7 +39,7 @@ export const AuthProvider = ({ children }) => {
     await requestLogout();
     sessionStorage.removeItem("accessToken");
     setIsAuthenticated(false);
-    setUserRole("guest");
+    setUserRole("");
     setIsAdmin(false);
     setIsPremium(false);
   };

@@ -24,13 +24,14 @@ import SignIn from "./pages/SignIn";
 import Button from "./components/Button";
 import SignUp from "./pages/SignUp";
 import AuctionMain from "./pages/Auction/AuctionMain";
+import Auction from "./pages/Auction/Auction";
 
 import { AuthContext } from "./token/AuthContext";
 import Mypage from "./pages/Mypage";
 
 import { useContext, useEffect } from "react";
 import ProtectedRoute from "./token/ProtectedRoute";
-import ThemeRoutes from "./admin/routes/Router";
+import AdminRoutes from "./admin/routes/Router";
 // import PaymentCheckoutPage from "./pages/Checkout/PaymentCheckoutPage";
 
 import CheckoutPage from "./pages/Checkout/CheckoutPage";
@@ -92,10 +93,9 @@ function App() {
           </Route>
           {/* 회원 전용 route가 될예정이오니 여기 내부에 pageroute넣어주세요 */}
           <Route path="/auction" element={<AuctionMain />} />
-
-          {/* <Route element={<ProtectedRoute allowedRoles={["premium"]} />}>
-              
-            </Route> */}
+          <Route element={<ProtectedRoute allowedRoles={["ROLE_PREMIUM"]} />}>
+               <Route path="/auction/bid" element={<Auction />} />
+            </Route>
         </Routes>
 
         {!hideNavAndFotter && <Button />}
@@ -103,7 +103,7 @@ function App() {
       </div>
       <Routes>
         <Route element={<ProtectedRoute allowedRoles={["ROLE_ADMIN"]} />}>
-          <Route path="/admin/*" element={<ThemeRoutes />} />
+          <Route path="/admin/*" element={<AdminRoutes />} />
         </Route>
       </Routes>
     </>

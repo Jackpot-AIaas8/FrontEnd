@@ -52,7 +52,7 @@ const ProductInfo = ({ productId }) => {
         shopId: product.shopId,
         name: product.name,
         productPrice: product.price,
-        totalPrice: totalPrice,
+        totalAmount: totalPrice,
         quantity: quantity,
       },
     });
