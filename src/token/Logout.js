@@ -1,4 +1,4 @@
-import { SERVER_URL } from "../config/Constants";
+import { SERVER_URL } from "../config/Constants.js";
 import axios from "axios";
 
 // 로그아웃 함수 정의

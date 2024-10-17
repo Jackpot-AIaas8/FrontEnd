@@ -11,21 +11,36 @@ const BoardRegister = () => {
   const [currentDateTime, setCurrentDateTime] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const now = new Date();
-    const formattedDateTime = now.toISOString();
-    setCurrentDateTime(formattedDateTime);
-  }, []);
+  // useEffect(() => {
+  //   const now = new Date();
+  //   const formattedDateTime = now.toISOString();
+  //   setCurrentDateTime(formattedDateTime);
+  // }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log(currentDateTime);
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("content", content);
+    formData.append("regDate", currentDateTime);
+    formData.append("type", type);
+
+    // try {
+    //   const response = await apiClient.post("board/register", {
+    //     title: title,
+    //     content: content,
+    //     type: type,
+    //     regDate: currentDateTime,
+    //   });
+
     try {
-      const response = await apiClient.post("/board/register", {
-        title: title,
-        content: content,
-        type: type,
-        regDate: currentDateTime,
+      const response = await apiClient.post("board/register", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       console.log("게시글 작성 성공:", response.data);
@@ -41,7 +56,7 @@ const BoardRegister = () => {
   return (
     <div className="flex flex-column align-center">
       <form onSubmit={handleSubmit}>
-        <div className="flex justify-between items-center w-half p-2"> 
+        <div className="flex justify-between items-center w-half p-2">
           <h2 className="align-left p-2">게시글 작성하기</h2>
         </div>
 
@@ -59,7 +74,10 @@ const BoardRegister = () => {
                     required
                   />
                 </td>
-                <td className='w-thirty' style={{ padding: "10px", borderTopRightRadius: "8px" }}>
+                <td
+                  className="w-thirty"
+                  style={{ padding: "10px", borderTopRightRadius: "8px" }}
+                >
                   <select
                     value={type}
                     onChange={(e) => setType(e.target.value)}
@@ -76,11 +94,16 @@ const BoardRegister = () => {
             <tbody>
               <tr>
                 <td colSpan={2} className="">
-                  <h4 className="text-left" style={{ marginLeft: '10px' }}>아래에 본문 작성</h4> 
+                  <h4 className="text-left" style={{ marginLeft: "10px" }}>
+                    아래에 본문 작성
+                  </h4>
                 </td>
               </tr>
               <tr>
-                <td colSpan={2} style={{ padding: "8px", borderBottom: "1px solid #ccc" }}>
+                <td
+                  colSpan={2}
+                  style={{ padding: "8px", borderBottom: "1px solid #ccc" }}
+                >
                   <textarea
                     className="w-full contentArea"
                     value={content}
@@ -93,12 +116,8 @@ const BoardRegister = () => {
             </tbody>
           </table>
         </div>
-        <div style={{ marginTop: '16px', textAlign: 'right' }}> 
-          <Button
-            type="submit"
-            variant="contained"
-            className="save-button"
-          >
+        <div style={{ marginTop: "16px", textAlign: "right" }}>
+          <Button type="submit" variant="contained" className="save-button">
             저장하기
           </Button>
         </div>
