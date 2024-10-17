@@ -39,11 +39,7 @@ const BoardAddFrom = () => {
         formData.append('type', board.type);
         formData.append('regDate', board.reg_date);
 
-        apiClient.post('/admin/board/register', formData, {
-            headers: {
-                "Content-Type": 'application/json'
-            }
-        })
+        apiClient.post('admin/board/register', formData)
             .then(response => {
                 alert("공지사항이 등록 되었습니다.");
                 window.location.href = '/admin/boardtable';
