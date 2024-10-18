@@ -1,16 +1,15 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import logoImage from "../static/newLogoverticalOrange.png";
 import { AuthContext } from "../token/AuthContext";
 
 import { StyledNavBar } from "./Mypage.styles";
 
-const MypageLeftSection = () => {
+const MypageLeftSection = ({ currentPage, setCurrentPage, infoData }) => {
   const { logout } = useContext(AuthContext);
-  const [currentPage, setCurrentPage] = useState("all");
+
   const sections = [
     { id: "info", label: "개인정보수정" },
     { id: "purchase", label: "구매 내역" },
-    { id: "cancel", label: "취소/반품/환불 내역" },
     { id: "inquiry", label: "1:1 문의 내역" },
     { id: "funding", label: "펀딩내역" },
   ];
@@ -52,8 +51,8 @@ const MypageLeftSection = () => {
                 />
               </div>
               <div className="profile">
-                <p className="name">name</p>
-                <p className="usemail">get Email@naver.com</p>
+                <p className="name">{infoData.name}</p>
+                <p className="usemail">{infoData.email}</p>
               </div>
             </div>
           </>

@@ -105,7 +105,7 @@ const BoardRegister = () => {
                   style={{ padding: "8px", borderBottom: "1px solid #ccc" }}
                 >
                   <textarea
-                    className="w-full contentArea"
+                    className="contentArea"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     required

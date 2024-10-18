@@ -4,7 +4,7 @@ const GlobalStyle = createGlobalStyle`
   /* Regular 폰트 정의 */
   @font-face {
     font-family: "Noto Sans KR";
-    src: url("./fonts/NotoSansKR-Regular.ttf") format("truetype");
+    src: url("/fonts/NotoSansKR-Regular.ttf") format("truetype");
     font-weight: 400;
     font-style: normal;
   }
@@ -12,13 +12,13 @@ const GlobalStyle = createGlobalStyle`
   /* SemiBold 폰트 정의 */
   @font-face {
     font-family: "Noto Sans KR";
-    src: url("./fonts/NotoSansKR-SemiBold.ttf") format("truetype");
+    src: url("/fonts/NotoSansKR-SemiBold.ttf") format("truetype");
     font-weight: 600;
     font-style: normal;
   }
   @font-face {
   font-family: "Noto Sans KR";
-  src: url("./fonts/NotoSansKR-Bold.ttf") format("truetype");
+  src: url("/fonts/NotoSansKR-Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
 }
@@ -26,7 +26,7 @@ const GlobalStyle = createGlobalStyle`
   /* ExtraBold 폰트 정의 */
  @font-face {
   font-family: "Noto Sans KR";
-  src: url("./fonts/NotoSansKR-ExtraBold.ttf") format("truetype");
+  src: url("/fonts/NotoSansKR-ExtraBold.ttf") format("truetype");
   font-weight: 900;
   font-style: normal;
 }

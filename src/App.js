@@ -2,12 +2,12 @@ import "./App.css";
 import Main from "./pages/MainPage";
 import NavBar from "./components/Main/NavBar";
 import Footer from "./components/Main/Footer";
-import FreeBoardPage from "./pages/FreeBoardPage";
-import OneOnOneBoardPage from "./pages/OneOnOneBoardPage";
-import BoardFindOnePage from "./pages/BoardFindOnePage";
-import BoardRegister from "./pages/BoardRegisterPage";
-import BoardEdit from "./pages/BoardEditPage";
-import BoardRemove from "./pages/BoardDeletePage";
+import FreeBoardPage from "./pages/Board/FreeBoardPage";
+import OneOnOneBoardPage from "./pages/Board/OneOnOneBoardPage";
+import BoardFindOnePage from "./pages/Board/BoardFindOnePage";
+import BoardRegister from "./pages/Board/BoardRegisterPage";
+import BoardEdit from "./pages/Board/BoardEditPage";
+import BoardRemove from "./pages/Board/BoardDeletePage";
 import Cart from "./components/Cart";
 import DogDetail from "./dogList/DogDetail";
 import DogList from "./pages/DogList";
@@ -88,7 +88,11 @@ function App() {
           <Route path="/signUp" element={<SignUp />} />
 
           {/* 회원 전용 route가 될예정이오니 여기 내부에 pageroute넣어주세요 */}
-          <Route element={<ProtectedRoute allowedRoles={["ROLE_USER"]} />}>
+          <Route
+            element={
+              <ProtectedRoute allowedRoles={["ROLE_USER", "ROLE_PREMIUM"]} />
+            }
+          >
             <Route path="/mypage" element={<Mypage />} />
             <Route path="/Checkout" element={<CheckoutPage />} />
             <Route path="/board/:boardId" element={<BoardFindOnePage />} />
