@@ -34,9 +34,10 @@ const ProductInfo = ({ productId }) => {
 
   const totalPrice = quantity * product.price;
 
-  const handlePurchase = () => {
+  const handleBuyNow = () => {
     navigate("/Checkout", {
       state: {
+        isFunding: false, 
         shopId: product.shopId,
         name: product.name,
         productPrice: product.price,
@@ -77,10 +78,10 @@ const ProductInfo = ({ productId }) => {
         <Typography variant="body2" style={{ marginTop: "16px" }}>무료배송 (30,000원 이상 구매 시)</Typography>
 
         <ButtonSection>
-          <Button variant="contained" sx={{ marginRight: 1 }} startIcon={<FavoriteBorderIcon />} onClick={handlePurchase}>
+          <Button variant="contained" sx={{ marginRight: 1 }} startIcon={<FavoriteBorderIcon />} onClick={handleBuyNow}>
             장바구니 담기
           </Button>
-          <Button variant="contained" color="primary" startIcon={<ShareIcon />} onClick={handlePurchase}>
+          <Button variant="contained" color="primary" startIcon={<ShareIcon />} onClick={handleBuyNow}>
             바로구매
           </Button>
         </ButtonSection>
