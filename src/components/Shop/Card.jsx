@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
+import apiNoToken from "../../token/AxiosConfig"; // apiNoToken을 import
 
 const Card = ({ category, searchResults }) => {
   const navigate = useNavigate();
@@ -43,10 +43,10 @@ const Card = ({ category, searchResults }) => {
       setIsLoading(true);
       try {
         const endpoint = category
-          ? `http://localhost:8181/shop/category/${category}`
-          : "http://localhost:8181/shop/findList";
+          ? `/shop/category/${category}`
+          : "/shop/findList";
 
-        const response = await axios.get(endpoint, {
+        const response = await apiNoToken.get(endpoint, {
           params: {
             page: currentPage,
             size: itemsPerPage,
@@ -144,6 +144,7 @@ const Card = ({ category, searchResults }) => {
     </StyledWrapper>
   );
 };
+
 
 // 스타일 정의는 그대로 유지합니다.
 const StyledWrapper = styled.div`
