@@ -9,7 +9,11 @@ const customerKey = "e6Bp3EiNGF0nTmXJ05nvg";
 
 function CheckoutPage() {
   const location = useLocation();
-  const { productNames = [], totalAmount = 0, quantity = 1 } = location.state || {};
+  const {
+    productNames = [],
+    totalAmount = 0,
+    quantity = 1,
+  } = location.state || {};
   const { name: productName = "", shopId = "" } = location.state || {};
 
   const amount = totalAmount + 3000; // 배송비 포함 금액
@@ -78,9 +82,10 @@ function CheckoutPage() {
     }
 
     try {
-      const orderName = Array.isArray(productNames) && productNames.length > 1
-        ? productNames.map((item) => item.productName).join(", ")
-        : productName || productNames[0]?.productName || "상품 이름 없음";
+      const orderName =
+        Array.isArray(productNames) && productNames.length > 1
+          ? productNames.map((item) => item.productName).join(", ")
+          : productName || productNames[0]?.productName || "상품 이름 없음";
 
       console.log("Order Name:", orderName);
 
@@ -100,7 +105,10 @@ function CheckoutPage() {
       };
 
       sessionStorage.setItem("paymentData", JSON.stringify(paymentData));
-      console.log("sessionStorage에 저장된 데이터:", JSON.parse(sessionStorage.getItem("paymentData")));
+      console.log(
+        "sessionStorage에 저장된 데이터:",
+        JSON.parse(sessionStorage.getItem("paymentData"))
+      );
 
       await widgets.requestPayment({
         orderId: orderId,
@@ -111,7 +119,6 @@ function CheckoutPage() {
         customerName: user.name,
         customerMobilePhone: user.phone,
       });
-
     } catch (error) {
       console.error("결제 요청 중 오류 발생:", error);
       alert("결제 요청 중 오류가 발생했습니다. 다시 시도해 주세요.");
@@ -165,9 +172,13 @@ function CheckoutPage() {
         <FlexRow>
           <SectionTitle>받는 사람 정보</SectionTitle>
           {isEditingAddress ? (
-            <SaveAddressButton onClick={handleAddressSave}>저장</SaveAddressButton>
+            <SaveAddressButton onClick={handleAddressSave}>
+              저장
+            </SaveAddressButton>
           ) : (
-            <EditAddressButton onClick={handleAddressEdit}>수정</EditAddressButton>
+            <EditAddressButton onClick={handleAddressEdit}>
+              수정
+            </EditAddressButton>
           )}
         </FlexRow>
         {isEditingAddress ? (
@@ -189,11 +200,27 @@ function CheckoutPage() {
         <ProductInfoBox>
           <ProductRow>
             <Label>상품명</Label>
-            <Value>{productName || "상품명 불러오기 실패"}</Value>
+            <Value>
+              {Array.isArray(productNames) && productNames.length > 0
+                ? productNames
+                    .map((item) => item.shopName || item.name)
+                    .join(", ") // 배열일 때 처리 (장바구니 데이터)
+                : typeof productName === "string" && productName // 단일 값일 때 처리 (상세 페이지 데이터)
+                ? productName
+                : "상품명 불러오기 실패"}
+            </Value>
           </ProductRow>
           <ProductRow>
             <Label>수량</Label>
-            <Value>{quantity || 1}개</Value>
+            <Value>
+              {Array.isArray(productNames) && productNames.length > 0 // 장바구니 형태일 경우 배열
+                ? productNames
+                    .map((item) => `${item.quantity || 1}개`)
+                    .join(", ") // 수량이 없으면 기본값으로 1 설정
+                : typeof productName === "string" && quantity // 단일 값일 때 바로구매 형태
+                ? `${quantity || 1}개` // 수량이 없으면 기본값으로 1 설정
+                : "수량 불러오기 실패"}
+            </Value>
           </ProductRow>
         </ProductInfoBox>
       </Section>
