@@ -1,27 +1,27 @@
-import { StyledPurchaseSection } from "../myPage/Mypage.styles";
-import { Card } from "@mui/material";
+import styled from "styled-components";
 
-const PurchaseHistory = ({ shopData }) => {
-  console.log(shopData);
-  const getState = (state) => {
+const PurchaseHistory = ({ shopData, theme }) => {
+  const getStateInfo = (state) => {
     switch (state) {
       case 0:
-        return "배송 준비 중";
+        return { text: "배송 준비 중", color: "black" };
       case 1:
-        return "배송 중";
+        return { text: "배송 중", color: "orange" };
       case 2:
-        return "배송 완료";
+        return { text: "배송 완료", color: "green" };
       default:
-        return "알 수 없음";
+        return { text: "서비스 에러", color: "red" };
     }
   };
 
+  const stateInfo = getStateInfo(shopData.deliveryState);
+
   return (
-    <StyledPurchaseSection>
+    <StyledPurchaseSection statecolor={stateInfo.color}>
       {/* left-section */}
 
       <div className="section-left flex">
-        <h2 className="status">{getState(shopData.deliveryState)}</h2>
+        <h5 className="status">{stateInfo.text}</h5>
         <img
           src="https://cdn.univ20.com/wp-content/uploads/2016/03/06df40100dc3614b1f183f7a1b4e41c1-17.png"
           className="thumbnail"
@@ -42,4 +42,49 @@ const PurchaseHistory = ({ shopData }) => {
   );
 };
 
+export const StyledPurchaseSection = styled.div`
+  .section-left {
+    flex-wrap: wrap;
+    height: fit-content;
+    text-align: left;
+    padding: 30px;
+
+    > h5 {
+      width: 100%;
+      font-size: 1.5rem;
+      color: ${(props) => props.statecolor};
+    }
+
+    > .thumbnail {
+      width: 64px;
+      height: 64px;
+    }
+
+    > .product-section {
+      width: calc(100% - 194px);
+    }
+
+    > .productPrice,
+    .quntity {
+    }
+
+    > .btn_detailed {
+      width: 100px;
+    }
+  }
+
+  .btn_detailed {
+    flex: 1;
+    align-self: center;
+    height: 30%;
+  }
+
+  .productInfo {
+    margin: 20px 0;
+  }
+
+  .product-section {
+    margin-left: 20px;
+  }
+`;
 export default PurchaseHistory;
