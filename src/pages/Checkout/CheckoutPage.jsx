@@ -21,7 +21,7 @@ function CheckoutPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await apiClient.get("member/myPage");
+        const response = await apiClient.get("/member/myPage");
         setUser(response.data);
         console.log("Fetched User Info:", response.data);
       } catch (error) {
@@ -71,7 +71,7 @@ function CheckoutPage() {
   const handlePayment = async () => {
     const paymentAmount = parseInt(amount, 10);
     const orderId = `order_${Date.now()}`;
-    
+
     if (!ready) {
       alert("결제 준비가 완료되지 않았습니다.");
       return;
@@ -189,19 +189,11 @@ function CheckoutPage() {
         <ProductInfoBox>
           <ProductRow>
             <Label>상품명</Label>
-            <Value>
-              {Array.isArray(productNames) && productNames.length > 0
-                ? productNames.map((item) => item.name).join(", ") 
-                : productName || "상품명 불러오기 실패"}
-            </Value>
+            <Value>{productName || "상품명 불러오기 실패"}</Value>
           </ProductRow>
           <ProductRow>
             <Label>수량</Label>
-            <Value>
-              {Array.isArray(productNames) && productNames.length > 0
-                ? productNames.map((item) => `${item.quantity}개`).join(", ")
-                : `${quantity}개`}
-            </Value>
+            <Value>{quantity || 1}개</Value>
           </ProductRow>
         </ProductInfoBox>
       </Section>
@@ -219,12 +211,10 @@ function CheckoutPage() {
                 : "가격 정보 없음"}
             </Value>
           </InfoRow>
-
           <InfoRow>
             <Label>배송비</Label>
             <Value>3,000원</Value>
           </InfoRow>
-
           <TotalRow>
             <Label>총 결제 금액</Label>
             <Value>
