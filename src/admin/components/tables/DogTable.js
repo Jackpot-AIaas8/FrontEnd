@@ -85,7 +85,7 @@ const DogTables = () => {
                                 </td>
                                 <td>{dogs.species}</td>
                                 <td>{dogs.heart}</td>
-                                <td>{dogs.regdate}</td>
+                                <td>{dogs.regDate}</td>
                                 <td>
                                     <button onClick={() => navigate(`/admin/dogdetailform/${dogs.dogId}`)}
                                             style={{border: "none", background: "white"}}>상세보기
