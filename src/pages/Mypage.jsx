@@ -26,7 +26,9 @@ import MypageSideBar from "../myPage/MyPageSideBar";
 
 import apiClient from "../token/AxiosConfig";
 import InquirySection from "../myPage/InquirySection";
-import PurchaseHistorySection from "../myPage/ShopPurchaseSection";
+import PurchaseHistorySection, {
+  PurchaseHistory,
+} from "../myPage/ShopPurchaseSection";
 
 const Mypage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -47,12 +49,70 @@ const Mypage = () => {
     grade: "기본 회원",
   });
 
+  useEffect(() => {
+    const apiShopData = () => {
+      try {
+        const response = apiClient("order/findAll");
+
+        setShopData(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    apiShopData();
+  }, []);
+
+  const [shopData, setShopData] = useState([]) || {};
+
+  useEffect(() => {
+    const apiShopData = () => {
+      try {
+        const response = apiClient("order/findAll");
+
+        setShopData(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    apiShopData();
+  }, []);
+
+  // useEffect(() => {
+  //   const mockShopData = () => {
+  //     const response = MockShopData;
+
+  //     setShopData(response.data);
+  //   };
+
+  //   mockShopData();
+  // }, []);
+
+  useEffect(() => {
+    const apiInfo = async () => {
+      try {
+        const response = await apiClient.get("member/myPage");
+        console.log(response.data);
+
+        // 가져온 데이터를 기반으로 grade를 판별해서 상태 업데이트
+        const updatedData = {
+          ...response.data,
+          grade: response.data.grade === 1 ? "기본 회원" : "VIP",
+        };
+        setInfoData(updatedData);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    apiInfo();
+    console.log(infoData.grade);
+  }, []);
+
   const renderSingleContent = () => {
     switch (currentPage) {
       case "info":
         return <InfoSection />;
       case "purchase":
-        return <PurchaseHistorySection />;
+        return <PurchaseHistorySection shopData={shopData} />;
       case "inquiry":
         return <InquirySection />;
       case "funding":
@@ -65,7 +125,18 @@ const Mypage = () => {
   const renderAllContent = () => (
     <>
       <InfoSection />
-      <PurchaseHistorySection />
+      <div>
+        <h4 className="text-left p-0 m-0">구매내역</h4>
+        {shopData?.length ? (
+          shopData
+            .slice(0, 3)
+            .map((shopDatum) => (
+              <PurchaseHistory key={shopDatum.id} shopData={shopDatum} />
+            ))
+        ) : (
+          <NoneContent />
+        )}
+      </div>
 
       <InquirySection />
       <FundHisotrySection />
@@ -201,36 +272,6 @@ const Mypage = () => {
       </StyledFundHistory>
     );
   };
-
-  // useEffect(() => {
-  //   const mockShopData = () => {
-  //     const response = MockShopData;
-
-  //     setShopData(response.data);
-  //   };
-
-  //   mockShopData();
-  // }, []);
-
-  useEffect(() => {
-    const apiInfo = async () => {
-      try {
-        const response = await apiClient.get("member/myPage");
-        console.log(response.data);
-
-        // 가져온 데이터를 기반으로 grade를 판별해서 상태 업데이트
-        const updatedData = {
-          ...response.data,
-          grade: response.data.grade === 1 ? "기본 회원" : "VIP",
-        };
-        setInfoData(updatedData);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    apiInfo();
-    console.log(infoData.grade);
-  }, []);
 
   const handleMypage = (e) => {
     e.preventDefault();

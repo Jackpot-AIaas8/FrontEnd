@@ -1,24 +1,7 @@
 import styled from "styled-components";
 import { NoneContent } from "../pages/Mypage";
-import { useEffect, useState } from "react";
-import apiClient from "../token/AxiosConfig";
 
-const PurchaseHistorySection = () => {
-  const [shopData, setShopData] = useState([]) || {};
-
-  useEffect(() => {
-    const apiShopData = () => {
-      try {
-        const response = apiClient("order/findAll");
-
-        setShopData(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    apiShopData();
-  }, []);
-
+const PurchaseHistorySection = ({ shopData }) => {
   return (
     <div>
       <h4 className="text-left p-0 m-0">구매내역</h4>
@@ -33,7 +16,7 @@ const PurchaseHistorySection = () => {
   );
 };
 
-const PurchaseHistory = ({ shopData, theme }) => {
+export const PurchaseHistory = ({ shopData, theme }) => {
   const getStateInfo = (state) => {
     switch (state) {
       case 0:
