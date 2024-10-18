@@ -11,12 +11,12 @@ const BoardEdit = () => {
   const navigate = useNavigate(); // 페이지 이동을 위한 navigate
   const [currentDateTime, setCurrentDateTime] = useState(""); // 현재 시간 상태
 
-  // 현재 시간과 날짜를 가져오는 함수
-  useEffect(() => {
-    const now = new Date();
-    const formattedDateTime = now.toISOString(); // 현재 시간을 ISO 형식으로 변환
-    setCurrentDateTime(formattedDateTime); // 상태 업데이트
-  }, []);
+  // // 현재 시간과 날짜를 가져오는 함수
+  // useEffect(() => {
+  //   const now = new Date();
+  //   const formattedDateTime = now.toISOString(); // 현재 시간을 ISO 형식으로 변환
+  //   setCurrentDateTime(formattedDateTime); // 상태 업데이트
+  // }, []);
 
   // 기존 게시글 데이터를 가져오는 함수
   useEffect(() => {
@@ -39,16 +39,30 @@ const BoardEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault(); // 기본 폼 제출 방지
 
+    // console.log(currentDateTime);
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("content", content);
+    formData.append("regDate", currentDateTime);
+    // formData.append("type", type);
+
+    // try {
+    //   const response = await apiClient.post(`/board/edit/${boardId}`, {
+    //     title: title,
+    //     content: content,
+    //     regDate: currentDateTime, // 현재 시간
+    //   });
     try {
-      const response = await apiClient.post(`/board/edit/${boardId}`, {
-        title: title,
-        content: content,
-        regDate: currentDateTime, // 현재 시간
+      const response = await apiClient.post(`board/edit/${boardId}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       console.log("게시글 수정 성공:", response.data);
       if (response.data.status === 200 || response.status === 200) {
-        navigate("/freeBoard"); 
+        navigate("/freeBoard");
       }
     } catch (error) {
       console.error(error.response ? error.response.data : error.message);
@@ -81,13 +95,16 @@ const BoardEdit = () => {
               <tbody>
                 <tr>
                   <td colSpan={2} className="">
-                    <h4 className="text-left" style={{ marginLeft: '10px' }}>
+                    <h4 className="text-left" style={{ marginLeft: "10px" }}>
                       아래에 수정내용 작성
                     </h4>
                   </td>
                 </tr>
                 <tr>
-                  <td colSpan={2} style={{ padding: "8px", borderBottom: "1px solid #ccc" }}>
+                  <td
+                    colSpan={2}
+                    style={{ padding: "8px", borderBottom: "1px solid #ccc" }}
+                  >
                     <textarea
                       className="w-full contentArea"
                       value={content} // 기존 내용을 표시
@@ -100,12 +117,8 @@ const BoardEdit = () => {
               </tbody>
             </table>
           </div>
-          <div style={{ marginTop: '16px', textAlign: 'right' }}>
-            <Button
-              type="submit"
-              variant="contained"
-              className="save-button"
-            >
+          <div style={{ marginTop: "16px", textAlign: "right" }}>
+            <Button type="submit" variant="contained" className="save-button">
               수정하기
             </Button>
           </div>

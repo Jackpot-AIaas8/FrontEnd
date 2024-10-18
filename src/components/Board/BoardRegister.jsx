@@ -20,7 +20,7 @@ const BoardRegister = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(currentDateTime);
+    // console.log(currentDateTime);
 
     const formData = new FormData();
     formData.append("title", title);

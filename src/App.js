@@ -19,17 +19,16 @@ import FailPage from "./pages/Checkout/FailPage";
 
 import { Routes, Route, useLocation } from "react-router-dom";
 
-import "./config/Utility.css";
+import GlobalStyle from "./config/GlobalStyle";
 import SignIn from "./pages/SignIn";
 import Button from "./components/Button";
 import SignUp from "./pages/SignUp";
 import AuctionMain from "./pages/Auction/AuctionMain";
 import Auction from "./pages/Auction/Auction";
 
-import { AuthContext } from "./token/AuthContext";
 import Mypage from "./pages/Mypage";
 
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import ProtectedRoute from "./token/ProtectedRoute";
 import AdminRoutes from "./admin/routes/Router";
 // import PaymentCheckoutPage from "./pages/Checkout/PaymentCheckoutPage";
@@ -41,24 +40,28 @@ import {
   setupNoTokenInterceptors,
 } from "./token/AxiosConfig";
 import { useLoading } from "./config/LodingContext";
+let interceptorsInitialized = false;
 
 function App() {
-  const { isAdmin } = useContext(AuthContext) || {};
   const { setLoading } = useLoading();
   const location = useLocation();
-  const hideNavAndHeader = location.pathname === "/admin";
+  const hideNavAndFotter = location.pathname.startsWith("/admin");
   // axios 초기 설정 선언
-  useEffect(() => {
-    setupInterceptors(setLoading);
-    setupNoTokenInterceptors(setLoading); // 인터셉터 초기화
-  }, [setLoading]);
+  // useEffect(() => {
+  //   if (!interceptorsInitialized) {
+  //     setupInterceptors(setLoading);
+  //     setupNoTokenInterceptors(setLoading); // 인터셉터 초기화
+  //     interceptorsInitialized = true; // 한 번만 설정하도록 변경
+  //   }
+  // }, [setLoading]);
 
   return (
     <>
       {/* 로그인 전역 상태 관리 */}
       <div className="App">
+        <GlobalStyle />
         <GlobalLoading />
-        {!isAdmin && <NavBar />}
+        {!hideNavAndFotter && <NavBar />}
 
         <Routes>
           {/* 메인 Page  */}
@@ -93,12 +96,12 @@ function App() {
           {/* 회원 전용 route가 될예정이오니 여기 내부에 pageroute넣어주세요 */}
           <Route path="/auction" element={<AuctionMain />} />
           <Route element={<ProtectedRoute allowedRoles={["ROLE_PREMIUM"]} />}>
-               <Route path="/auction/bid" element={<Auction />} />
-            </Route>
+            <Route path="/auction/bid" element={<Auction />} />
+          </Route>
         </Routes>
 
-        {!isAdmin && <Button />}
-        {!isAdmin && <Footer />}
+        {!hideNavAndFotter && <Button />}
+        {!hideNavAndFotter && <Footer />}
       </div>
       <Routes>
         <Route element={<ProtectedRoute allowedRoles={["ROLE_ADMIN"]} />}>
