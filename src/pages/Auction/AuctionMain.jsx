@@ -75,20 +75,20 @@ const AuctionMain = () => {
   // WebSocket으로부터 경매 업데이트 받기
   const handleAuctionUpdate = useCallback(
     (data) => {
-      setAuction(data); // WebSocket에서 받은 경매 데이터를 상태로 업데이트
-      setStatus(data.auctionStatus);
-      // calculateRemainingTime(data.startTime, data.auctionId);
-
+      if (data.auctionStatus === 1 || new Date(data.startTime) < new Date(auction.startTime)) {
+        setAuction(data);  // WebSocket에서 받은 경매 데이터를 상태로 업데이트
+        setStatus(data.auctionStatus);
+        console.log("경매 바뀜 : " , auction)
+        return auction;
+      }
       if (data.auctionStatus === 2) {
         // 경매가 종료되었을 때 다음 경매 데이터를 가져옴
         fetchCurrentAuction(); // 현재 또는 다음 경매 데이터를 가져오는 함수
       }
     },
-    [fetchCurrentAuction]
+    [auction]
   );
-  useEffect(() => {
-    fetchCurrentAuction();  // 처음 로드할 때 현재 경매 데이터를 가져옴
-  }, [fetchCurrentAuction]);
+
 
   useEffect(() => {
     if (auction && auction.auctionStatus === 1) {
@@ -98,9 +98,9 @@ const AuctionMain = () => {
 
   useEffect(() => {
     if (auction) {
-      console.log('Auction data updated:', auction);
+      console.log('경매 업데이트', auction);
     }
-  }, [auction]);  
+  }, [auction]);
 
   if (!auction) {
     return <div>경매 정보를 불러오는 중...</div>;
@@ -165,7 +165,7 @@ const AuctionMain = () => {
           </Grid>
           <Grid size={12}>
             <strong style={{ fontSize: "20px" }}>
-              경매장은 VIP이상의 회원만 입장 가능합니다.
+              경매장은 Premium이상의 회원만 입장 가능합니다.
             </strong>
           </Grid>
         </Grid>
