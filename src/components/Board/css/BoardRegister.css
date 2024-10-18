@@ -1,15 +1,16 @@
 .board-table-reg {
   border-collapse: collapse;
-  width: 1200px;
+  width: 1200px !important;
   height: 300px; /* 높이를 고정하여 정사각형 형태 유지 */
   margin: 0 auto; /* 테이블을 가운데 정렬 */
   border: 1px solid #ccc; /* 테이블 전체에 보더 추가 */
+  /* overflow: hidden; */
 }
 
 .board-table-reg thead td {
   border-top: 1px solid #ccc;
-  border-left: none; 
-  border-right: none; 
+  border-left: none;
+  border-right: none;
   border-bottom: none;
   background-color: #ffffff;
   padding: 5px; /* 패딩을 줄여서 왼쪽 끝에 가깝게 설정 */
@@ -23,7 +24,6 @@
 .board-table-reg tbody tr:first-child {
   border-top: 2px solid #ff7600;
 }
-
 
 .board-table-reg tbody td {
   border: 1px solid #ccc; /* 각 셀에 보더 추가 */
@@ -41,7 +41,7 @@
   min-height: 500px;
   background-color: white;
   margin: 5px;
-  width: calc(100% - 20px);  
+  width: calc(100% - 20px);
 }
 
 .contentArea:focus {
@@ -54,7 +54,7 @@
 }
 
 .save-button {
-  background-color: #ff7600 !important; 
+  background-color: #ff7600 !important;
   color: #ffffff !important;
   transition: background-color 0.3s, color 0.3s;
 }
@@ -64,7 +64,8 @@
   color: #ff7600 !important;
 }
 
-input, textarea {
+input,
+textarea {
   margin: 0; /* 마진을 0으로 설정하여 공간 없애기 */
   padding: 10px;
   font-size: 16px;
@@ -73,7 +74,7 @@ input, textarea {
   background-color: #ffffffa8;
 }
 
-input:focus, textarea:focus {
+input:focus,
+textarea:focus {
   outline: none;
 }
-

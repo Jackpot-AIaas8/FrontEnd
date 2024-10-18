@@ -106,7 +106,7 @@ const BoardEdit = () => {
                     style={{ padding: "8px", borderBottom: "1px solid #ccc" }}
                   >
                     <textarea
-                      className="w-full contentArea"
+                      className="contentArea"
                       value={content} // 기존 내용을 표시
                       onChange={(e) => setContent(e.target.value)} // 새로운 내용 입력 시 상태 업데이트
                       required
