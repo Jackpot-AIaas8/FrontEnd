@@ -4,7 +4,7 @@ import { AuthContext } from "../token/AuthContext";
 
 import { StyledNavBar } from "./Mypage.styles";
 
-const MypageLeftSection = ({ currentPage, setCurrentPage }) => {
+const MypageLeftSection = ({ currentPage, setCurrentPage, infoData }) => {
   const { logout } = useContext(AuthContext);
 
   const sections = [
@@ -51,8 +51,8 @@ const MypageLeftSection = ({ currentPage, setCurrentPage }) => {
                 />
               </div>
               <div className="profile">
-                <p className="name">name</p>
-                <p className="usemail">get Email@naver.com</p>
+                <p className="name">{infoData.name}</p>
+                <p className="usemail">{infoData.email}</p>
               </div>
             </div>
           </>
