@@ -18,12 +18,16 @@ const Cart = () => {
   const fetchCartItems = async () => {
     try {
       const response = await apiClient.get("cart/findAll");
-      const itemsWithQuantity = response.data.map((item) => ({
-        ...item,
-        quantity: 1,
-      }));
-      setCartItems(itemsWithQuantity);
-      calculateTotalPrice(itemsWithQuantity);
+      if (response.data.length === 0) {
+        setCartItems([]);
+      } else {
+        const itemsWithQuantity = response.data.map((item) => ({
+          ...item,
+          quantity: 1,
+        }));
+        setCartItems(itemsWithQuantity);
+        calculateTotalPrice(itemsWithQuantity);
+      }
     } catch (error) {
       console.error("Error fetching cart items:", error);
     }
@@ -55,15 +59,15 @@ const Cart = () => {
   // 결제 페이지로 상품 정보 및 총 결제 금액 전달
   const handlePurchase = () => {
     const productNames = cartItems.map((item) => ({
-      productName: item.shopName,
+      name: item.shopName,
       productPrice: item.shopPrice,
       quantity: item.quantity,
-      totalPrice: item.shopPrice * item.quantity, // 총 금액 계산
+      totalAmount: item.shopPrice * item.quantity, // 총 금액 계산
     }));
 
     navigate("/Checkout", {
       state: {
-        name: productNames, // 구매 상품 리스트 전달
+        productNames, // 구매 상품 리스트 전달
         totalAmount: totalPrice + 3000, // 총 결제 금액 (배송비 포함)
       },
     });
@@ -79,65 +83,82 @@ const Cart = () => {
         <Grid size={{ xs: 6, md: 7 }} style={{ marginLeft: "200px" }}>
           <StyledWrapper>
             <div className="master-container">
-              {cartItems.map((item) => (
-                <div className="card cart" key={item.cartId}>
-                  <label className="title">장바구니 물품</label>
-                  <div className="products">
-                    <div className="product">
-                      <img
-                        src={logo}
-                        alt="상품 이미지 대체 로고"
-                        style={{ height: "80px", width: "80px" }}
-                      ></img>
-                      <div>
-                        <span>{item.shopName}</span>
-                        <p>{item.shopId}번 상품</p>
-                        <p>{item.shopPrice}원</p>
-                      </div>
-                      <div className="quantity">
-                        <button onClick={() => updateQuantity(item.cartId, -1)}>
-                          <svg
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            height="14"
-                            width="14"
-                            xmlns="http://www.w3.org/2000/svg"
+              {cartItems.length === 0 ? (
+                <div className="empty-cart">
+                  <p>장바구니에 상품이 없습니다</p>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => navigate("/shop")}
+                  >
+                    쇼핑몰로 이동 →
+                  </Button>
+                </div>
+              ) : (
+                cartItems.map((item) => (
+                  <div className="card cart" key={item.cartId}>
+                    <label className="title">장바구니 물품</label>
+                    <div className="products">
+                      <div className="product">
+                        <img
+                          src={logo}
+                          alt="상품 이미지 대체 로고"
+                          style={{ height: "80px", width: "80px" }}
+                        ></img>
+                        <div>
+                          <span>{item.shopName}</span>
+                          <p>{item.shopId}번 상품</p>
+                          <p>{item.shopPrice}원</p>
+                        </div>
+                        <div className="quantity">
+                          <button
+                            onClick={() => updateQuantity(item.cartId, -1)}
                           >
-                            <path
-                              strokeLinejoin="round"
-                              strokeLinecap="round"
-                              strokeWidth={2.5}
-                              stroke="#47484b"
-                              d="M20 12L4 12"
-                            />
-                          </svg>
-                        </button>
-                        <label>{item.quantity}</label>
-                        <button onClick={() => updateQuantity(item.cartId, 1)}>
-                          <svg
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            height="14"
-                            width="14"
-                            xmlns="http://www.w3.org/2000/svg"
+                            <svg
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              height="14"
+                              width="14"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinejoin="round"
+                                strokeLinecap="round"
+                                strokeWidth={2.5}
+                                stroke="#47484b"
+                                d="M20 12L4 12"
+                              />
+                            </svg>
+                          </button>
+                          <label>{item.quantity}</label>
+                          <button
+                            onClick={() => updateQuantity(item.cartId, 1)}
                           >
-                            <path
-                              strokeLinejoin="round"
-                              strokeLinecap="round"
-                              strokeWidth={2.5}
-                              stroke="#47484b"
-                              d="M12 4V20M20 12H4"
-                            />
-                          </svg>
-                        </button>
+                            <svg
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              height="14"
+                              width="14"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinejoin="round"
+                                strokeLinecap="round"
+                                strokeWidth={2.5}
+                                stroke="#47484b"
+                                d="M12 4V20M20 12H4"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                        <label className="price small">
+                          {(item.shopPrice * item.quantity).toLocaleString()}원
+                        </label>
                       </div>
-                      <label className="price small">
-                        {(item.shopPrice * item.quantity).toLocaleString()}원
-                      </label>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </StyledWrapper>
         </Grid>
@@ -290,7 +311,7 @@ const StyledWrapper = styled.div`
   /* Checkout */
   .checkout {
     border-radius: 9px 9px 19px 19px;
-    width: 71%;
+    width: 80%;
     margin-top: -80px;
     margin-left: -300px;
   }

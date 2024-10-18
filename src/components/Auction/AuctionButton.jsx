@@ -10,7 +10,7 @@ const AuctionButton = ({text}) => {
         if (text === "뒤로가기") {
             window.history.back(); // history.back() 호출
           } else {
-            navigate("/auctionEnter"); // 원하는 경로로 이동
+            navigate("/auction/bid"); // 원하는 경로로 이동
           }
     }
 

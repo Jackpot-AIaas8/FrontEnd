@@ -1,0 +1,90 @@
+import styled from "styled-components";
+
+const PurchaseHistory = ({ shopData, theme }) => {
+  const getStateInfo = (state) => {
+    switch (state) {
+      case 0:
+        return { text: "배송 준비 중", color: "black" };
+      case 1:
+        return { text: "배송 중", color: "orange" };
+      case 2:
+        return { text: "배송 완료", color: "green" };
+      default:
+        return { text: "서비스 에러", color: "red" };
+    }
+  };
+
+  const stateInfo = getStateInfo(shopData.deliveryState);
+
+  return (
+    <StyledPurchaseSection statecolor={stateInfo.color}>
+      {/* left-section */}
+
+      <div className="section-left flex">
+        <h5 className="status">{stateInfo.text}</h5>
+        <img
+          src="https://cdn.univ20.com/wp-content/uploads/2016/03/06df40100dc3614b1f183f7a1b4e41c1-17.png"
+          className="thumbnail"
+          alt="품목"
+        />
+        <div className="product-section align-center">
+          <p className="productTitle">{shopData.productDTO.exampleName}</p>{" "}
+          {/*상품명*/}
+          <span className="productPrice">
+            {shopData.productDTO.productPrice}
+          </span>
+          <span>*</span>
+          <span className="quntity">{shopData.productDTO.quantity}개</span>
+        </div>
+        <button className="btn_detailed">상세정보</button>
+      </div>
+    </StyledPurchaseSection>
+  );
+};
+
+export const StyledPurchaseSection = styled.div`
+  .section-left {
+    flex-wrap: wrap;
+    height: fit-content;
+    text-align: left;
+    padding: 30px;
+
+    > h5 {
+      width: 100%;
+      font-size: 1.5rem;
+      color: ${(props) => props.statecolor};
+    }
+
+    > .thumbnail {
+      width: 64px;
+      height: 64px;
+    }
+
+    > .product-section {
+      width: calc(100% - 194px);
+    }
+
+    > .productPrice,
+    .quntity {
+    }
+
+    > .btn_detailed {
+      width: 100px;
+    }
+  }
+
+  .btn_detailed {
+    flex: 1;
+    align-self: center;
+    height: 30%;
+  }
+
+  .productInfo {
+    margin: 20px 0;
+  }
+
+  .product-section {
+    margin-left: 20px;
+  }
+`;
+export default PurchaseHistory;

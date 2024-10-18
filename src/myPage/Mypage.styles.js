@@ -79,21 +79,33 @@ export const StyledNavBar = styled.div`
     letter-spacing: -1.18px;
     line-height: 26px;
     margin: 8% 0;
-  }
 
-  .menu_item.active {
-    background-color: #ff7f50;
-    color: white;
-    font-weight: bold;
+    &.active {
+      background-color: #ff7f50;
+      color: white;
+      font-weight: bold;
+    }
   }
 `;
 
 export const StyeldRightSection = styled.div`
   flex: 2;
-  gap: 30px;
+  gap: 15px;
+
+  h4 {
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+  }
+
   .section-mypage {
     height: fit-content;
     padding: 20px;
+  }
+
+  .section-noneContent {
+    min-height: 50px;
+    text-align: center;
+    line-height: 50px;
   }
 `;
 
@@ -118,46 +130,13 @@ export const StyledMypageSection = styled.div`
   }
 `;
 
-export const StyledPurchaseSection = styled.div`
-  .left-section {
-    flex-wrap: wrap;
-    height: fit-content;
-    text-align: left;
+export const StyledOneBoard = styled.div`
+  .section-oneBoard {
     padding: 30px;
-
-    > h2 {
-      width: 100%;
-    }
-
-    > .thumbnail {
-      width: 64px;
-      height: 64px;
-    }
-
-    > .product-section {
-      width: calc(100% - 194px);
-    }
-
-    > .productPrice,
-    .quntity {
-    }
-
-    > .btn_detailed {
-      width: 100px;
-    }
   }
-
-  .btn_detailed {
-    flex: 1;
+  .left-oneBoard {
     align-self: center;
-    height: 30%;
-  }
-
-  .productInfo {
-    margin: 20px 0;
-  }
-
-  .product-section {
-    margin-left: 20px;
   }
 `;
+
+export const StyledFundHistory = styled.div``;

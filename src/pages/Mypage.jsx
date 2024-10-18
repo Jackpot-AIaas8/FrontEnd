@@ -4,17 +4,16 @@ import {
   StyledMypageWrapper,
   StyeldRightSection,
   StyledMypageSection,
-  StyledPurchaseSection,
+  StyledOneBoard,
+  StyledFundHistory,
 } from "../myPage/Mypage.styles";
-
-import mockMypageData, { MockShopData } from "../myPage/MockMypageData";
-import apiClient from "../token/AxiosConfig";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { MockShopData } from "../myPage/MockMypageData";
 
 import Grid2 from "@mui/material/Grid2";
 import {
   Avatar,
   Button,
-  Card,
   CardContent,
   Dialog,
   DialogActions,
@@ -24,13 +23,14 @@ import {
   Typography,
 } from "@mui/material";
 import MypageSideBar from "../myPage/MyPageSideBar";
+import PurchaseHistory from "../myPage/ShopPurchase";
+import apiClient from "../token/AxiosConfig";
+import getTimeAgo from "../detailComponent/GetTImeAgo";
 
 const Mypage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const [memberMerchList, setMemberMerchList] = useState([]);
-  const [oneOnOneboardList, setoneOnOneboardList] = useState([]);
-  const [dogList, setDogList] = useState([]);
+  const [currentPage, setCurrentPage] = useState("all");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,6 +38,34 @@ const Mypage = () => {
   const [name, setName] = useState("");
   const [nickname, setNickname] = useState("");
   const [address, setAddress] = useState("");
+
+  const [shopData, setShopData] = useState([]) || {};
+  const [boardData, setBoardData] = useState([]) || {};
+
+  const renderSingleContent = () => {
+    switch (currentPage) {
+      case "info":
+        return <InfoSection />;
+      case "purchase":
+        return <PurchaseHistorySection />;
+      case "inquiry":
+        return <InquirySection />;
+      case "funding":
+        return <FundHisotrySection />;
+      default:
+        return renderAllContent(); // 기본적으로 모든 섹션 렌더링
+    }
+  };
+
+  const renderAllContent = () => (
+    <>
+      <InfoSection />
+      <PurchaseHistorySection />
+
+      <InquirySection />
+      <FundHisotrySection />
+    </>
+  );
 
   const editUser = () => {
     return (
@@ -100,253 +128,197 @@ const Mypage = () => {
     );
   };
 
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
+  const InfoSection = () => {
+    return (
+      <StyledMypageSection className="w-full">
+        <h4 className="text-left p-0 m-0">프로필</h4>
+
+        <div className="section-mypage flex flex-row">
+          {/* Left Section */}
+
+          <Grid2
+            onClick={handleMypage}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 5,
+              backgroundColor: "#f5f5f5",
+              borderRadius: ".5rem 0 0 .5rem",
+            }}
+          >
+            <Avatar
+              src="https://static.nid.naver.com/images/web/user/default.png"
+              sx={{ width: 100, height: 100, mb: 2 }}
+            />
+            <Typography variant="h5">전세계</Typography>
+            <Typography variant="body2">Gold</Typography>
+          </Grid2>
+
+          {/* Right Section */}
+
+          <CardContent className="w-full">
+            <Typography variant="h6">Information</Typography>
+            <Divider sx={{ my: 2 }} />
+            <ul className="flex justify-around">
+              <li>
+                <h3 className="info-title">Email</h3>
+                <span>이메일 || *******처리</span>
+              </li>
+              <li>
+                <h3 className="info-title">Phone</h3>
+                <span>000-000-0000</span>
+              </li>
+
+              <li>
+                <h3 className="info-title">닉네임</h3>
+                <span>nickName</span>
+              </li>
+              <li>
+                <h3 className="info-title">Address</h3>
+                <span>집 주소</span>
+              </li>
+            </ul>
+          </CardContent>
+        </div>
+      </StyledMypageSection>
+    );
   };
 
-  const [shopData, setShopData] = useState([]);
+  const InquirySection = () => {
+    return (
+      <StyledOneBoard>
+        <h4 className="text-left p-0 m-0">나의 문의내역</h4>
+        {boardData?.length ? (
+          boardData.slice(0, 3).map((board) => (
+            <div
+              key={board.boardId}
+              className="section-oneBoard flex flex-row justify-between align-center"
+            >
+              <span className="left-oneBoard flex flex-row w-half ">
+                <LockOutlinedIcon />
+                1대1문의 내역입니다.
+              </span>
+
+              <span>{board.regDate.slice(0, 10)}</span>
+              <span>{getTimeAgo(board.regDate)} </span>
+              <button className="btn_show">보러가기</button>
+            </div>
+          ))
+        ) : (
+          <NoneContent />
+        )}
+      </StyledOneBoard>
+    );
+  };
+
+  const PurchaseHistorySection = () => {
+    return (
+      <div>
+        <h4 className="text-left p-0 m-0">구매내역</h4>
+        {shopData?.length ? (
+          shopData.map((shopDatum) => (
+            <PurchaseHistory key={shopDatum.id} shopData={shopDatum} />
+          ))
+        ) : (
+          <NoneContent />
+        )}
+      </div>
+    );
+  };
+
+  const FundHisotrySection = () => {
+    return (
+      <StyledFundHistory>
+        <h4 className="text-left p-0 m-0">펀딩내역</h4>
+        <div className="section-fund flex w-full flex-column">
+          <span>dogDTO가 될것</span>
+        </div>
+      </StyledFundHistory>
+    );
+  };
+
+  const NoneContent = () => {
+    return <p className="section-noneContent ">정보가 없습니다.</p>;
+  };
+
+  // useEffect(() => {
+  //   const mockShopData = () => {
+  //     const response = MockShopData;
+
+  //     setShopData(response.data);
+  //   };
+
+  //   mockShopData();
+  // }, []);
 
   useEffect(() => {
-    const shopMerchList = async () => {
+    const apiShopData = () => {
       try {
-        const response = await apiClient.get("shop/findOrderList", {
-          params: { page: 1, size: 5 }, // 페이지 사이즈는 5로 너무 길지 않게
-        });
-        const memberMerchList = response.data || [];
-        setMemberMerchList(memberMerchList);
+        const response = apiClient("order/findAll");
+        console.log(response.data);
+        setShopData(response.data);
       } catch (error) {
-        // console.error("구매리스트 받아오기 실패:", error);
+        console.log(error);
       }
     };
-
-    shopMerchList(); // 비동기 함수 호출
+    apiShopData();
   }, []);
 
   useEffect(() => {
-    const apiShopData = async () => {
-      const response = MockShopData;
-      console.log(response.data);
-      setShopData(response.data);
-    };
-
-    apiShopData();
-    console.log(shopData);
-  }, [shopData]);
-
-  useEffect(() => {
-    const askBoardList = async () => {
+    const apiOnBoardData = async () => {
       try {
         const response = await apiClient.get("board/findAllAskMyPage", {
-          params: { page: 1, size: 5 }, // 페이지 사이즈는 5로 너무 길지 않게
+          params: { page: 1, size: 3 },
         });
 
-        const oneOnOneboardList = response.data || [];
-        setoneOnOneboardList(oneOnOneboardList.slice(0, 5));
+        setBoardData(response.data);
+        console.log(response);
       } catch (error) {
-        // console.error("문의내역 받아오기 실패:", error);
+        console.error(error);
       }
     };
-
-    askBoardList(); // 비동기 함수 호출
+    apiOnBoardData();
   }, []);
 
-  useEffect(() => {
-    const dogFund = async () => {
-      try {
-        const response = await apiClient.get("dog/fundListMyPage");
-
-        const dogList = response.data.dogList || [];
-        setDogList(dogList.slice(0, 5));
-        console.log(dogList); // 여기 콘솔 찍는거 있음. 데이터가 잘 들어왔는지 봐야지
-      } catch (error) {
-        console.error("펀딩내역 받아오기 실패:", error);
-      }
-    };
-
-    dogFund(); // 비동기 함수 호출
-  }, []);
+  // useEffect(() => {
+  //   const apiInfo = () => {
+  //     try {
+  //       const response = apiClient("member/myPage");
+  //       console.log(response.data);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   apiInfo();
+  // }, []);
 
   const handleMypage = (e) => {
     e.preventDefault();
     // 조건이 눌렸을 경우 개인정보 수정 창이 떠야한다.
   };
-
-  const PurchaseHistory = () => {
-    return (
-      <Card sx={{ display: "block", borderRadius: ".5rem" }}>
-        <StyledPurchaseSection>
-          {/* left-section */}
-
-          <div className="left-section flex">
-            <h2 className="status">배송상태</h2>
-            <img
-              src="https://cdn.univ20.com/wp-content/uploads/2016/03/06df40100dc3614b1f183f7a1b4e41c1-17.png"
-              className="thumbnail"
-              alt="품목"
-            />
-            <div className="product-section align-center">
-              <p className="productTitle">이름.</p>
-              <span className="productPrice">가격</span>
-              <span className="quntity">개수</span>
-            </div>
-            <button className="btn_detailed">상세정보</button>
-          </div>
-        </StyledPurchaseSection>
-      </Card>
-    );
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
   };
 
   return (
     <>
       <div className="container flex justify-center">
         <StyledMypageWrapper className="flex flex-row">
-          <MypageSideBar />
-          <StyeldRightSection className="right-section flex flex-column  w-full    ">
-            <>
-              <StyledMypageSection className="w-full">
-                <Card sx={{ display: "flex", borderRadius: ".5rem" }}>
-                  {/* Left Section */}
+          {/* leftSection */}
+          <MypageSideBar
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+          />
+          {/* RightSection */}
+          <StyeldRightSection className="right-section flex flex-column  w-full justify-around  ">
+            {/* <InfoSection />
+            <PurchaseHistorySection />
+            <InquirySection />
+            <FundHisotrySection /> */}
 
-                  <Grid2
-                    onClick={handleMypage}
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      padding: 5,
-                      backgroundColor: "#f5f5f5",
-                      borderRadius: ".5rem 0 0 .5rem",
-                    }}
-                  >
-                    <Avatar
-                      src="https://static.nid.naver.com/images/web/user/default.png"
-                      sx={{ width: 100, height: 100, mb: 2 }}
-                    />
-                    <Typography variant="h5">전세계</Typography>
-                    <Typography variant="body2">Gold</Typography>
-                  </Grid2>
-
-                  {/* Right Section */}
-
-                  <CardContent className="w-full">
-                    <Typography variant="h6">Information</Typography>
-                    <Divider sx={{ my: 2 }} />
-                    <ul className="flex justify-around">
-                      <li>
-                        <h3 className="info-title">Email</h3>
-                        <span>이메일 || *******처리</span>
-                      </li>
-                      <li>
-                        <h3 className="info-title">Phone</h3>
-                        <span>000-000-0000</span>
-                      </li>
-
-                      <li>
-                        <h3 className="info-title">닉네임</h3>
-                        <span>nickName</span>
-                      </li>
-                      <li>
-                        <h3 className="info-title">Address</h3>
-                        <span>집 주소</span>
-                      </li>
-                    </ul>
-                  </CardContent>
-                </Card>
-              </StyledMypageSection>
-            </>
-
-            <h4 className="text-left p-0 m-0">구매내역</h4>
-            <PurchaseHistory />
-
-            <div className="section-mypage flex w-full flex-column">
-              <h2 className="text-left p-2">취소/반품/환불내역</h2>
-              <table>
-                <thead>
-                  <tr>
-                    <th>상품 ID</th>
-                    <th>상품명</th>
-                    <th>카테고리</th>
-                    <th>가격</th>
-                    <th>주문상태</th>
-                    <th>장바구니 담기</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {mockMypageData.returnItems.map((item) => (
-                    <tr key={item.shopId}>
-                      <td>{item.shopId}</td>
-                      <td>{item.name}</td>
-                      <td>{item.category}</td>
-                      <td>{item.price} 원</td>
-                      <td>{item.status}</td>
-                      <td>
-                        <button onClick={() => alert("장바구니에 담겼습니다.")}>
-                          장바구니 담기
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="section-mypage flex w-full flex-column">
-              <h2 className="text-left p-2">1:1문의내역</h2>
-              <table>
-                <thead>
-                  <tr>
-                    <th>글번호</th>
-                    <th>문의글 제목</th>
-                    <th>작성일</th>
-                    <th>작성자</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {oneOnOneboardList.map((boardDTO) => (
-                    <tr key={boardDTO.boardId}>
-                      <td>{boardDTO.boardId}</td>
-                      <td>{boardDTO.title}</td>
-                      <td>{boardDTO.regDate}</td>
-                      <td>{boardDTO.memberId}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="section-mypage flex w-full flex-column">
-              <h2 className="text-left p-2">펀딩내역</h2>
-              <table>
-                <thead style={{ borderBottom: "1px solid lightOrange" }}>
-                  <tr>
-                    <th>펀딩 번호</th>
-                    <th>유기견 번호</th>
-                    {/* <th>펀딩 금액</th> */}
-                  </tr>
-                </thead>
-                <tbody>
-                  {/* {mockMypageData.fundingItems.map((fundDTO) => (
-                  <tr key={fundDTO.fundId}>
-                    <td>{fundDTO.fundId}</td>
-                    <td>{fundDTO.dogId}</td>
-                    <td>{fundDTO.amount} 원</td>
-                  </tr>
-                ))} */}
-                  {dogList.map((fundDTO) => (
-                    <tr key={fundDTO.fundId}>
-                      <td>{fundDTO.fundId}</td>
-                      <td>{fundDTO.dogId}</td>
-                    </tr>
-                  ))}
-                  {/* {fund.map((fundDTO) => (
-                              <tr key={fundDTO.fundId}>
-                                <td>{fundDTO.fundId}</td>
-                                <td>{fundDTO.dogId}</td>
-                              </tr>
-                              ))} */}
-                </tbody>
-              </table>
-            </div>
+            {currentPage === "all" ? renderAllContent() : renderSingleContent()}
           </StyeldRightSection>
         </StyledMypageWrapper>
       </div>
