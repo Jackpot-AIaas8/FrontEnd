@@ -59,15 +59,15 @@ const Cart = () => {
   // 결제 페이지로 상품 정보 및 총 결제 금액 전달
   const handlePurchase = () => {
     const productNames = cartItems.map((item) => ({
-      productName: item.shopName,
+      name: item.shopName,
       productPrice: item.shopPrice,
       quantity: item.quantity,
-      totalPrice: item.shopPrice * item.quantity, // 총 금액 계산
+      totalAmount: item.shopPrice * item.quantity, // 총 금액 계산
     }));
 
     navigate("/Checkout", {
       state: {
-        name: productNames, // 구매 상품 리스트 전달
+        productNames, // 구매 상품 리스트 전달
         totalAmount: totalPrice + 3000, // 총 결제 금액 (배송비 포함)
       },
     });

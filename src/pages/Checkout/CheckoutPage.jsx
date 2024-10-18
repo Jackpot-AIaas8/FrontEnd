@@ -12,7 +12,12 @@ function CheckoutPage() {
 
   const { productNames = [], totalAmount = 0 } = location.state || {};
 
-  console.log("CheckoutPage received state:", location.state);
+  productNames.forEach((item) => {
+    console.log(
+      `상품명: ${item.name}, 가격: ${item.productPrice}, 수량: ${item.quantity}, 총 금액: ${item.totalAmount}`
+    );
+  });
+  // 장바구니에서 잘 들어왔는지 콘솔찍어보는거임
 
   const {
     name: productName = "",
@@ -111,18 +116,6 @@ function CheckoutPage() {
       });
       console.log("결제 요청 완료");
 
-      // // 결제 요청 처리
-      // await widgets.requestPayment({
-      //   orderId: orderId,
-      //   orderName: productNames.map((item) => item.productName).join(", "),
-      //   successUrl: `${window.location.origin}/success?orderId=${orderId}`,
-      //   failUrl: `${window.location.origin}/fail`,
-      //   customerEmail: user.email,
-      //   customerName: user.name,
-      //   customerMobilePhone: user.phone,
-      // });
-      // console.log("결제 요청 완료");
-
       // 결제 성공 시 sessionStorage에 결제 정보 저장
       const paymentData = {
         orderId,
@@ -140,22 +133,6 @@ function CheckoutPage() {
         deliveryFee: 3000,
         amount: paymentAmount,
       };
-
-      // 결제 성공 시 sessionStorage에 결제 정보 저장
-      // const paymentData = {
-      //   orderId,
-      //   productNames,
-      //   shopId: productNames[0]?.shopId || "", // 첫 번째 상품의 shopId 사용
-      //   orderName: productNames.map((item) => item.productName).join(", "),
-      //   quantity: productNames.reduce((acc, item) => acc + item.quantity, 0),
-      //   memberId: user.memberID,
-      //   customerName: user.name,
-      //   customerMobilePhone: user.phone,
-      //   userAddress: user.address,
-      //   totalPrice: totalAmount - 3000, // 배송비를 제외한 가격
-      //   deliveryFee: 3000,
-      //   amount: paymentAmount,
-      // };
 
       sessionStorage.setItem("paymentData", JSON.stringify(paymentData));
       console.log("SuccessPage로 전달할 데이터:", paymentData);
@@ -242,8 +219,11 @@ function CheckoutPage() {
           <ProductRow>
             <Label>상품명</Label>
             <Value>
-              {Array.isArray(name) && name.length > 0
-                ? name.map((item) => item.productName).join(", ") // 배열일 때 처리 - 장바구니
+              {/* {Array.isArray(name) && name.length > 0
+                ? name.map((item) => item.productName).join(", ") */}
+
+              {Array.isArray(productNames) && productNames.length > 0
+                ? productNames.map((item) => item.name).join(", ") // 배열일 때 처리 - 장바구니
                 : typeof name === "string" && name // 단일 값일 때 처리 - 디테일페이지 바로구매
                 ? name
                 : "상품명 불러오기 실패"}
@@ -251,7 +231,15 @@ function CheckoutPage() {
           </ProductRow>
           <ProductRow>
             <Label>수량</Label>
-            <Value>{quantity || 1}개</Value>
+            <Value>
+              {/* {Array.isArray(name) && name.length > 0 // 장바구니 형태일 경우 배열
+                ? name.map((item) => `${item.quantity}개`).join(", ") */}
+              {Array.isArray(productNames) && productNames.length > 0
+                ? productNames.map((item) => `${item.quantity}개`).join(", ")
+                : typeof name === "string" && quantity // 단일 값일 때 바로구매 형태
+                ? `${quantity}개`
+                : "수량 불러오기 실패"}
+            </Value>
           </ProductRow>
         </ProductInfoBox>
       </Section>
@@ -264,20 +252,30 @@ function CheckoutPage() {
           <InfoRow>
             <Label>총 상품 가격</Label>
             <Value>
-              {totalPrice
-                ? `${totalPrice.toLocaleString()}원`
+              {Array.isArray(totalAmount) && totalAmount.length > 0 // 장바구니 형태일 경우 배열
+                ? `${totalAmount
+                    .reduce((acc, item) => acc + item, 0)
+                    .toLocaleString()}원` // 배열일 경우 총합 계산
+                : typeof totalAmount === "number" // 단일 상품일 경우 숫자형 처리
+                ? `${totalAmount.toLocaleString()}원`
                 : "가격 정보 없음"}
             </Value>
           </InfoRow>
+
           <InfoRow>
             <Label>배송비</Label>
             <Value>3,000원</Value>
           </InfoRow>
+
           <TotalRow>
             <Label>총 결제 금액</Label>
             <Value>
-              {totalPrice
-                ? `${(totalPrice + 3000).toLocaleString()}원`
+              {Array.isArray(totalAmount) && totalAmount.length > 0
+                ? `${(
+                    totalAmount.reduce((acc, item) => acc + item, 0) + 3000
+                  ).toLocaleString()}원` // 총 상품 가격 + 배송비 계산
+                : typeof totalAmount === "number"
+                ? `${(totalAmount + 3000).toLocaleString()}원`
                 : "가격 정보 없음"}
             </Value>
           </TotalRow>
