@@ -23,12 +23,10 @@ function CheckoutPage() {
   } = location.state || {};
 
   const name = productName;
-
   const amount = totalPrice + 3000; // 배송비 포함 금액
 
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState(null);
-
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [user, setUser] = useState({});
 
@@ -113,6 +111,18 @@ function CheckoutPage() {
       });
       console.log("결제 요청 완료");
 
+      // // 결제 요청 처리
+      // await widgets.requestPayment({
+      //   orderId: orderId,
+      //   orderName: productNames.map((item) => item.productName).join(", "),
+      //   successUrl: `${window.location.origin}/success?orderId=${orderId}`,
+      //   failUrl: `${window.location.origin}/fail`,
+      //   customerEmail: user.email,
+      //   customerName: user.name,
+      //   customerMobilePhone: user.phone,
+      // });
+      // console.log("결제 요청 완료");
+
       // 결제 성공 시 sessionStorage에 결제 정보 저장
       const paymentData = {
         orderId,
@@ -130,6 +140,22 @@ function CheckoutPage() {
         deliveryFee: 3000,
         amount: paymentAmount,
       };
+
+      // 결제 성공 시 sessionStorage에 결제 정보 저장
+      // const paymentData = {
+      //   orderId,
+      //   productNames,
+      //   shopId: productNames[0]?.shopId || "", // 첫 번째 상품의 shopId 사용
+      //   orderName: productNames.map((item) => item.productName).join(", "),
+      //   quantity: productNames.reduce((acc, item) => acc + item.quantity, 0),
+      //   memberId: user.memberID,
+      //   customerName: user.name,
+      //   customerMobilePhone: user.phone,
+      //   userAddress: user.address,
+      //   totalPrice: totalAmount - 3000, // 배송비를 제외한 가격
+      //   deliveryFee: 3000,
+      //   amount: paymentAmount,
+      // };
 
       sessionStorage.setItem("paymentData", JSON.stringify(paymentData));
       console.log("SuccessPage로 전달할 데이터:", paymentData);
@@ -215,7 +241,13 @@ function CheckoutPage() {
         <ProductInfoBox>
           <ProductRow>
             <Label>상품명</Label>
-            <Value>{name || "상품명 불러오기 실패"}</Value>
+            <Value>
+              {Array.isArray(name) && name.length > 0
+                ? name.map((item) => item.productName).join(", ") // 배열일 때 처리 - 장바구니
+                : typeof name === "string" && name // 단일 값일 때 처리 - 디테일페이지 바로구매
+                ? name
+                : "상품명 불러오기 실패"}
+            </Value>
           </ProductRow>
           <ProductRow>
             <Label>수량</Label>
@@ -267,6 +299,8 @@ function CheckoutPage() {
     </PageContainer>
   );
 }
+
+export default CheckoutPage;
 
 const PageContainer = styled.div`
   width: 40%;
@@ -405,4 +439,3 @@ const PayButton = styled.button`
   border-radius: 8px;
   cursor: pointer;
 `;
-export default CheckoutPage;
