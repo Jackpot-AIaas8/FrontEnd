@@ -49,43 +49,34 @@ const Mypage = () => {
     grade: "기본 회원",
   });
 
-  useEffect(() => {
-    const apiShopData = () => {
-      try {
-        const response = apiClient("order/findAll");
-
-        setShopData(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    apiShopData();
-  }, []);
-
-  const [shopData, setShopData] = useState([]) || {};
-
-  useEffect(() => {
-    const apiShopData = () => {
-      try {
-        const response = apiClient("order/findAll");
-
-        setShopData(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    apiShopData();
-  }, []);
+  const [shopData, setShopData] = useState([]);
 
   // useEffect(() => {
-  //   const mockShopData = () => {
-  //     const response = MockShopData;
+  //   const apiShopData = async () => {
+  //     try {
+  //       const response = await apiClient.get("order/findAll", {
+  //         params: {
+  //           memberId: infoData.memberId,
+  //         },
+  //       });
 
-  //     setShopData(response.data);
+  //       setShopData(response.data);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
   //   };
-
-  //   mockShopData();
+  //   apiShopData();
   // }, []);
+
+  useEffect(() => {
+    const mockShopData = () => {
+      const response = MockShopData;
+
+      setShopData(response.data);
+    };
+
+    mockShopData();
+  }, []);
 
   useEffect(() => {
     const apiInfo = async () => {
@@ -105,6 +96,18 @@ const Mypage = () => {
     };
     apiInfo();
     console.log(infoData.grade);
+  }, []);
+
+  useEffect(() => {
+    const apiFunding = async () => {
+      try {
+        const response = await apiClient.get("dog/fundListMyPage");
+        console.log(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    apiFunding();
   }, []);
 
   const renderSingleContent = () => {
@@ -131,7 +134,7 @@ const Mypage = () => {
           shopData
             .slice(0, 3)
             .map((shopDatum) => (
-              <PurchaseHistory key={shopDatum.id} shopData={shopDatum} />
+              <PurchaseHistory key={shopDatum.shopId} shopData={shopDatum} />
             ))
         ) : (
           <NoneContent />

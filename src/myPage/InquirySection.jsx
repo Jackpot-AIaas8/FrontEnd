@@ -4,9 +4,11 @@ import { NoneContent } from "../pages/Memeber/Mypage";
 import { StyledOneBoard } from "./Mypage.styles";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import apiClient from "../token/AxiosConfig";
+import { useNavigate } from "react-router-dom";
 
 const InquirySection = () => {
   const [inquiry, setInquiry] = useState([]) || {};
+  const navigate = useNavigate();
 
   useEffect(() => {
     const apiOninquiry = async () => {
@@ -39,7 +41,14 @@ const InquirySection = () => {
 
             <span>{board.regDate.slice(0, 10)}</span>
             <span>{getTimeAgo(board.regDate)} </span>
-            <button className="btn_show">보러가기</button>
+            <button
+              className="btn_show"
+              onClick={() => {
+                navigate(`/board/${board.boardId}`);
+              }}
+            >
+              보러가기
+            </button>
           </div>
         ))
       ) : (

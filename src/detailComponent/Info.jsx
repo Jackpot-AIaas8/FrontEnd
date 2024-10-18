@@ -9,50 +9,30 @@ import Categories from "./Categories";
 import styled from "styled-components";
 import MainImage from "./MainImage";
 import getTimeAgo from "./GetTImeAgo";
-import useHeart from "../dogList/heart/useHeart";
+
 import { useNavigate } from "react-router-dom";
 
-const DogInfo = ({ dogData: initialDogData }) => {
-  const [data, setData] = useState({
-    dogId: 0,
-    name: "",
-    gender: "",
-    age: "",
-    regDate: "",
-    fundCollection: 0,
-    fundMemberNum: 0,
-    heart: 0,
-  });
+const DogInfo = ({ dogData }) => {
+  const [data, setData] = useState({});
+
+  // const onHeartToggle = () => {
+  //   setData((prevData) => ({
+  //     ...prevData,
+  //     heart: prevData.heart + (isHeart ? -1 : 1),
+  //   }));
+  // };
+
+  // const { isHeart, updateHeart } = useHeart(data, onHeartToggle);
 
   useEffect(() => {
-    if (initialDogData) {
-      const {
-        dogId,
-        name,
-        gender,
-        age,
-        regDate,
-        fundCollection,
-        fundMemberNum,
-        heart,
-      } = initialDogData;
+    if (dogData) {
       setData({
-        dogId,
-        name,
-        gender: gender === 1 ? "남성" : "여성",
-        age: `${age}세`,
-        regDate,
-        fundCollection,
-        fundMemberNum,
-        heart,
+        ...dogData, // dogData의 모든 속성을 복사
+        gender: dogData.gender === 1 ? "남성" : "여성", // gender 변환
+        age: `${dogData.age}세`, // age 형식 변환
       });
     }
-    // console.log(data);
-  }, [initialDogData]);
-
-  const { heart: currentHeart, updateHeart } = useHeart(data, (newHeart) => {
-    setData((prev) => ({ ...prev, heart: newHeart }));
-  });
+  }, [dogData]);
 
   const infoItems = data.regDate
     ? [
@@ -69,8 +49,7 @@ const DogInfo = ({ dogData: initialDogData }) => {
 
   const title = "길을 잃어 죽기 직전인 뽀삐를 살려주세요";
 
-  const imgSrc =
-    "https://newsimg.hankookilbo.com/2017/11/14/201711141165118317_1.jpg";
+  const imgSrc = data.mainImage;
 
   const WarningMessage = () => {
     return (
@@ -202,7 +181,7 @@ const DogInfo = ({ dogData: initialDogData }) => {
                 {...params}
                 label="가격 선택 또는 입력"
                 placeholder="가격을 선택하거나 입력하세요"
-                InputProps={{
+                slotProps={{
                   ...params.InputProps,
                   readOnly: selectedOption !== "직접 입력", // '직접 입력'일 때만 입력 가능
                   inputMode:
@@ -228,11 +207,11 @@ const DogInfo = ({ dogData: initialDogData }) => {
             variant="outlined"
             sx={{ marginRight: 1 }}
             startIcon={
-              currentHeart === 1 ? <FavoriteIcon /> : <FavoriteBorderIcon />
+              data.isHeart === 1 ? <FavoriteIcon /> : <FavoriteBorderIcon />
             }
             onClick={(e) => {
-              e.stopPropagation();
-              updateHeart();
+              e.stopPropagation(); // 부모 요소로 이벤트 전파 방지
+              // updateHeart(); // 하트 업데이트 함수 호출
             }}
           >
             {data.heart}명이 관심있어요
