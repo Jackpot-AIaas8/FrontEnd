@@ -12,6 +12,7 @@ const AuctionMain = () => {
   const [remainingTime, setRemainingTime] = useState("");
   const [status, setStatus] = useState(0); // 0: 대기, 1: 진행 중, 2: 종료
 
+
   // 경매 상태 업데이트 API 호출
   const updateAuctionStatus = (auctionId, status) => {
     apiClient
@@ -160,7 +161,7 @@ const AuctionMain = () => {
             <Button text="뒤로가기" />
           </Grid>
           <Grid size={6}>
-            <Button text="입장하기" />
+            <Button text="입장하기"></Button>
           </Grid>
           <Grid size={12}>
             <strong style={{ fontSize: "20px" }}>

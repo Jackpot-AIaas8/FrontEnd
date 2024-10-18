@@ -20,7 +20,11 @@ const ProtectedRoute = ({ allowedRoles }) => {
       // 사용자가 해당 역할에 포함되지 않은 경우, 접근 불가 페이지로 리디렉션
       alert("접근이 허용되지 않은 회원입니다.");
       navigate("/");
+      if(location.pathname === "/auction/bid"){
+        navigate("/auction");
+      }  
     }
+      
   }, [isAuthenticated, userRole, allowedRoles, navigate, location]);
 
   return isAuthenticated && allowedRoles.includes(userRole) ? <Outlet /> : null;
