@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
+
 const ProductInfo = ({ productId }) => {
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState(null);
@@ -45,6 +46,7 @@ const ProductInfo = ({ productId }) => {
 
   const totalPrice = quantity * product.price;
 
+  
   // 결제 페이지로 상품 정보만 전달
   const handlePurchase = () => {
     navigate("/Checkout", {
@@ -52,7 +54,7 @@ const ProductInfo = ({ productId }) => {
         shopId: product.shopId,
         name: product.name,
         productPrice: product.price,
-        totalAmount: totalPrice,
+        totalPrice: totalPrice,
         quantity: quantity,
       },
     });
@@ -110,14 +112,26 @@ const ProductInfo = ({ productId }) => {
         <ButtonSection>
           <Button
             variant="contained"
-            sx={{ marginRight: 1 }}
+            sx={{
+              marginRight: 1,
+              backgroundColor: "#ffa150", // 장바구니 담기 버튼의 배경색
+              "&:hover": {
+                backgroundColor: "#ff7600", // hover 시 어두운 주황색으로 변경
+              },
+            }}
             startIcon={<FavoriteBorderIcon />}
+            onClick={handlePurchase}
           >
             장바구니 담기
           </Button>
           <Button
             variant="contained"
-            color="primary"
+            sx={{
+              backgroundColor: "#ffa150", // 바로구매 버튼의 배경색
+              "&:hover": {
+                backgroundColor: "#ff7600", // hover 시 더 어두운 파란색으로 변경
+              },
+            }}
             startIcon={<ShareIcon />}
             onClick={handlePurchase}
           >

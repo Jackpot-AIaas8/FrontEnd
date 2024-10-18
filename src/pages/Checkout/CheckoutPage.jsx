@@ -98,7 +98,10 @@ function CheckoutPage() {
       console.log("Order ID:", orderId);
       console.log("shopId:", shopId);
       console.log("Order Name:", name);
-      console.log("Amount:", paymentAmount);
+
+      console.log("Amount:", paymentAmount); 
+      console.log("quantity:", quantity); 
+
       console.log("Customer Email:", user.email);
       console.log("Customer Name:", user.name);
       console.log("Customer Phone:", user.phone);
@@ -116,20 +119,21 @@ function CheckoutPage() {
       });
       console.log("결제 요청 완료");
 
+
       // 결제 성공 시 sessionStorage에 결제 정보 저장
       const paymentData = {
         orderId,
         productNames,
         shopId,
         // orderName: name,
-        // quantity,
+        //quantity: productNames.reduce((acc, item) => acc + item.quantity, 0),  // 여러 상품의 수량 합산
         orderName: productNames.map((item) => item.productName).join(", "),
-        quantity: productNames.reduce((acc, item) => acc + item.quantity, 0),
-        memberId: user.memberID,
+        quantity,  
+        memberID: user.memberID,
         customerName: user.name,
         customerMobilePhone: user.phone,
         userAddress: user.address,
-        totalPrice: totalAmount - 3000, // 합계가격에서 배송비를 빼야 토탈프라이스임
+        totalPrice: amount * quantity, // 토탈프라이스임
         deliveryFee: 3000,
         amount: paymentAmount,
       };

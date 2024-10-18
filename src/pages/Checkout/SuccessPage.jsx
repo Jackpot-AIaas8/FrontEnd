@@ -10,6 +10,7 @@ export function SuccessPage() {
   const [isConfirming, setIsConfirming] = useState(true);
 
   const paymentData = JSON.parse(sessionStorage.getItem("paymentData")) || {};
+  console.log("Session에서 가져온 결제 데이터:", paymentData);
 
   const {
     memberID,
@@ -17,6 +18,7 @@ export function SuccessPage() {
     customerMobilePhone = "",
     userAddress = "",
     totalPrice = 0,
+    quantity,
     deliveryFee = 3000,
     orderId,
     shopId = "" ,
@@ -35,11 +37,11 @@ export function SuccessPage() {
       paymentKey: searchParams.get("paymentKey"),
       shopId: shopId,       
       orderName: name,
+      quantity: quantity,
       memberID: memberID, 
       name: customerName,
       phone: customerMobilePhone,
       address: userAddress,
-      products: [{ shopName: "example shop", productPrice: 5000, quantity: 1 }] // 리스트로 보내기
     };
     console.log("결제 완료 후 백엔드로 전달할 데이터:", requestData);
 
@@ -52,6 +54,9 @@ export function SuccessPage() {
           }
         });
 
+        console.log("API 응답:", response);
+
+
         if (response.status !== 200) {
           navigate(`/fail?message=${response.data.message}&code=${response.data.code}`);
           return;
@@ -60,6 +65,7 @@ export function SuccessPage() {
         setPaymentInfo(response.data);
         setIsConfirming(false);
       } catch (error) {
+        console.error("API 호출 중 오류 발생:", error.response?.data || error.message);
         console.error(error);
         navigate(`/fail?message=결제 확인 중 오류가 발생했습니다.`);
       }
@@ -91,7 +97,7 @@ export function SuccessPage() {
       <Section>
         <SectionTitle>상품배송 정보</SectionTitle>
         <InfoRow>
-          <InfoLabel>{name || "상품 정보 없음"}</InfoLabel>
+          <InfoLabel>{name}({quantity}개)</InfoLabel>
         </InfoRow>
       </Section>
       <InfoContainer>
