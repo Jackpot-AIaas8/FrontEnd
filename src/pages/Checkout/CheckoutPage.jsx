@@ -9,35 +9,21 @@ const customerKey = "e6Bp3EiNGF0nTmXJ05nvg";
 
 function CheckoutPage() {
   const location = useLocation();
+  const { productNames = [], totalAmount = 0, quantity = 1 } = location.state || {};
+  const { name: productName = "", shopId = "" } = location.state || {};
 
-  const { productNames = [], totalAmount = 0 } = location.state || {};
-
-  console.log("CheckoutPage received state:", location.state);
-
-  const {
-    name: productName = "",
-    quantity = 1,
-    totalPrice = 50000,
-
-    shopId = "",
-  } = location.state || {};
-
-  const name = productName;
-
-  const amount = totalPrice + 3000; // 배송비 포함 금액
-
+  const amount = totalAmount + 3000; // 배송비 포함 금액
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState(null);
-
-  const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [user, setUser] = useState({});
+  const [isEditingAddress, setIsEditingAddress] = useState(false); // 주소 수정 상태 관리
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
         const response = await apiClient.get("/member/myPage");
         setUser(response.data);
-        console.log("Fetched User Info:", response.data); // 확인용 로그 추가
+        console.log("Fetched User Info:", response.data);
       } catch (error) {
         console.error("Error fetching user info:", error);
       }
@@ -58,13 +44,14 @@ function CheckoutPage() {
   // 결제 위젯 렌더링
   useEffect(() => {
     async function renderPaymentWidgets() {
-      if (!widgets) return;
+      if (!widgets) return; // 위젯이 로드되지 않았다면 종료
 
       await widgets.setAmount({
         currency: "KRW",
         value: parseInt(amount, 10), // 결제 금액 설정
       });
 
+      // 결제 수단 및 동의란 위젯 렌더링
       await Promise.all([
         widgets.renderPaymentMethods({
           selector: "#payment-method",
@@ -76,86 +63,57 @@ function CheckoutPage() {
         }),
       ]);
 
-      setReady(true);
+      setReady(true); // 결제 준비 완료
     }
     renderPaymentWidgets();
-  }, [widgets, amount]);
+  }, [widgets, amount]); // widgets와 amount가 변경될 때마다 렌더링
 
   const handlePayment = async () => {
     const paymentAmount = parseInt(amount, 10);
-    const orderId = `order_${Date.now()}`; 
-    console.log("Amount:", paymentAmount); 
+    const orderId = `order_${Date.now()}`;
+
     if (!ready) {
       alert("결제 준비가 완료되지 않았습니다.");
       return;
     }
 
     try {
-      console.log("결제 요청 시작");
-      console.log("Order ID:", orderId);
-      console.log("shopId:", shopId);
-      console.log("Order Name:", name);
-      console.log("Amount:", paymentAmount); 
-      console.log("quantity:", quantity); 
-      console.log("Customer Email:", user.email);
-      console.log("Customer Name:", user.name);
-      console.log("Customer Phone:", user.phone);
-      console.log("Sending amount to Toss Payments:", paymentAmount);
+      const orderName = Array.isArray(productNames) && productNames.length > 1
+        ? productNames.map((item) => item.productName).join(", ")
+        : productName || productNames[0]?.productName || "상품 이름 없음";
 
-      // 결제 요청 처리
+      console.log("Order Name:", orderName);
+
+      const paymentData = {
+        orderId,
+        productNames: orderName,
+        shopId,
+        orderName,
+        quantity,
+        memberID: user.memberID,
+        customerName: user.name,
+        customerMobilePhone: user.phone,
+        userAddress: user.address || "주소 정보 없음",
+        totalPrice: totalAmount * quantity,
+        deliveryFee: 3000,
+        amount: paymentAmount,
+      };
+
+      sessionStorage.setItem("paymentData", JSON.stringify(paymentData));
+      console.log("sessionStorage에 저장된 데이터:", JSON.parse(sessionStorage.getItem("paymentData")));
+
       await widgets.requestPayment({
         orderId: orderId,
-        orderName: name,
+        orderName,
         successUrl: `${window.location.origin}/success?orderId=${orderId}`,
         failUrl: `${window.location.origin}/fail`,
         customerEmail: user.email,
         customerName: user.name,
         customerMobilePhone: user.phone,
       });
-      console.log("결제 요청 완료");
-
-<<<<<<< HEAD
-
-      // 결제 성공 시 sessionStorage에 결제 정보 저장
-      const paymentData = {
-=======
-      // 결제 성공 시 sessionStorage에 결제 정보 저장
-   const paymentData = {
->>>>>>> ad17fe48247690846a21cf31b8cf9b5dee7b1fa7
-        orderId,
-        productNames,
-        shopId,
-        // orderName: name,
-<<<<<<< HEAD
-        //quantity: productNames.reduce((acc, item) => acc + item.quantity, 0),  // 여러 상품의 수량 합산
-        orderName: productNames.map((item) => item.productName).join(", "),
-        quantity,  
-        memberID: user.memberID,
-        customerName: user.name,
-        customerMobilePhone: user.phone,
-        userAddress: user.address,
-        totalPrice: amount * quantity, // 토탈프라이스임
-=======
-        // quantity,
-        orderName: productNames.map((item) => item.productName).join(", "),
-        quantity: productNames.reduce((acc, item) => acc + item.quantity, 0),
-        memberId: user.memberID,
-        customerName: user.name,
-        customerMobilePhone: user.phone,
-        userAddress: user.address,
-        totalPrice: totalAmount - 3000, // 합계가격에서 배송비를 빼야 토탈프라이스임
->>>>>>> ad17fe48247690846a21cf31b8cf9b5dee7b1fa7
-        deliveryFee: 3000,
-        amount: paymentAmount,
-      };
-
-      sessionStorage.setItem("paymentData", JSON.stringify(paymentData));
-      console.log("SuccessPage로 전달할 데이터:", paymentData);
-
 
     } catch (error) {
       console.error("결제 요청 중 오류 발생:", error);
-
       alert("결제 요청 중 오류가 발생했습니다. 다시 시도해 주세요.");
     }
   };
@@ -207,19 +165,15 @@ function CheckoutPage() {
         <FlexRow>
           <SectionTitle>받는 사람 정보</SectionTitle>
           {isEditingAddress ? (
-            <SaveAddressButton onClick={handleAddressSave}>
-              저장
-            </SaveAddressButton>
+            <SaveAddressButton onClick={handleAddressSave}>저장</SaveAddressButton>
           ) : (
-            <EditAddressButton onClick={handleAddressEdit}>
-              수정
-            </EditAddressButton>
+            <EditAddressButton onClick={handleAddressEdit}>수정</EditAddressButton>
           )}
         </FlexRow>
         {isEditingAddress ? (
           <Input
             type="text"
-            value={user.address}
+            value={user.address || ""} // 주소가 없을 경우 빈 문자열 처리
             onChange={handleAddressChange}
             placeholder="주소를 수정하세요"
           />
@@ -235,7 +189,7 @@ function CheckoutPage() {
         <ProductInfoBox>
           <ProductRow>
             <Label>상품명</Label>
-            <Value>{name || "상품명 불러오기 실패"}</Value>
+            <Value>{productName || "상품명 불러오기 실패"}</Value>
           </ProductRow>
           <ProductRow>
             <Label>수량</Label>
@@ -252,8 +206,8 @@ function CheckoutPage() {
           <InfoRow>
             <Label>총 상품 가격</Label>
             <Value>
-              {totalPrice
-                ? `${totalPrice.toLocaleString()}원`
+              {totalAmount
+                ? `${totalAmount.toLocaleString()}원`
                 : "가격 정보 없음"}
             </Value>
           </InfoRow>
@@ -264,8 +218,8 @@ function CheckoutPage() {
           <TotalRow>
             <Label>총 결제 금액</Label>
             <Value>
-              {totalPrice
-                ? `${(totalPrice + 3000).toLocaleString()}원`
+              {totalAmount
+                ? `${(totalAmount + 3000).toLocaleString()}원`
                 : "가격 정보 없음"}
             </Value>
           </TotalRow>
@@ -288,18 +242,20 @@ function CheckoutPage() {
   );
 }
 
+export default CheckoutPage;
+
+// 스타일 정의
 const PageContainer = styled.div`
   width: 40%;
   margin: 0 auto;
   padding: 20px;
-  background-color: #f9f9f9;
   margin-top: 100px;
+  background-color: #f0f0f0; /* 배경 색상 추가 */
 `;
 
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
 `;
 
 const Logo = styled.h1`
@@ -329,18 +285,9 @@ const SectionTitle = styled.h2`
   margin-bottom: 10px;
 `;
 
-const FlexRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-`;
-
 const InfoBox = styled.div`
   border: 1px solid #ddd;
-  border-radius: 8px;
   padding: 20px;
-  background-color: white;
 `;
 
 const InfoRow = styled.div`
@@ -355,26 +302,44 @@ const Label = styled.span`
 
 const Value = styled.span``;
 
-const TotalRow = styled(InfoRow)`
-  font-size: 18px;
-  font-weight: bold;
-`;
-
 const ProductInfoBox = styled.div`
   border: 1px solid #ddd;
-  border-radius: 8px;
   padding: 20px;
-  background-color: white;
 `;
 
 const ProductRow = styled.div`
   display: flex;
   justify-content: space-between;
+`;
+
+const TotalRow = styled(InfoRow)`
+  font-size: 18px;
+  font-weight: bold;
+`;
+
+const PaymentSection = styled.div`
+  margin-top: 20px;
+`;
+
+const PayButton = styled.button`
+  width: 100%;
+  background-color: #ffa150; /* 버튼 색상 #ffa150 */
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+`;
+
+const FlexRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 10px;
 `;
 
 const EditAddressButton = styled.button`
-  background-color: #007bff;
+  background-color: #ffa150; /* 수정 버튼 색상 #ffa150 */
   color: white;
   border: none;
   padding: 10px;
@@ -383,12 +348,20 @@ const EditAddressButton = styled.button`
 `;
 
 const SaveAddressButton = styled.button`
-  background-color: #28a745;
+  background-color: #ffa150; /* 저장 버튼 색상 #ffa150 */
   color: white;
   border: none;
   padding: 10px;
   border-radius: 5px;
   cursor: pointer;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 `;
 
 const MessageBox = styled.div`
@@ -400,29 +373,8 @@ const MessageBox = styled.div`
   margin-bottom: 10px;
   font-size: 14px;
   color: #333;
+  font-weight: bold;
+  strong {
+    color: #28a745;
+  }
 `;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-`;
-
-const PaymentSection = styled.div`
-  margin-top: 20px;
-`;
-
-const PayButton = styled.button`
-  display: block;
-  width: 100%;
-  background-color: #28a745;
-  color: white;
-  padding: 15px;
-  font-size: 18px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-`;
-export default CheckoutPage;
