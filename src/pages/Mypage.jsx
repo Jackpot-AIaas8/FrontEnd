@@ -5,10 +5,10 @@ import {
   StyeldRightSection,
   StyledMypageSection,
   StyledOneBoard,
+  StyledFundHistory,
 } from "../myPage/Mypage.styles";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import mockMypageData, { MockShopData } from "../myPage/MockMypageData";
-import apiClient from "../token/AxiosConfig";
+import { MockShopData } from "../myPage/MockMypageData";
 
 import Grid2 from "@mui/material/Grid2";
 import {
@@ -25,13 +25,10 @@ import {
 } from "@mui/material";
 import MypageSideBar from "../myPage/MyPageSideBar";
 import PurchaseHistory from "../myPage/ShopPurchase";
+import apiClient from "../token/AxiosConfig";
 
 const Mypage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  const [memberMerchList, setMemberMerchList] = useState([]);
-  const [oneOnOneboardList, setoneOnOneboardList] = useState([]);
-  const [dogList, setDogList] = useState([]);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,6 +37,7 @@ const Mypage = () => {
   const [nickname, setNickname] = useState("");
   const [address, setAddress] = useState("");
   const [shopDatas, setShopDatas] = useState([]) || {};
+  const [boardData, setBoardData] = useState([]) || {};
 
   const editUser = () => {
     return (
@@ -116,6 +114,22 @@ const Mypage = () => {
     apiShopDatas();
   }, []);
 
+  useEffect(() => {
+    const apiOnBoardData = async () => {
+      try {
+        const response = await apiClient.get("board/findAllAskMyPage", {
+          params: { page: 1, size: 3 },
+        });
+
+        setBoardData(response.data);
+        console.log(response);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    apiOnBoardData();
+  }, []);
+
   const handleMypage = (e) => {
     e.preventDefault();
     // 조건이 눌렸을 경우 개인정보 수정 창이 떠야한다.
@@ -188,26 +202,27 @@ const Mypage = () => {
             {shopDatas.slice(0, 3).map((shopData) => (
               <PurchaseHistory key={shopData.id} shopData={shopData} />
             ))}
+            {boardData.map((board) => (
+              <StyledOneBoard className="btn_section" key={board.boardId}>
+                <h4 className="text-left p-0 m-0">1:1문의내역</h4>
+                <div className="section-oneBoard flex flex-row justify-between">
+                  <span className="left-oneBoard flex flex-row w-half ">
+                    <LockOutlinedIcon />
+                    1대1문의 내역입니다.
+                  </span>
 
-            <StyledOneBoard className="btn_section">
-              <h4 className="text-left p-0 m-0">1:1문의내역</h4>{" "}
-              <div className="section-oneBoard flex flex-row justify-between">
-                <span className="left-oneBoard flex flex-row w-half ">
-                  <LockOutlinedIcon />
-                  1대1문의 내역입니다.
-                </span>
-
-                <span>regData</span>
-                <span>몇 일전 </span>
-                <button className="btn_show">보러가기</button>
-              </div>
-            </StyledOneBoard>
-            <styledFundHistory>
+                  <span></span>
+                  <span>몇 일전 </span>
+                  <button className="btn_show">보러가기</button>
+                </div>
+              </StyledOneBoard>
+            ))}
+            <StyledFundHistory>
               <h4 className="text-left p-0 m-0">펀딩내역</h4>
               <div className="section-fund flex w-full flex-column">
                 <span></span>
               </div>
-            </styledFundHistory>
+            </StyledFundHistory>
           </StyeldRightSection>
         </StyledMypageWrapper>
       </div>

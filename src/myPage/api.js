@@ -17,7 +17,7 @@ export const fetchShopMerchList = async () => {
 export const fetchOneOnOneBoardList = async () => {
   try {
     const response = await apiClient.get("board/findAllAskMyPage", {
-      params: { page: 1, size: 5 },
+      params: { page: 1, size: 3 },
     });
     console.log("문의 내역 응답:", response.data);
     return response.data;
