@@ -33,11 +33,11 @@ function CheckoutPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await apiClient.get("/member/myPage");
+        const response = await apiClient.get("member/myPage");
         setUser(response.data);
-        console.log("Fetched User Info:", response.data); // 확인용 로그 추가
+        console.log(response.data); // 확인용 로그 추가
       } catch (error) {
-        console.error("Error fetching user info:", error);
+        console.error(error);
       }
     };
     fetchUserInfo();
