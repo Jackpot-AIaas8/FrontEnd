@@ -9,7 +9,9 @@ export function SuccessPage() {
   const navigate = useNavigate();
   const [isConfirming, setIsConfirming] = useState(true);
 
-  const paymentData = JSON.parse(sessionStorage.getItem("paymentData")) || {};
+  // sessionStorage에서 데이터 가져오기
+  const paymentData = JSON.parse(sessionStorage.getItem("paymentData")) || {}; 
+  console.log("sessionStorage에서 가져온 결제 데이터:", paymentData);
 
   const {
     memberID,
@@ -17,14 +19,17 @@ export function SuccessPage() {
     customerMobilePhone = "",
     userAddress = "",
     totalPrice = 0,
+    quantity = "",
     deliveryFee = 3000,
     orderId,
-    shopId = "" ,
-    orderName: name, 
+    shopId = "",
+    orderName: name,
   } = paymentData;
 
+  // sessionStorage에서 가져온 orderId가 존재하는지 확인
   useEffect(() => {
     if (!orderId) {
+      console.log("orderId가 없습니다. 결제 정보가 유실되었습니다.");
       navigate(`/fail?message=결제 정보가 유실되었습니다.`);
       return;
     }
@@ -33,24 +38,26 @@ export function SuccessPage() {
       orderId: searchParams.get("orderId") || orderId,
       amount: searchParams.get("amount"),
       paymentKey: searchParams.get("paymentKey"),
-      shopId: shopId,       
+      shopId: shopId,
       orderName: name,
-      memberID: memberID, 
+      quantity: quantity,
+      memberID: memberID,
       name: customerName,
       phone: customerMobilePhone,
       address: userAddress,
-      products: [{ shopName: "example shop", productPrice: 5000, quantity: 1 }] // 리스트로 보내기
     };
+
     console.log("결제 완료 후 백엔드로 전달할 데이터:", requestData);
 
     async function confirm() {
       try {
-        const response = await apiClient.post("http://localhost:8181/api/confirm", requestData, {
+        const response = await apiClient.post("/api/confirm", requestData, {
           headers: {
-            Authorization: "Basic " + btoa("test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6:"), // 시크릿 키를 인코딩하여 포함
-            "Content-Type": "application/json"
-          }
+            Authorization: "Basic " + btoa("test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6:"),
+            "Content-Type": "application/json",
+          },
         });
+        console.log("백엔드 응답:", response.data);
 
         if (response.status !== 200) {
           navigate(`/fail?message=${response.data.message}&code=${response.data.code}`);
@@ -60,7 +67,7 @@ export function SuccessPage() {
         setPaymentInfo(response.data);
         setIsConfirming(false);
       } catch (error) {
-        console.error(error);
+        console.error("결제 확인 중 오류 발생:", error);
         navigate(`/fail?message=결제 확인 중 오류가 발생했습니다.`);
       }
     }
@@ -76,12 +83,7 @@ export function SuccessPage() {
     return <div>결제 정보를 불러올 수 없습니다.</div>;
   }
 
-  const {
-    orderName,
-    totalAmount,
-    status,
-  } = paymentInfo;
-
+  const { orderName, totalAmount, status } = paymentInfo;
   const suppliedAmount = totalAmount - deliveryFee;
 
   return (
@@ -91,7 +93,7 @@ export function SuccessPage() {
       <Section>
         <SectionTitle>상품배송 정보</SectionTitle>
         <InfoRow>
-          <InfoLabel>{name || "상품 정보 없음"}</InfoLabel>
+          <InfoLabel>{name} ({quantity}개)</InfoLabel>
         </InfoRow>
       </Section>
       <InfoContainer>
@@ -110,7 +112,9 @@ export function SuccessPage() {
           <SectionTitle>결제 정보</SectionTitle>
           <InfoRow>
             <InfoLabel>주문금액</InfoLabel>
-            <InfoValue>{totalPrice.toLocaleString()} 원</InfoValue>
+            <InfoValue> {totalAmount
+                ? `${(totalAmount  - 3000).toLocaleString()}원`
+                : "가격 정보 없음"}</InfoValue>
           </InfoRow>
           <InfoRow>
             <InfoLabel>배송비</InfoLabel>
@@ -130,8 +134,8 @@ export function SuccessPage() {
   );
 }
 
-// 스타일 정의는 생략
 export default SuccessPage;
+
 
 // 스타일 정의
 const PageContainer = styled.div`

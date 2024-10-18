@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Search from "../components/Shop/Search";
-import NavBar from "../components/Main/NavBar";
 import SideBar from "../components/Shop/SideBar";
 import MainCarousel from "../components/Shop/ShopCarousel";
 import Card from "../components/Shop/Card";
@@ -89,7 +88,6 @@ function ShopPage() {
 
   return (
     <PageContainer>
-      <NavBar />
       <MainContentWrapper>
         <SearchWrapper>
           <Search setSearchResults={setSearchResults} />

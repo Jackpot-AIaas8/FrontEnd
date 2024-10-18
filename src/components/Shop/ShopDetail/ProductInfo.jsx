@@ -3,23 +3,19 @@ import { Typography, Button } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
 import styled from "styled-components";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const ProductInfo = ({ productId }) => {
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState(null);
   const navigate = useNavigate();
-  const location = useLocation(); // useLocation을 사용하여 현재 위치 정보를 가져옵니다.
 
   // 상품 정보 가져오기
   const fetchProduct = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:8181/shop/findOne/${productId}`
-      );
+      const response = await axios.get(`http://localhost:8181/shop/findOne/${productId}`);
       setProduct(response.data);
-      console.log(product);
     } catch (error) {
       console.error("상품 정보를 불러오는 중 오류 발생:", error);
     }
@@ -33,19 +29,11 @@ const ProductInfo = ({ productId }) => {
     return <div>상품 정보를 불러오는 중입니다...</div>;
   }
 
-  const handleIncrement = () => {
-    setQuantity(quantity + 1);
-  };
-
-  const handleDecrement = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
-    }
-  };
+  const handleIncrement = () => setQuantity(quantity + 1);
+  const handleDecrement = () => quantity > 1 && setQuantity(quantity - 1);
 
   const totalPrice = quantity * product.price;
 
-  // 결제 페이지로 상품 정보만 전달
   const handlePurchase = () => {
     navigate("/Checkout", {
       state: {
@@ -62,39 +50,22 @@ const ProductInfo = ({ productId }) => {
     <TopSection className="flex flex-row justify-between">
       <LeftSection className="flex flex-column align-start">
         <img
-          src={
-            product.imageUrl ||
-            "https://img.biteme.co.kr/product/750/2308ae4a580a9e017ad5b07084b8cc51.jpg"
-          }
+          src={product.imageUrl || "https://img.biteme.co.kr/product/750/2308ae4a580a9e017ad5b07084b8cc51.jpg"}
           alt={product.name}
         />
       </LeftSection>
 
       <RightSection className="flex flex-column align-start justify-center">
-        <Typography variant="h5" style={{ marginTop: "16px" }}>
-          {product.name}
-        </Typography>
-
-        <Typography
-          variant="body1"
-          style={{ marginTop: "4px", color: "red", fontSize: "24px" }}
-        >
+        <Typography variant="h5" style={{ marginTop: "16px" }}>{product.name}</Typography>
+        <Typography variant="body1" style={{ marginTop: "4px", color: "red", fontSize: "24px" }}>
           판매가: {product.price.toLocaleString()}원
         </Typography>
 
-        <div
-          style={{ display: "flex", alignItems: "center", marginTop: "16px" }}
-        >
+        <div style={{ display: "flex", alignItems: "center", marginTop: "16px" }}>
           <QuantityContainer>
-            <Button onClick={handleDecrement} variant="outlined" size="small">
-              -
-            </Button>
-            <Typography variant="body1" style={{ margin: "0 8px" }}>
-              {quantity}
-            </Typography>
-            <Button onClick={handleIncrement} variant="outlined" size="small">
-              +
-            </Button>
+            <Button onClick={handleDecrement} variant="outlined" size="small">-</Button>
+            <Typography variant="body1" style={{ margin: "0 8px" }}>{quantity}</Typography>
+            <Button onClick={handleIncrement} variant="outlined" size="small">+</Button>
           </QuantityContainer>
 
           <div style={{ marginLeft: "16px" }}>
@@ -103,24 +74,13 @@ const ProductInfo = ({ productId }) => {
           </div>
         </div>
 
-        <Typography variant="body2" style={{ marginTop: "16px" }}>
-          무료배송 (30,000원 이상 구매 시)
-        </Typography>
+        <Typography variant="body2" style={{ marginTop: "16px" }}>무료배송 (30,000원 이상 구매 시)</Typography>
 
         <ButtonSection>
-          <Button
-            variant="contained"
-            sx={{ marginRight: 1 }}
-            startIcon={<FavoriteBorderIcon />}
-          >
+          <Button variant="contained" sx={{ marginRight: 1 }} startIcon={<FavoriteBorderIcon />} onClick={handlePurchase}>
             장바구니 담기
           </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<ShareIcon />}
-            onClick={handlePurchase}
-          >
+          <Button variant="contained" color="primary" startIcon={<ShareIcon />} onClick={handlePurchase}>
             바로구매
           </Button>
         </ButtonSection>
@@ -131,7 +91,6 @@ const ProductInfo = ({ productId }) => {
 
 export default ProductInfo;
 
-// 스타일 정의
 const TopSection = styled.div`
   display: flex;
   flex-direction: row;

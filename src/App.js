@@ -88,7 +88,11 @@ function App() {
           <Route path="/signUp" element={<SignUp />} />
 
           {/* 회원 전용 route가 될예정이오니 여기 내부에 pageroute넣어주세요 */}
-          <Route element={<ProtectedRoute allowedRoles={["ROLE_USER"]} />}>
+          <Route
+            element={
+              <ProtectedRoute allowedRoles={["ROLE_USER", "ROLE_PREMIUM"]} />
+            }
+          >
             <Route path="/mypage" element={<Mypage />} />
             <Route path="/Checkout" element={<CheckoutPage />} />
             <Route path="/board/:boardId" element={<BoardFindOnePage />} />
