@@ -35,11 +35,11 @@ function CheckoutPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await apiClient.get("/member/myPage");
+        const response = await apiClient.get("member/myPage");
         setUser(response.data);
-        console.log("Fetched User Info:", response.data); // 확인용 로그 추가
+        console.log(response.data); // 확인용 로그 추가
       } catch (error) {
-        console.error("Error fetching user info:", error);
+        console.error(error);
       }
     };
     fetchUserInfo();
@@ -83,8 +83,8 @@ function CheckoutPage() {
 
   const handlePayment = async () => {
     const paymentAmount = parseInt(amount, 10);
-    const orderId = `order_${Date.now()}`; 
-    console.log("Amount:", paymentAmount); 
+    const orderId = `order_${Date.now()}`;
+    console.log("Amount:", paymentAmount);
     if (!ready) {
       alert("결제 준비가 완료되지 않았습니다.");
       return;
@@ -95,7 +95,7 @@ function CheckoutPage() {
       console.log("Order ID:", orderId);
       console.log("shopId:", shopId);
       console.log("Order Name:", name);
-      console.log("Amount:", paymentAmount); 
+      console.log("Amount:", paymentAmount);
       console.log("Customer Email:", user.email);
       console.log("Customer Name:", user.name);
       console.log("Customer Phone:", user.phone);
@@ -114,7 +114,7 @@ function CheckoutPage() {
       console.log("결제 요청 완료");
 
       // 결제 성공 시 sessionStorage에 결제 정보 저장
-   const paymentData = {
+      const paymentData = {
         orderId,
         productNames,
         shopId,
@@ -133,8 +133,6 @@ function CheckoutPage() {
 
       sessionStorage.setItem("paymentData", JSON.stringify(paymentData));
       console.log("SuccessPage로 전달할 데이터:", paymentData);
-
-
     } catch (error) {
       console.error("결제 요청 중 오류 발생:", error);
 
