@@ -9,8 +9,8 @@ import BoardRegister from "./pages/BoardRegisterPage";
 import BoardEdit from "./pages/BoardEditPage";
 import BoardRemove from "./pages/BoardDeletePage";
 import Cart from "./components/Cart";
-import DogDetail from "./dogList/DogDetail";
-import DogList from "./pages/DogList";
+import DogDetail from "./pages/Dog/DogDetail";
+import DogList from "./pages/Dog/DogList";
 import ShopPage from "./pages/ShopPage";
 import ShopDetailPage from "./pages/ShopDetailPage";
 
@@ -20,13 +20,14 @@ import FailPage from "./pages/Checkout/FailPage";
 import { Routes, Route, useLocation } from "react-router-dom";
 
 import GlobalStyle from "./config/GlobalStyle";
-import SignIn from "./pages/SignIn";
+import SignIn from "./pages/Memeber/SignIn";
+import SignUp from "./pages/Memeber/SignUp";
 import Button from "./components/Button";
-import SignUp from "./pages/SignUp";
+
 import AuctionMain from "./pages/Auction/AuctionMain";
 import Auction from "./pages/Auction/Auction";
 
-import Mypage from "./pages/Mypage";
+import Mypage from "./pages/Memeber/Mypage";
 
 import { useEffect } from "react";
 import ProtectedRoute from "./token/ProtectedRoute";

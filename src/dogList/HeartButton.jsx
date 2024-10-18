@@ -42,7 +42,6 @@ const HeartButton = (props) => {
   };
   /* heart db추가 api 성공 시 던져주면 그거 */
   const apiHeartUpdate = async () => {
-    console.log(dog.dogId);
     try {
       const response = await apiClient.post("dog/addHeart", {
         dogId: dog.dogId,

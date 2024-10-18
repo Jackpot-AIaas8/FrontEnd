@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { NoneContent } from "../pages/Mypage";
+import { NoneContent } from "../pages/Memeber/Mypage";
 
 const PurchaseHistorySection = ({ shopData }) => {
   return (

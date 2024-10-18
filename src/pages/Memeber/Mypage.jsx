@@ -6,9 +6,9 @@ import {
   StyledMypageSection,
   StyledOneBoard,
   StyledFundHistory,
-} from "../myPage/Mypage.styles";
+} from "../../myPage/Mypage.styles";
 
-import { MockShopData } from "../myPage/MockMypageData";
+import { MockShopData } from "../../myPage/MockMypageData";
 
 import Grid2 from "@mui/material/Grid2";
 import {
@@ -22,13 +22,13 @@ import {
   Divider,
   Typography,
 } from "@mui/material";
-import MypageSideBar from "../myPage/MyPageSideBar";
+import MypageSideBar from "../../myPage/MyPageSideBar";
 
-import apiClient from "../token/AxiosConfig";
-import InquirySection from "../myPage/InquirySection";
+import apiClient from "../../token/AxiosConfig";
+import InquirySection from "../../myPage/InquirySection";
 import PurchaseHistorySection, {
   PurchaseHistory,
-} from "../myPage/ShopPurchaseSection";
+} from "../../myPage/ShopPurchaseSection";
 
 const Mypage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);

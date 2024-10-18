@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import "../login/CSS/Login.css";
+import "../../login/CSS/Login.css";
 import { Snackbar } from "@mui/material";
-import InputField from "../login/components/InputField";
-import SocialLogin from "../login/components/SocialLogin";
+import InputField from "../../login/components/InputField";
+import SocialLogin from "../../login/components/SocialLogin";
 import { Link, useNavigate } from "react-router-dom";
-import { apiNoToken } from "../token/AxiosConfig";
-import usePasswordCheck from "../login/components/usePasswordCheck";
+import { apiNoToken } from "../../token/AxiosConfig";
+import usePasswordCheck from "../../login/components/usePasswordCheck";
 import {
   formatPhoneNumber,
   validateEmail,
@@ -13,7 +13,7 @@ import {
   validateNickname,
   validatePassword,
   validatePhoneNumber,
-} from "../login/components/Validation";
+} from "../../login/components/Validation";
 
 const SignUp = () => {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import getTimeAgo from "../detailComponent/GetTImeAgo";
-import { NoneContent } from "../pages/Mypage";
+import { NoneContent } from "../pages/Memeber/Mypage";
 import { StyledOneBoard } from "./Mypage.styles";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import apiClient from "../token/AxiosConfig";
