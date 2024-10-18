@@ -1,6 +1,22 @@
 import styled from "styled-components";
+import { NoneContent } from "../pages/Mypage";
 
-const PurchaseHistory = ({ shopData, theme }) => {
+const PurchaseHistorySection = ({ shopData }) => {
+  return (
+    <div>
+      <h4 className="text-left p-0 m-0">구매내역</h4>
+      {shopData?.length ? (
+        shopData.map((shopDatum) => (
+          <PurchaseHistory key={shopDatum.id} shopData={shopDatum} />
+        ))
+      ) : (
+        <NoneContent />
+      )}
+    </div>
+  );
+};
+
+export const PurchaseHistory = ({ shopData, theme }) => {
   const getStateInfo = (state) => {
     switch (state) {
       case 0:
@@ -87,4 +103,4 @@ export const StyledPurchaseSection = styled.div`
     margin-left: 20px;
   }
 `;
-export default PurchaseHistory;
+export default PurchaseHistorySection;
