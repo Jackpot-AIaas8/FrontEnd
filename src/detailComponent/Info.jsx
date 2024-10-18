@@ -131,7 +131,7 @@ const DogInfo = ({ dogData: initialDogData }) => {
 
   const navigate = useNavigate();
 
-  const handlePurchase = () => {
+  const handleFundNow  = () => {
     if (!inputValue || parseInt(inputValue, 10) <= 0) {
       alert("가격을 입력해 주세요."); // 알림 표시
       return;
@@ -142,10 +142,10 @@ const DogInfo = ({ dogData: initialDogData }) => {
 
     navigate("/Checkout", {
       state: {
-        name: data.name,
-        productPrice: parsedPrice,
-        totalPrice: parsedPrice,
-        quantity: 1,
+        isFunding: true,  
+        name: data.name,  
+        totalAmount: parsedPrice, 
+        
       },
     });
   };
@@ -240,7 +240,7 @@ const DogInfo = ({ dogData: initialDogData }) => {
           <Button
             variant="outlined"
             startIcon={<ShareIcon />}
-            onClick={handlePurchase}
+            onClick={handleFundNow }
           >
             결제하기
           </Button>
