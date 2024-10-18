@@ -1,4 +1,37 @@
 import styled from "styled-components";
+import { NoneContent } from "../pages/Mypage";
+import { useEffect, useState } from "react";
+import apiClient from "../token/AxiosConfig";
+
+const PurchaseHistorySection = () => {
+  const [shopData, setShopData] = useState([]) || {};
+
+  useEffect(() => {
+    const apiShopData = () => {
+      try {
+        const response = apiClient("order/findAll");
+
+        setShopData(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    apiShopData();
+  }, []);
+
+  return (
+    <div>
+      <h4 className="text-left p-0 m-0">구매내역</h4>
+      {shopData?.length ? (
+        shopData.map((shopDatum) => (
+          <PurchaseHistory key={shopDatum.id} shopData={shopDatum} />
+        ))
+      ) : (
+        <NoneContent />
+      )}
+    </div>
+  );
+};
 
 const PurchaseHistory = ({ shopData, theme }) => {
   const getStateInfo = (state) => {
@@ -87,4 +120,4 @@ export const StyledPurchaseSection = styled.div`
     margin-left: 20px;
   }
 `;
-export default PurchaseHistory;
+export default PurchaseHistorySection;
