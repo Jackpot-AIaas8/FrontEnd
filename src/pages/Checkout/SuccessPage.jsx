@@ -19,11 +19,11 @@ export function SuccessPage() {
     customerMobilePhone = "",
     userAddress = "",
     totalPrice = 0,
-    quantity = "",
     deliveryFee = 3000,
     orderId,
     shopId = "",
     orderName: name,
+    products = [] // 추가된 부분: 상품 배열 정보
   } = paymentData;
 
   // sessionStorage에서 가져온 orderId가 존재하는지 확인
@@ -40,12 +40,13 @@ export function SuccessPage() {
       paymentKey: searchParams.get("paymentKey"),
       shopId: shopId,
       orderName: name,
-      quantity: quantity,
       memberID: memberID,
       name: customerName,
       phone: customerMobilePhone,
       address: userAddress,
     };
+    console.log("전송할 requestData:", requestData); // 요청 데이터 로그 추가
+
 
     console.log("결제 완료 후 백엔드로 전달할 데이터:", requestData);
 
@@ -83,8 +84,7 @@ export function SuccessPage() {
     return <div>결제 정보를 불러올 수 없습니다.</div>;
   }
 
-  const { orderName, totalAmount, status } = paymentInfo;
-  const suppliedAmount = totalAmount - deliveryFee;
+  const { totalAmount } = paymentInfo; // totalAmount는 paymentInfo에서 가져옵니다.
 
   return (
     <PageContainer>
@@ -92,9 +92,17 @@ export function SuccessPage() {
       <Subtitle>주문이 완료되었습니다. 감사합니다!</Subtitle>
       <Section>
         <SectionTitle>상품배송 정보</SectionTitle>
-        <InfoRow>
-          <InfoLabel>{name} ({quantity}개)</InfoLabel>
-        </InfoRow>
+        {products.length > 0 ? (
+          products.map((product, index) => (
+            <InfoRow key={index}>
+              <InfoLabel>{product.shopName} ({product.quantity}개)</InfoLabel>
+            </InfoRow>
+          ))
+        ) : (
+          <InfoRow>
+            <InfoLabel>{name} (1개)</InfoLabel>
+          </InfoRow>
+        )}
       </Section>
       <InfoContainer>
         <LeftColumn>
@@ -112,9 +120,7 @@ export function SuccessPage() {
           <SectionTitle>결제 정보</SectionTitle>
           <InfoRow>
             <InfoLabel>주문금액</InfoLabel>
-            <InfoValue> {totalAmount
-                ? `${(totalAmount  - 3000).toLocaleString()}원`
-                : "가격 정보 없음"}</InfoValue>
+            <InfoValue>{(totalAmount - deliveryFee).toLocaleString()}원</InfoValue>
           </InfoRow>
           <InfoRow>
             <InfoLabel>배송비</InfoLabel>
@@ -135,7 +141,6 @@ export function SuccessPage() {
 }
 
 export default SuccessPage;
-
 
 // 스타일 정의
 const PageContainer = styled.div`
@@ -171,6 +176,9 @@ const InfoRow = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
+  &:nth-child(odd) {
+    background-color: #f1f1f1;
+  }
 `;
 
 const InfoLabel = styled.span`
