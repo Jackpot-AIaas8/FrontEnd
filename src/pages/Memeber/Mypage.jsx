@@ -26,9 +26,7 @@ import MypageSideBar from "../../myPage/MyPageSideBar";
 
 import apiClient from "../../token/AxiosConfig";
 import InquirySection from "../../myPage/InquirySection";
-import PurchaseHistorySection, {
-  PurchaseHistory,
-} from "../../myPage/ShopPurchaseSection";
+import PurchaseHistorySection from "../../myPage/ShopPurchaseSection";
 
 const Mypage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -51,6 +49,11 @@ const Mypage = () => {
   });
 
   const [shopData, setShopData] = useState([]);
+  const [showAll, setShowAll] = useState({
+    purchase: false,
+    inquiry: false,
+    funding: false,
+  });
 
   useEffect(() => {
     const apiInfo = async () => {
@@ -110,34 +113,48 @@ const Mypage = () => {
       case "info":
         return <InfoSection />;
       case "purchase":
-        return <PurchaseHistorySection shopData={shopData} />;
+        return (
+          <PurchaseHistorySection
+            shopData={shopData}
+            showAll={showAll[currentPage]}
+          />
+        );
       case "inquiry":
-        return <InquirySection />;
+        return <InquirySection showAll={showAll[currentPage]} />;
       case "funding":
-        return <FundHisotrySection />;
+        return <FundHistorySection showAll={showAll[currentPage]} />;
       default:
         return renderAllContent(); // 기본적으로 모든 섹션 렌더링
     }
   };
 
+  const handleSectionChange = (section) => {
+    setCurrentPage(section);
+    if (section === "all") {
+      setShowAll({
+        purchase: false,
+        inquiry: false,
+        funding: false,
+      });
+    } else {
+      setShowAll({
+        purchase: false,
+        inquiry: false,
+        funding: false,
+        [section]: true,
+      });
+    }
+  };
+
   const renderAllContent = () => (
     <>
-      <InfoSection />
-      <div>
-        <h4 className="text-left p-0 m-0">구매내역</h4>
-        {shopData?.length ? (
-          shopData
-            .slice(0, 3)
-            .map((shopDatum) => (
-              <PurchaseHistory key={shopDatum.Id} shopData={shopDatum} />
-            ))
-        ) : (
-          <NoneContent />
-        )}
-      </div>
-
-      <InquirySection />
-      <FundHisotrySection />
+      <InfoSection infoData={infoData} />
+      <PurchaseHistorySection
+        shopData={shopData}
+        showAll={showAll[currentPage]}
+      />
+      <InquirySection showAll={showAll[currentPage]} />
+      <FundHistorySection showAll={showAll[currentPage]} />
     </>
   );
 
@@ -236,20 +253,20 @@ const Mypage = () => {
             <Typography variant="h6">Information</Typography>
             <Divider sx={{ my: 2 }} />
             <ul className="flex justify-around">
-              <li>
+              <li key="email">
                 <h3 className="info-title">Email</h3>
                 <span>{infoData.email}</span>
               </li>
-              <li>
+              <li key="phone">
                 <h3 className="info-title">Phone</h3>
                 <span>{infoData.phone}</span>
               </li>
 
-              <li>
+              <li key="nickName">
                 <h3 className="info-title">닉네임</h3>
                 <span>{infoData.nickName}</span>
               </li>
-              <li>
+              <li key="address">
                 <h3 className="info-title">{infoData.address}</h3>
                 <span>집 주소</span>
               </li>
@@ -260,7 +277,7 @@ const Mypage = () => {
     );
   };
 
-  const FundHisotrySection = () => {
+  const FundHistorySection = ({ showAll }) => {
     return (
       <StyledFundHistory>
         <h4 className="text-left p-0 m-0">펀딩내역</h4>
@@ -287,7 +304,7 @@ const Mypage = () => {
           <MypageSideBar
             infoData={infoData}
             currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
+            handleSectionChange={handleSectionChange}
           />
           {/* RightSection */}
           <StyeldRightSection className="right-section flex flex-column  w-full justify-around  ">

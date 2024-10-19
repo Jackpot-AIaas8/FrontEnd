@@ -4,7 +4,7 @@ import { AuthContext } from "../token/AuthContext";
 
 import { StyledNavBar } from "./Mypage.styles";
 
-const MypageLeftSection = ({ currentPage, setCurrentPage, infoData }) => {
+const MypageLeftSection = ({ currentPage, handleSectionChange, infoData }) => {
   const { logout } = useContext(AuthContext);
 
   const sections = [
@@ -13,14 +13,6 @@ const MypageLeftSection = ({ currentPage, setCurrentPage, infoData }) => {
     { id: "inquiry", label: "1:1 문의 내역" },
     { id: "funding", label: "펀딩내역" },
   ];
-
-  const handleSectionChange = (section) => {
-    if (section === "logout") {
-      logout();
-    } else {
-      setCurrentPage(section); // 현재 페이지 상태 업데이트
-    }
-  };
 
   return (
     <>
@@ -74,7 +66,7 @@ const MypageLeftSection = ({ currentPage, setCurrentPage, infoData }) => {
               <li
                 className="btn_menu menu_item"
                 onClick={() => {
-                  handleSectionChange("logout");
+                  logout();
                 }}
               >
                 <h2>로그아웃</h2>
