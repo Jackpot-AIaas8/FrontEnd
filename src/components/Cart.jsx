@@ -47,7 +47,8 @@ const Cart = () => {
       await apiClient.delete(`cart/remove`, { params: { cartId: cartId } });
       // console.log(`${cartId}번 상품이 삭제되었습니다.`);
       alert("장바구니에서 상품이 삭제되었습니다.");
-      navigate("/cart"); // 새로고침 대신 카트에서 카트로 이동 안그러면 삭제된게 안없어지는거같음
+      // navigate("/cart"); // 새로고침 대신 카트에서 카트로 이동 안그러면 삭제된게 안없어지는거같음. 이걸론 새로고침이 안됨
+      window.location.reload(); // 페이지를 강제로 새로고침
     } catch (error) {
       console.error("Error fetching cart items:", error);
     }
@@ -190,7 +191,7 @@ const Cart = () => {
         {cartItems.length > 0 && (
           <Grid size={{ xs: 4, md: 3 }} sx={{ margin: 10 }}>
             <StyledWrapper>
-              <div className="card checkout">
+              <div className="card checkout flex-wrap">
                 <label className="title">주문 예상 금액</label>
                 <div className="details">
                   <span>총 상품 가격</span>
