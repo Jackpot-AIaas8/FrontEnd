@@ -6,6 +6,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import apiClient from "../../../token/AxiosConfig";
 
 const ProductInfo = ({ productId }) => {
   const [quantity, setQuantity] = useState(1);
@@ -16,7 +17,7 @@ const ProductInfo = ({ productId }) => {
   // 상품 정보 가져오기
   const fetchProduct = async () => {
     try {
-      const response = await axios.get(`http://localhost:8181/shop/findOne/${productId}`);
+      const response = await apiClient.get(`shop/findOne/${productId}`);
       setProduct(response.data);
     } catch (error) {
       console.error("상품 정보를 불러오는 중 오류 발생:", error);
@@ -42,14 +43,14 @@ const ProductInfo = ({ productId }) => {
 
     try {
       // cart/register API로 장바구니 등록 요청
-      await axios.post('http://localhost:8181/cart/register', {
+      await apiClient.post("cart/register", {
         shopId: product.shopId,
         quantity: quantity,
-        totalPrice: totalPrice
+        totalPrice: totalPrice,
       });
-      console.log('장바구니에 상품이 등록되었습니다.');
+      console.log("장바구니에 상품이 등록되었습니다.");
     } catch (error) {
-      console.error('장바구니 등록 중 오류 발생:', error);
+      console.error("장바구니 등록 중 오류 발생:", error);
     }
 
     // 5초 후에 Popover 자동으로 닫기
@@ -64,7 +65,7 @@ const ProductInfo = ({ productId }) => {
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  const id = open ? "simple-popover" : undefined;
 
   // 바로구매 처리
   const handleBuyNow = () => {
@@ -91,22 +92,38 @@ const ProductInfo = ({ productId }) => {
       <TopSection className="flex flex-row justify-between">
         <LeftSection className="flex flex-column align-start">
           <img
-            src={product.imageUrl || "https://img.biteme.co.kr/product/750/2308ae4a580a9e017ad5b07084b8cc51.jpg"}
+            src={
+              product.imageUrl ||
+              "https://img.biteme.co.kr/product/750/2308ae4a580a9e017ad5b07084b8cc51.jpg"
+            }
             alt={product.name}
           />
         </LeftSection>
 
         <RightSection className="flex flex-column align-start justify-center">
-          <Typography variant="h5" style={{ marginTop: "16px" }}>{product.name}</Typography>
-          <Typography variant="body1" style={{ marginTop: "4px", color: "red", fontSize: "24px" }}>
+          <Typography variant="h5" style={{ marginTop: "16px" }}>
+            {product.name}
+          </Typography>
+          <Typography
+            variant="body1"
+            style={{ marginTop: "4px", color: "red", fontSize: "24px" }}
+          >
             판매가: {product.price.toLocaleString()}원
           </Typography>
 
-          <div style={{ display: "flex", alignItems: "center", marginTop: "16px" }}>
+          <div
+            style={{ display: "flex", alignItems: "center", marginTop: "16px" }}
+          >
             <QuantityContainer>
-              <Button onClick={handleDecrement} variant="outlined" size="small">-</Button>
-              <Typography variant="body1" style={{ margin: "0 8px" }}>{quantity}</Typography>
-              <Button onClick={handleIncrement} variant="outlined" size="small">+</Button>
+              <Button onClick={handleDecrement} variant="outlined" size="small">
+                -
+              </Button>
+              <Typography variant="body1" style={{ margin: "0 8px" }}>
+                {quantity}
+              </Typography>
+              <Button onClick={handleIncrement} variant="outlined" size="small">
+                +
+              </Button>
             </QuantityContainer>
 
             <div style={{ marginLeft: "16px" }}>
@@ -116,14 +133,19 @@ const ProductInfo = ({ productId }) => {
           </div>
 
           <ButtonSection>
-            <StyledButton 
-              variant="contained" 
-              startIcon={<FavoriteBorderIcon />} 
+            <StyledButton
+              variant="contained"
+              startIcon={<FavoriteBorderIcon />}
               onClick={handleAddToCart} // 장바구니 담기 클릭 시 Popover 열기
             >
               장바구니 담기
             </StyledButton>
-            <StyledButton variant="contained" color="primary" startIcon={<ShareIcon />} onClick={handleBuyNow}>
+            <StyledButton
+              variant="contained"
+              color="primary"
+              startIcon={<ShareIcon />}
+              onClick={handleBuyNow}
+            >
               바로구매
             </StyledButton>
           </ButtonSection>
@@ -137,32 +159,35 @@ const ProductInfo = ({ productId }) => {
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
+          vertical: "bottom",
+          horizontal: "center",
         }}
         transformOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
+          vertical: "top",
+          horizontal: "center",
         }}
         PaperProps={{
-          style: { marginTop: '10px' }, // 팝업을 아래로 약간 내림
+          style: { marginTop: "10px" }, // 팝업을 아래로 약간 내림
         }}
       >
         <PopoverContent>
           <IconButton
-            style={{ position: 'absolute', top: '4px', right: '4px' }}
+            style={{ position: "absolute", top: "4px", right: "4px" }}
             onClick={handleClose}
           >
             <CloseIcon fontSize="small" />
           </IconButton>
-          <Typography variant="body2" style={{ fontSize: '12px', paddingTop: '16px' }}>
+          <Typography
+            variant="body2"
+            style={{ fontSize: "12px", paddingTop: "16px" }}
+          >
             상품이 장바구니에 담겼습니다.
           </Typography>
           <StyledButton
             variant="contained"
             onClick={handleGoToCart}
             color="primary"
-            style={{ marginTop: '8px', fontSize: '12px' }}
+            style={{ marginTop: "8px", fontSize: "12px" }}
           >
             장바구니 바로가기
           </StyledButton>
