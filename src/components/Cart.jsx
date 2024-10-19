@@ -131,7 +131,9 @@ const Cart = () => {
                 <div className="left-section">
                   {cartItems.length === 0 ? (
                     <div className="empty-cart">
-                      <p>장바구니에 상품이 없습니다</p>
+                      <p className="p-2" style={{ height: "150px" }}>
+                        장바구니에 상품이 없습니다
+                      </p>
                       <Button
                         variant="contained"
                         color="primary"
@@ -207,30 +209,32 @@ const Cart = () => {
                     ))
                   )}
                 </div>
-                <div className="right-section" style={{ flex: 1.5 }}>
-                  <div className="checkout">
-                    <label className="title">주문 예상 금액</label>
-                    <div className="details">
-                      <span>총 상품 가격</span>
-                      <span>{totalPrice.toLocaleString()}원</span>
-                      <span>총 할인</span>
-                      <span>- 0원</span>
-                      <span>총 배송비</span>
-                      <span>+ 3000원</span>
-                    </div>
-                    <div className="checkout--footer">
-                      <label>합계</label>
-                      <span>{(totalPrice + 3000).toLocaleString()}원</span>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handlePurchase}
-                      >
-                        결제하기
-                      </Button>
+                {cartItems.length > 0 && (
+                  <div className="right-section" style={{ flex: 1.5 }}>
+                    <div className="checkout">
+                      <label className="title">주문 예상 금액</label>
+                      <div className="details">
+                        <span>총 상품 가격</span>
+                        <span>{totalPrice.toLocaleString()}원</span>
+                        <span>총 할인</span>
+                        <span>- 0원</span>
+                        <span>총 배송비</span>
+                        <span>+ 3000원</span>
+                      </div>
+                      <div className="checkout--footer">
+                        <label>합계</label>
+                        <span>{(totalPrice + 3000).toLocaleString()}원</span>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={handlePurchase}
+                        >
+                          결제하기
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
