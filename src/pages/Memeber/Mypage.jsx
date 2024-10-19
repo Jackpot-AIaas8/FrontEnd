@@ -4,11 +4,10 @@ import {
   StyledMypageWrapper,
   StyeldRightSection,
   StyledMypageSection,
-  StyledOneBoard,
   StyledFundHistory,
-} from "../../myPage/Mypage.styles";
+} from "../myPage/Mypage.styles";
 
-import { MockShopData } from "../../myPage/MockMypageData";
+import { MockShopData } from "../myPage/MockMypageData";
 
 import Grid2 from "@mui/material/Grid2";
 import {
@@ -22,13 +21,13 @@ import {
   Divider,
   Typography,
 } from "@mui/material";
-import MypageSideBar from "../../myPage/MyPageSideBar";
+import MypageSideBar from "../myPage/MyPageSideBar";
 
-import apiClient from "../../token/AxiosConfig";
-import InquirySection from "../../myPage/InquirySection";
+import apiClient from "../token/AxiosConfig";
+import InquirySection from "../myPage/InquirySection";
 import PurchaseHistorySection, {
   PurchaseHistory,
-} from "../../myPage/ShopPurchaseSection";
+} from "../myPage/ShopPurchaseSection";
 
 const Mypage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -43,14 +42,49 @@ const Mypage = () => {
   const [address, setAddress] = useState("");
 
   const [infoData, setInfoData] = useState({
-    memberId: "",
     name: "",
     email: "",
     phone: "",
     grade: "기본 회원",
   });
 
-  const [shopData, setShopData] = useState([]);
+  useEffect(() => {
+    const apiShopData = () => {
+      try {
+        const response = apiClient("order/findAll");
+
+        setShopData(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    apiShopData();
+  }, []);
+
+  const [shopData, setShopData] = useState([]) || {};
+
+  useEffect(() => {
+    const apiShopData = () => {
+      try {
+        const response = apiClient("order/findAll");
+
+        setShopData(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    apiShopData();
+  }, []);
+
+  // useEffect(() => {
+  //   const mockShopData = () => {
+  //     const response = MockShopData;
+
+  //     setShopData(response.data);
+  //   };
+
+  //   mockShopData();
+  // }, []);
 
   useEffect(() => {
     const apiInfo = async () => {
@@ -68,41 +102,8 @@ const Mypage = () => {
         console.log(error);
       }
     };
-    // const apiShopData = async () => {
-    //   try {
-    //     const response = await apiClient.get("order/findAll", {
-    //       params: {
-    //         memberId: infoData.memberId,
-    //       },
-    //     });
-
-    //     setShopData(response.data);
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // };
-
-    const apiFunding = async () => {
-      try {
-        const response = await apiClient.get("dog/fundListMyPage");
-        console.log(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
     apiInfo();
-    // apiShopData();
-    apiFunding();
-  }, []);
-
-  useEffect(() => {
-    const mockShopData = () => {
-      const response = MockShopData;
-      console.log(response.data);
-      setShopData(response.data);
-    };
-
-    mockShopData();
+    console.log(infoData.grade);
   }, []);
 
   const renderSingleContent = () => {
@@ -129,7 +130,7 @@ const Mypage = () => {
           shopData
             .slice(0, 3)
             .map((shopDatum) => (
-              <PurchaseHistory key={shopDatum.Id} shopData={shopDatum} />
+              <PurchaseHistory key={shopDatum.id} shopData={shopDatum} />
             ))
         ) : (
           <NoneContent />
