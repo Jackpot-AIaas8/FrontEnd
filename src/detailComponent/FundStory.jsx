@@ -15,20 +15,19 @@ const fundStory = `
 `;
 
 const Section = styled.div`
-  outline-width: medium;
-  outline-color: blue;
-  outline-style: solid;
+  border: 3px solid ${(props) => props.theme.colors.paleOrange};
   width: 80%;
   border-radius: 10px;
   margin: 20px 0;
-  padding: 20px;
+  padding: 0px;
+  overflow: hidden;
 
   .story-section {
     word-break: break-word;
   }
 
   .top-name {
-    background-color: #002fa3;
+    background: ${(props) => props.theme.colors.orangeGradient};
     color: #fff;
     font-size: 18px;
     font-weight: 700;
@@ -39,12 +38,11 @@ const Section = styled.div`
     align-items: center;
     padding: 0 15px;
     line-height: 42px;
-    border-top-left-radius: 10px;
   }
 
   .discription-section {
     max-width: 900px;
-    margin: 0 30px;
+    margin: 15px 30px;
   }
 
   .title {
@@ -54,7 +52,7 @@ const Section = styled.div`
     line-height: 1.5em;
     margin: 20px 0 0 0;
     padding: 1px 8px 1px;
-    border-left: 3px solid #1b62ab;
+    border-left: 3px solid blue;
     width: fit-content;
     color: #000;
   }
@@ -64,6 +62,7 @@ const Section = styled.div`
     text-align: left;
     margin-top: 0;
     font-size: 1.2rem;
+    padding: 20px 0;
   }
 `;
 const storySection = () => {

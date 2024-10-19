@@ -108,26 +108,7 @@ const Mypage = () => {
     mockShopData();
   }, []);
 
-  const renderSingleContent = () => {
-    switch (currentPage) {
-      case "info":
-        return <InfoSection />;
-      case "purchase":
-        return (
-          <PurchaseHistorySection
-            shopData={shopData}
-            showAll={showAll[currentPage]}
-          />
-        );
-      case "inquiry":
-        return <InquirySection showAll={showAll[currentPage]} />;
-      case "funding":
-        return <FundHistorySection showAll={showAll[currentPage]} />;
-      default:
-        return renderAllContent(); // 기본적으로 모든 섹션 렌더링
-    }
-  };
-
+  // section 조건 변경에 따른 렌더링 함수
   const handleSectionChange = (section) => {
     setCurrentPage(section);
     if (section === "all") {
@@ -157,6 +138,28 @@ const Mypage = () => {
       <FundHistorySection showAll={showAll[currentPage]} />
     </>
   );
+
+  const renderSingleContent = () => {
+    switch (currentPage) {
+      case "info":
+        return <InfoSection />;
+      case "purchase":
+        return (
+          <PurchaseHistorySection
+            shopData={shopData}
+            showAll={showAll[currentPage]}
+          />
+        );
+      case "inquiry":
+        return <InquirySection showAll={showAll[currentPage]} />;
+      case "funding":
+        return <FundHistorySection showAll={showAll[currentPage]} />;
+      default:
+        return renderAllContent(); // 기본적으로 모든 섹션 렌더링
+    }
+  };
+
+  // ---------------------------------------------------------------------
 
   const editUser = () => {
     return (

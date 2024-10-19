@@ -77,7 +77,9 @@ const History = ({ dogData }) => {
 
         <div className="dog-info-section flex">
           <h3>{dogData.name}</h3>
-          <p>나이: {dogData.age}세</p>
+          <p>나이: {dogData.age}</p>
+          <p> {dogData.species}</p>
+          <p>성별: {dogData.gender}</p>
           <p dangerouslySetInnerHTML={{ __html: dogData.dogDetail }}></p>
         </div>
       </div>
