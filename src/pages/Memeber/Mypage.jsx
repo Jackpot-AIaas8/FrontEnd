@@ -43,6 +43,7 @@ const Mypage = () => {
   const [address, setAddress] = useState("");
 
   const [infoData, setInfoData] = useState({
+    memberId: "",
     name: "",
     email: "",
     phone: "",
@@ -50,33 +51,6 @@ const Mypage = () => {
   });
 
   const [shopData, setShopData] = useState([]);
-
-  // useEffect(() => {
-  //   const apiShopData = async () => {
-  //     try {
-  //       const response = await apiClient.get("order/findAll", {
-  //         params: {
-  //           memberId: infoData.memberId,
-  //         },
-  //       });
-
-  //       setShopData(response.data);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   apiShopData();
-  // }, []);
-
-  useEffect(() => {
-    const mockShopData = () => {
-      const response = MockShopData;
-
-      setShopData(response.data);
-    };
-
-    mockShopData();
-  }, []);
 
   useEffect(() => {
     const apiInfo = async () => {
@@ -94,11 +68,20 @@ const Mypage = () => {
         console.log(error);
       }
     };
-    apiInfo();
-    console.log(infoData.grade);
-  }, []);
+    // const apiShopData = async () => {
+    //   try {
+    //     const response = await apiClient.get("order/findAll", {
+    //       params: {
+    //         memberId: infoData.memberId,
+    //       },
+    //     });
 
-  useEffect(() => {
+    //     setShopData(response.data);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // };
+
     const apiFunding = async () => {
       try {
         const response = await apiClient.get("dog/fundListMyPage");
@@ -107,7 +90,19 @@ const Mypage = () => {
         console.log(error);
       }
     };
+    apiInfo();
+    // apiShopData();
     apiFunding();
+  }, []);
+
+  useEffect(() => {
+    const mockShopData = () => {
+      const response = MockShopData;
+      console.log(response.data);
+      setShopData(response.data);
+    };
+
+    mockShopData();
   }, []);
 
   const renderSingleContent = () => {
@@ -134,7 +129,7 @@ const Mypage = () => {
           shopData
             .slice(0, 3)
             .map((shopDatum) => (
-              <PurchaseHistory key={shopDatum.shopId} shopData={shopDatum} />
+              <PurchaseHistory key={shopDatum.Id} shopData={shopDatum} />
             ))
         ) : (
           <NoneContent />
