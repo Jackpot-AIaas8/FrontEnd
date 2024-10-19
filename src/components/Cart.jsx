@@ -22,12 +22,18 @@ const Cart = () => {
       if (response.data.length === 0) {
         setCartItems([]);
       } else {
-        const itemsWithQuantity = response.data.map((item) => ({
-          ...item,
-          quantity: 1,
-        }));
-        setCartItems(itemsWithQuantity);
-        calculateTotalPrice(itemsWithQuantity);
+        // 같은 shopId를 가진 아이템들을 그룹화하여 수량을 합산
+        const groupedItems = response.data.reduce((acc, item) => {
+          const existingItem = acc.find(i => i.shopId === item.shopId);
+          if (existingItem) {
+            existingItem.quantity += 1; // 수량 증가
+          } else {
+            acc.push({ ...item, quantity: 1 }); // 새로운 항목 추가
+          }
+          return acc;
+        }, []);
+        setCartItems(groupedItems);
+        calculateTotalPrice(groupedItems);
       }
     } catch (error) {
       console.error("Error fetching cart items:", error);
@@ -41,30 +47,37 @@ const Cart = () => {
     setTotalPrice(total);
   };
 
-  // x자 표시를 누르면 카트에서 상품이 삭제되는데 여기에 삭제 컨트롤러 메서드 연결됨
-  const handleRemoveItem = async (cartId) => {
-    try {
-      await apiClient.delete(`cart/remove`, { params: { cartId: cartId } });
-      // console.log(`${cartId}번 상품이 삭제되었습니다.`);
-      alert("장바구니에서 상품이 삭제되었습니다.");
-      // navigate("/cart"); // 새로고침 대신 카트에서 카트로 이동 안그러면 삭제된게 안없어지는거같음. 이걸론 새로고침이 안됨
-      window.location.reload(); // 페이지를 강제로 새로고침
-    } catch (error) {
-      console.error("Error fetching cart items:", error);
-    }
-  };
-
-  const updateQuantity = (id, delta) => {
+  const updateQuantity = async (shopId, delta) => {
     const updatedItems = cartItems.map((item) => {
-      if (item.cartId === id) {
-        const newQuantity = Math.max(1, item.quantity + delta); // 수량은 최소 1 이상
+      if (item.shopId === shopId) { // shopId를 사용하여 수량 업데이트
+        const newQuantity = Math.max(1, item.quantity + delta);
+
         return { ...item, quantity: newQuantity };
       }
       return item;
     });
     setCartItems(updatedItems);
     calculateTotalPrice(updatedItems);
+
+    // 서버에 수량 업데이트 요청
+    const cartItemToUpdate = updatedItems.find(item => item.shopId === shopId);
+    if (cartItemToUpdate) {
+      await apiClient.put(`/cart/update/${cartItemToUpdate.cartId}`, {
+        quantity: cartItemToUpdate.quantity,
+      });
+    }
   };
+
+  const removeItem = async (shopId) => {
+    try {
+      await apiClient.delete(`cart/remove/${shopId}`);
+      setCartItems((prevItems) => prevItems.filter((item) => item.shopId !== shopId));
+      calculateTotalPrice(cartItems.filter((item) => item.shopId !== shopId));
+    } catch (error) {
+      console.error("Error removing cart item:", error);
+    }
+  };
+
 
   useEffect(() => {
     fetchCartItems();
@@ -76,7 +89,9 @@ const Cart = () => {
       name: item.shopName,
       productPrice: item.shopPrice,
       quantity: item.quantity,
-      totalAmount: item.shopPrice * item.quantity, // 총 금액 계산
+      totalAmount: item.shopPrice * item.quantity,
+      shopId: item.shopId, 
+
     }));
 
     navigate("/Checkout", {
@@ -124,29 +139,25 @@ const Cart = () => {
                         onClick={() => handleRemoveItem(item.cartId)}
                       />
                     </div>
-                    <div className="products">
-                      <div className="product">
+                  ) : (
+                    cartItems.map((item) => (
+                      <div className="product" key={item.shopId}>
+
                         <img
                           src={logo}
                           alt="상품 이미지 대체 로고"
                           style={{ height: "80px", width: "80px" }}
-                        ></img>
-                        <div>
+                        />
+                        <div className="product-details">
+
                           <span>{item.shopName}</span>
                           <p>{item.shopId}번 상품</p>
                           <p>{item.shopPrice}원</p>
                         </div>
                         <div className="quantity">
-                          <button
-                            onClick={() => updateQuantity(item.cartId, -1)}
-                          >
-                            <svg
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              height="14"
-                              width="14"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
+                          <button onClick={() => updateQuantity(item.shopId, -1)}>
+                            <svg fill="none" viewBox="0 0 24 24" height="14" width="14">
+
                               <path
                                 strokeLinejoin="round"
                                 strokeLinecap="round"
@@ -157,16 +168,9 @@ const Cart = () => {
                             </svg>
                           </button>
                           <label>{item.quantity}</label>
-                          <button
-                            onClick={() => updateQuantity(item.cartId, 1)}
-                          >
-                            <svg
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              height="14"
-                              width="14"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
+                          <button onClick={() => updateQuantity(item.shopId, 1)}>
+                            <svg fill="none" viewBox="0 0 24 24" height="14" width="14">
+
                               <path
                                 strokeLinejoin="round"
                                 strokeLinecap="round"
@@ -177,9 +181,19 @@ const Cart = () => {
                             </svg>
                           </button>
                         </div>
-                        <label className="price small">
-                          {(item.shopPrice * item.quantity).toLocaleString()}원
-                        </label>
+                        <Button
+                          variant="text"
+                          color="secondary"
+                          onClick={() => removeItem(item.shopId)}
+                          style={{
+                            position: "absolute",
+                            top: "10px",
+                            right: "10px",
+                          }}
+                        >
+                          삭제
+                        </Button>
+
                       </div>
                     </div>
                   </div>
@@ -229,14 +243,8 @@ const StyledWrapper = styled.div`
     justify-content: center;
     align-items: center;
     flex-direction: column;
-  }
+    width: 100%;
 
-  .price-container {
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    width: auto;
-  }
 
   .card {
     width: 50%;
