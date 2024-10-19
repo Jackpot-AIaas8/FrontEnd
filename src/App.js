@@ -93,7 +93,8 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["ROLE_USER", "ROLE_PREMIUM"]} />
             }
-          >
+          > 
+            <Route prth="/cart" element={<Cart/>} />
             <Route path="/mypage" element={<Mypage />} />
             <Route path="/Checkout" element={<CheckoutPage />} />
             <Route path="/board/:boardId" element={<BoardFindOnePage />} />

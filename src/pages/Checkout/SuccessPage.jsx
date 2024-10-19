@@ -18,12 +18,12 @@ export function SuccessPage() {
     customerName = "",
     customerMobilePhone = "",
     userAddress = "",
-    totalPrice = 0,
+    amount = 0,
     deliveryFee = 3000,
     orderId,
     shopId = "",
     orderName: name,
-    products = [] // 추가된 부분: 상품 배열 정보
+    products = [] // 상품 배열 정보
   } = paymentData;
 
   // sessionStorage에서 가져온 orderId가 존재하는지 확인
@@ -45,8 +45,7 @@ export function SuccessPage() {
       phone: customerMobilePhone,
       address: userAddress,
     };
-    console.log("전송할 requestData:", requestData); // 요청 데이터 로그 추가
-
+    console.log("전송할 requestData:", requestData);
 
     console.log("결제 완료 후 백엔드로 전달할 데이터:", requestData);
 
