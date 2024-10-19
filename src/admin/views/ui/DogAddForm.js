@@ -11,7 +11,7 @@ import {
     Input,
 } from "reactstrap";
 import "../../assets/scss/style.scss";
-import React,{useState} from "react";
+import React, {useState} from "react";
 import apiClient from "../../../token/AxiosConfig";
 
 const DogAddFrom = () => {
@@ -33,7 +33,7 @@ const DogAddFrom = () => {
         detailImage2 : File,
         detailImage3 : File,
         detailImage4 : File
-});
+    });
 
     const handleInputChange = (e) => {
         const {name, value} = e.target;
