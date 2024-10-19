@@ -10,23 +10,36 @@ import {
 import { MockShopData } from "../myPage/MockMypageData";
 
 import Grid2 from "@mui/material/Grid2";
-import { Avatar, CardContent, Divider, Typography } from "@mui/material";
+import {
+  Avatar,
+  Button,
+  CardContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  Typography,
+} from "@mui/material";
 import MypageSideBar from "../myPage/MyPageSideBar";
 
 import apiClient from "../token/AxiosConfig";
 import InquirySection from "../myPage/InquirySection";
-import EditUserSection from "../myPage/EditUserSection";
-
 import PurchaseHistorySection, {
   PurchaseHistory,
 } from "../myPage/ShopPurchaseSection";
 
 const Mypage = () => {
-  const [setIsDialogOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [currentPage, setCurrentPage] = useState("all");
 
-  const [shopData, setShopData] = useState([]);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [name, setName] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [address, setAddress] = useState("");
 
   const [infoData, setInfoData] = useState({
     name: "",
@@ -36,14 +49,42 @@ const Mypage = () => {
   });
 
   useEffect(() => {
-    const mockShopData = () => {
-      const response = MockShopData;
+    const apiShopData = () => {
+      try {
+        const response = apiClient("order/findAll");
 
-      setShopData(response.data);
+        setShopData(response.data);
+      } catch (error) {
+        console.log(error);
+      }
     };
-
-    mockShopData();
+    apiShopData();
   }, []);
+
+  const [shopData, setShopData] = useState([]) || {};
+
+  useEffect(() => {
+    const apiShopData = () => {
+      try {
+        const response = apiClient("order/findAll");
+
+        setShopData(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    apiShopData();
+  }, []);
+
+  // useEffect(() => {
+  //   const mockShopData = () => {
+  //     const response = MockShopData;
+
+  //     setShopData(response.data);
+  //   };
+
+  //   mockShopData();
+  // }, []);
 
   useEffect(() => {
     const apiInfo = async () => {
@@ -68,7 +109,7 @@ const Mypage = () => {
   const renderSingleContent = () => {
     switch (currentPage) {
       case "info":
-        return <EditUserSection />;
+        return <InfoSection />;
       case "purchase":
         return <PurchaseHistorySection shopData={shopData} />;
       case "inquiry":
@@ -100,6 +141,67 @@ const Mypage = () => {
       <FundHisotrySection />
     </>
   );
+
+  const editUser = () => {
+    return (
+      <>
+        <>
+          <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+            <DialogTitle>개인정보 수정</DialogTitle>
+            <DialogContent>
+              <input
+                type="text"
+                placeholder="이메일 수정"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <Button onClick={(e) => e.preventDefault()} color="primary">
+                이메일 중복검사
+              </Button>
+              <input
+                type="password"
+                placeholder="비밀번호 수정"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="전화번호 수정"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="이름 수정"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="닉네임 수정"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+              />
+              <Button onClick={(e) => e.preventDefault()} color="primary">
+                닉네임 중복검사
+              </Button>
+              <input
+                type="text"
+                placeholder="주소 수정"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseDialog} color="primary">
+                닫기
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </>
+      </>
+    );
+  };
 
   const InfoSection = () => {
     return (

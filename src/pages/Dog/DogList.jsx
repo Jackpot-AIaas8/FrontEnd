@@ -1,14 +1,14 @@
-import Dog from "../dogList/Dog";
+import Dog from "../../dogList/Dog";
 import React, { useEffect, useState } from "react";
 
 import { Box, Container } from "@mui/material";
 
 // import MOCKDATA from "./MockData";
-import SortSelector from "../dogList/SortSelector";
-import PageComponent from "../dogList/PageComponent";
-import apiClient from "../token/AxiosConfig";
+import SortSelector from "../../dogList/SortSelector";
+import PageComponent from "../../dogList/PageComponent";
+import apiClient from "../../token/AxiosConfig";
 import styled from "styled-components";
-import image from "../static/fundingBanner.jpg";
+import image from "../../static/fundingBanner.jpg";
 
 const DogListPage = () => {
   const [dogsData, setDogsData] = useState([]);
@@ -18,7 +18,6 @@ const DogListPage = () => {
     size: 9,
   });
   const [totalPages, setTotalPages] = useState();
-  const [loading, setLoading] = useState(true); // 로딩 상태 관리
 
   useEffect(() => {
     dogListAPI(pageInfo);
@@ -53,7 +52,6 @@ const DogListPage = () => {
 
       setTotalPages(Math.ceil(response.data.totalDogNum / pageInfo.size));
 
-      setLoading(false);
       setDogsData(response.data.dogList);
     } catch (err) {
       console.error(err);
@@ -63,7 +61,7 @@ const DogListPage = () => {
   return (
     <div className="container flex flex-column align-center justify-center">
       <StyledImageBox className=" section-Image flex">
-        <img src={image} alt="대표 사진 " style={{ width : '1200px'}} />
+        <img src={image} alt="대표 사진 " style={{ width: "1200px" }} />
       </StyledImageBox>
 
       <Container disableGutters>
@@ -88,7 +86,6 @@ const DogListPage = () => {
       <PageComponent
         pageInfo={pageInfo}
         totalPages={totalPages}
-        
         onPageChange={handlePageChange}
         onPrev={() => handlePageChange(Math.max(pageInfo.page - 1, 1))}
         onNext={() => handlePageChange(Math.min(pageInfo.page + 1, totalPages))}
