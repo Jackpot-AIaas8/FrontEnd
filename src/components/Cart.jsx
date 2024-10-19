@@ -9,6 +9,7 @@ import Grid from "@mui/material/Grid2";
 import logo from "../static/newLogoverticalOrange.png";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom"; // useNavigate 임포트 수정
+import CloseIcon from "@mui/icons-material/Close";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -38,6 +39,18 @@ const Cart = () => {
       return acc + item.shopPrice * item.quantity; // 가격과 수량을 곱하여 누적
     }, 0);
     setTotalPrice(total);
+  };
+
+  // x자 표시를 누르면 카트에서 상품이 삭제되는데 여기에 삭제 컨트롤러 메서드 연결됨
+  const handleRemoveItem = async (cartId) => {
+    try {
+      await apiClient.delete(`cart/remove`, { params: { cartId: cartId } });
+      // console.log(`${cartId}번 상품이 삭제되었습니다.`);
+      alert("장바구니에서 상품이 삭제되었습니다.");
+      navigate("/cart"); // 새로고침 대신 카트에서 카트로 이동 안그러면 삭제된게 안없어지는거같음
+    } catch (error) {
+      console.error("Error fetching cart items:", error);
+    }
   };
 
   const updateQuantity = (id, delta) => {
@@ -97,7 +110,19 @@ const Cart = () => {
               ) : (
                 cartItems.map((item) => (
                   <div className="card cart" key={item.cartId}>
-                    <label className="title">장바구니 물품</label>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <label className="title">장바구니 물품</label>
+                      <CloseIcon
+                        style={{ cursor: "pointer" }}
+                        onClick={() => handleRemoveItem(item.cartId)}
+                      />
+                    </div>
                     <div className="products">
                       <div className="product">
                         <img
@@ -162,32 +187,34 @@ const Cart = () => {
             </div>
           </StyledWrapper>
         </Grid>
-        <Grid size={{ xs: 4, md: 3 }} sx={{ margin: 10 }}>
-          <StyledWrapper>
-            <div className="card checkout">
-              <label className="title">주문 예상 금액</label>
-              <div className="details">
-                <span>총 상품 가격</span>
-                <span>{totalPrice.toLocaleString()}원</span>
-                <span>총 할인</span>
-                <span>- 0원</span>
-                <span>총 배송비</span>
-                <span>+ 3000원</span>
+        {cartItems.length > 0 && (
+          <Grid size={{ xs: 4, md: 3 }} sx={{ margin: 10 }}>
+            <StyledWrapper>
+              <div className="card checkout">
+                <label className="title">주문 예상 금액</label>
+                <div className="details">
+                  <span>총 상품 가격</span>
+                  <span>{totalPrice.toLocaleString()}원</span>
+                  <span>총 할인</span>
+                  <span>- 0원</span>
+                  <span>총 배송비</span>
+                  <span>+ 3000원</span>
+                </div>
+                <div className="checkout--footer">
+                  <label>합계</label>
+                  <span>{(totalPrice + 3000).toLocaleString()}원</span>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handlePurchase}
+                  >
+                    결제하기
+                  </Button>
+                </div>
               </div>
-              <div className="checkout--footer">
-                <label>합계</label>
-                <span>{(totalPrice + 3000).toLocaleString()}원</span>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handlePurchase}
-                >
-                  결제하기
-                </Button>
-              </div>
-            </div>
-          </StyledWrapper>
-        </Grid>
+            </StyledWrapper>
+          </Grid>
+        )}
       </Grid>
     </div>
   );
