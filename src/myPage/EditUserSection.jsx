@@ -1,246 +1,255 @@
-import { useState } from "react";
-
-import apiClient from "../token/AxiosConfig";
-import { styled } from "@mui/material/styles";
 import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import styled from "styled-components";
+import {
+  validateEmail,
+  validateName,
+  validateNickname,
+  validatePassword,
+  validatePhoneNumber,
+  formatPhoneNumber,
+  getOnlyNumbers,
+} from "../login/components/Validation";
 
-const commonInputStyles = {
-  border: "1px solid #ff7600",
-  padding: "8px",
-  borderRadius: "4px",
-  outline: "none",
-  flexGrow: 1,
-};
+const EditUserSection = ({ infoData }) => {
+  const [formUser, setFormUser] = useState({
+    ...infoData,
+    phone: formatPhoneNumber(infoData.phone),
+    pwd: "***********",
+  });
 
-// InputField 컴포넌트
-const InputField = styled("input")({
-  ...commonInputStyles,
-});
+  const [errors, setErrors] = useState({
+    email: "",
+    pwd: "",
+    phone: "",
+    name: "",
+    nickName: "",
+  });
 
-// OrangeButton 스타일
-const OrangeButton = styled(Button)(({ theme }) => ({
-  color: "#505050",
-  backgroundColor: "#e0e0e0",
-  "&:hover": {
-    backgroundColor: "#bbbbbb",
-  },
-}));
+  const [isEditing, setIsEditing] = useState(false); // 수정 모드 관리
 
-const EditUserSection = ({
-  email,
-  setEmail,
-  password,
-  setPassword,
-  phone,
-  setPhone,
-  name,
-  setName,
-  nickname,
-  setNickname,
-  address,
-  setAddress,
-  handleEdit,
-  handleDelete,
-  handleCheckNickname,
-}) => {
-  const commonFlexStyles = {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    width: "100%",
+  // 입력 변경 처리 함수
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    let error = "";
+    let updatedValue = value;
+
+    switch (name) {
+      case "email":
+        if (!validateEmail(value)) error = "이메일 형식이 잘못되었습니다.";
+        break;
+      case "pwd":
+        if (!validatePassword(value))
+          error = "비밀번호는 8~20자 및 특수기호가 포함되어야 합니다.";
+        break;
+      case "phone":
+        // 숫자만 추출
+        const numericValue = getOnlyNumbers(value);
+
+        // 전화번호 포맷팅
+        updatedValue = formatPhoneNumber(numericValue);
+
+        if (!validatePhoneNumber(numericValue))
+          error = "전화번호는 10~11자리 숫자만 허용됩니다.";
+
+        break;
+      case "name":
+        if (!validateName(value)) error = "이름은 한글 또는 영문만 가능합니다.";
+        break;
+      case "nickName":
+        if (!validateNickname(value))
+          error = "닉네임은 3~10자, 영문/한글/숫자만 허용됩니다.";
+        break;
+      default:
+        break;
+    }
+
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
+    setFormUser((prevState) => ({ ...prevState, [name]: updatedValue }));
   };
 
-  return (
-    <div
-      className="w-full h-full"
-      style={{
-        padding: "20px",
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-        marginBottom: "20px",
-      }}
-    >
-      <h4 className="text-left p-2">회원정보 수정</h4>
-      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-        <div style={commonFlexStyles}>
-          <span>이메일:</span>
-          <InputField type="text" value={email} readOnly />
-        </div>
+  // 수정 모드로 전환
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
 
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <span>비밀번호:</span>
-          <InputField
-            type="password"
-            placeholder="비밀번호 수정"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
+  // 저장 처리 함수
+  const handleSave = () => {
+    setIsEditing(false);
 
-        <div style={commonFlexStyles}>
-          <span>전화번호:</span>
-          <InputField
-            type="text"
-            placeholder="전화번호 수정"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
-        </div>
-
-        <div style={commonFlexStyles}>
-          <span>이름:</span>
-          <InputField
-            type="text"
-            placeholder="이름 수정"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
-
-        <div style={commonFlexStyles}>
-          <span style={{ whiteSpace: "nowrap" }}>닉네임:</span>
-          <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
-            <InputField
-              type="text"
-              placeholder="새로운 닉네임 입력"
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              style={{ flexGrow: 1 }} // 인풋이 가능한 공간을 최대한 차지하게 함
-            />
-            <OrangeButton
-              onClick={handleCheckNickname}
-              color="primary"
-              style={{ marginLeft: "10px", whiteSpace: "nowrap" }}
-            >
-              닉네임 중복검사
-            </OrangeButton>
-          </div>
-        </div>
-
-        <div style={commonFlexStyles}>
-          <span>주소:</span>
-          <InputField
-            type="text"
-            placeholder="주소 수정"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-          />
-        </div>
-      </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginTop: "10px",
-        }}
-      >
-        <OrangeButton
-          onClick={handleDelete}
-          color="primary"
-          style={{ marginLeft: "10px" }}
-        >
-          탈퇴하기
-        </OrangeButton>
-        <OrangeButton
-          onClick={handleEdit}
-          color="primary"
-          style={{ marginLeft: "10px" }}
-        >
-          수정하기
-        </OrangeButton>
-      </div>
-    </div>
-  );
-};
-
-const UserProfile = () => {
-  const [memberID, setMemberID] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
-  const [name, setName] = useState("");
-  const [nickname, setNickname] = useState("");
-  const [address, setAddress] = useState("");
-
-  const handleEdit = async () => {
-    const memberDTO = {
-      memberID,
-      email,
-      password,
-      phone,
-      name,
-      nickname,
-      address,
+    // 서버로 전송할 데이터 준비 (전화번호에서 숫자만 추출)
+    const dataToSend = {
+      ...formUser,
+      phone: getOnlyNumbers(formUser.phone),
     };
 
-    try {
-      const response = await apiClient.put("member/edit", memberDTO);
-
-      if (response.status === 200) {
-        alert("회원정보 수정에 성공했습니다.");
-      }
-    } catch (error) {
-      console.error("Error updating member:", error);
-      alert("회원정보 수정에 실패했습니다. 다시 시도해주세요.");
-    }
+    console.log("수정된 회원 정보:", dataToSend);
+    // 여기에서 API 호출 등을 통해 서버에 저장하는 로직을 추가하세요
   };
 
-  const navigate = useNavigate();
-
-  const handleDelete = async () => {
-    try {
-      const response = await apiClient.delete(`member/remove`);
-      console.log("회원탈퇴 성공", response);
-      alert("회원탈퇴에 성공했습니다.");
-      navigate("/"); // 회원탈퇴되면 알러트창 띄우고 나서 메인페이지로 이동함
-    } catch (error) {
-      console.error("Error deleting member:", error);
-      alert("회원탈퇴에 실패했습니다. 다시 시도해주세요.");
-    }
+  // 수정 취소 처리 함수
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setFormUser({
+      ...infoData,
+      phone: formatPhoneNumber(infoData.phone),
+      pwd: "***********",
+    }); // 초기 데이터로 복구
+    setErrors({
+      email: "",
+      pwd: "",
+      phone: "",
+      name: "",
+      nickName: "",
+    });
   };
 
-  const handleCheckNickname = async () => {
-    try {
-      const response = await apiClient.get(`member/checkNickName`, {
-        params: { nickName: nickname },
-      });
-      console.log(response);
-      if (response.data[nickname]) {
-        alert("닉네임이 이미 사용 중입니다.");
-      } else {
-        alert("사용 가능한 닉네임입니다.");
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 409) {
-        alert("닉네임이 이미 사용 중입니다.");
-      } else {
-        console.error("Error checking nickname:", error);
-      }
-    }
+  // 회원 탈퇴 처리 함수
+  const handleDelete = () => {
+    console.log("회원 탈퇴");
+    // 회원 탈퇴 로직을 추가하세요
   };
+
+  // 닉네임 중복 검사 함수
+  const handleCheckNickname = () => {
+    // 닉네임 중복 검사 로직 추가
+    console.log("닉네임 중복 검사:", formUser.nickName);
+  };
+
+  const input = [
+    { label: "이메일", name: "email", type: "text", readOnly: true },
+    {
+      label: "비밀번호",
+      name: "pwd",
+      type: "password",
+      placeholder: "비밀번호 수정",
+    },
+    {
+      label: "전화번호",
+      name: "phone",
+      type: "text",
+      placeholder: "전화번호 수정",
+    },
+    { label: "이름", name: "name", type: "text", placeholder: "이름 수정" },
+    {
+      label: "닉네임",
+      name: "nickName",
+      type: "text",
+      placeholder: "새로운 닉네임 입력",
+      withCheck: true,
+    },
+  ];
 
   return (
-    <div>
-      <EditUserSection
-        email={email}
-        setEmail={setEmail}
-        password={password}
-        setPassword={setPassword}
-        phone={phone}
-        setPhone={setPhone}
-        name={name}
-        setName={setName}
-        nickname={nickname}
-        setNickname={setNickname}
-        address={address}
-        setAddress={setAddress}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-        handleCheckNickname={handleCheckNickname}
-      />
-    </div>
+    <StyledEditMember className="flex flex-column">
+      <h4 className="edit-title text-left p-2 w-full">회원정보 수정</h4>
+      <form onSubmit={(e) => e.preventDefault()}>
+        {input.map((field, index) => (
+          <div className="section-input flex flex-row" key={index}>
+            <span className="input-title">{field.label}:</span>
+            <input
+              type={field.type}
+              name={field.name}
+              placeholder={field.placeholder}
+              value={formUser[field.name]}
+              onChange={handleChange}
+              readOnly={field.readOnly || !isEditing} // 이메일은 항상 읽기 전용, 수정 모드 시 나머지 필드 활성화
+              style={{ flexGrow: 1 }}
+              className="input-text"
+              autoComplete={
+                field.name === "pwd"
+                  ? "current-password"
+                  : field.name === "email"
+                  ? "email"
+                  : field.name === "name"
+                  ? "name"
+                  : field.name === "phone"
+                  ? "tel"
+                  : undefined
+              }
+            />
+            {errors[field.name] && (
+              <p style={{ color: "red" }}>{errors[field.name]}</p>
+            )}
+            {/* 닉네임 중복 검사 버튼 추가 */}
+            {field.withCheck && isEditing && (
+              <Button
+                onClick={handleCheckNickname}
+                color="primary"
+                style={{ marginLeft: "10px", whiteSpace: "nowrap" }}
+              >
+                닉네임 중복검사
+              </Button>
+            )}
+          </div>
+        ))}
+
+        <div className="flex justify-end">
+          {isEditing ? (
+            <>
+              <Button
+                onClick={handleCancelEdit}
+                color="primary"
+                className="btn_group"
+              >
+                취소하기
+              </Button>
+              <Button
+                onClick={handleSave}
+                color="primary"
+                className="btn_group"
+              >
+                저장하기
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                onClick={handleDelete}
+                color="primary"
+                className="btn_group"
+              >
+                탈퇴하기
+              </Button>
+              <Button
+                onClick={handleEdit}
+                color="primary"
+                className="btn_group"
+              >
+                수정하기
+              </Button>
+            </>
+          )}
+        </div>
+      </form>
+    </StyledEditMember>
   );
 };
 
-export default UserProfile;
+export default EditUserSection;
+
+const StyledEditMember = styled.div`
+  h4 {
+    font-size: 1.8rem;
+    line-height: 1.5rem;
+  }
+  .section-input {
+    width: 100%;
+    min-height: 80px;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 0;
+    > .input-title {
+      width: 15%;
+      font-size: 1.2rem;
+    }
+    > .input-text {
+      border: 1px solid ${(props) => props.theme.colors.pastelOrange};
+      padding: 8px;
+      border-radius: 4px;
+      outline: none;
+      flex-grow: 1;
+    }
+  }
+`;

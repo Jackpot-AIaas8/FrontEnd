@@ -36,7 +36,7 @@ export const PurchaseHistory = ({ shopData, theme }) => {
   const stateInfo = getStateInfo(shopData.deliveryState);
 
   return (
-    <StyledPurchaseSection statecolor={stateInfo.color}>
+    <StyledPurchaseSection $statecolor={stateInfo.color}>
       {/* left-section */}
 
       <div className="section-left flex">

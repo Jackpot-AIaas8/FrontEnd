@@ -4,41 +4,22 @@ import {
   StyledMypageWrapper,
   StyeldRightSection,
   StyledMypageSection,
-  StyledOneBoard,
   StyledFundHistory,
 } from "../../myPage/Mypage.styles";
 
 import { MockShopData } from "../../myPage/MockMypageData";
 
 import Grid2 from "@mui/material/Grid2";
-import {
-  Avatar,
-  Button,
-  CardContent,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  Typography,
-} from "@mui/material";
+import { Avatar, CardContent, Divider, Typography } from "@mui/material";
 import MypageSideBar from "../../myPage/MyPageSideBar";
 
 import apiClient from "../../token/AxiosConfig";
 import InquirySection from "../../myPage/InquirySection";
 import PurchaseHistorySection from "../../myPage/ShopPurchaseSection";
+import EditUserSection from "../../myPage/EditUserSection";
 
 const Mypage = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
   const [currentPage, setCurrentPage] = useState("all");
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
-  const [name, setName] = useState("");
-  const [nickname, setNickname] = useState("");
-  const [address, setAddress] = useState("");
 
   const [infoData, setInfoData] = useState({
     memberId: "",
@@ -142,7 +123,7 @@ const Mypage = () => {
   const renderSingleContent = () => {
     switch (currentPage) {
       case "info":
-        return <InfoSection />;
+        return <EditUserSection infoData={infoData} />;
       case "purchase":
         return (
           <PurchaseHistorySection
@@ -160,67 +141,6 @@ const Mypage = () => {
   };
 
   // ---------------------------------------------------------------------
-
-  const editUser = () => {
-    return (
-      <>
-        <>
-          <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
-            <DialogTitle>개인정보 수정</DialogTitle>
-            <DialogContent>
-              <input
-                type="text"
-                placeholder="이메일 수정"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <Button onClick={(e) => e.preventDefault()} color="primary">
-                이메일 중복검사
-              </Button>
-              <input
-                type="password"
-                placeholder="비밀번호 수정"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="전화번호 수정"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="이름 수정"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="닉네임 수정"
-                value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
-              />
-              <Button onClick={(e) => e.preventDefault()} color="primary">
-                닉네임 중복검사
-              </Button>
-              <input
-                type="text"
-                placeholder="주소 수정"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseDialog} color="primary">
-                닫기
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </>
-      </>
-    );
-  };
 
   const InfoSection = () => {
     return (
@@ -294,9 +214,6 @@ const Mypage = () => {
   const handleMypage = (e) => {
     e.preventDefault();
     // 조건이 눌렸을 경우 개인정보 수정 창이 떠야한다.
-  };
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
   };
 
   return (
