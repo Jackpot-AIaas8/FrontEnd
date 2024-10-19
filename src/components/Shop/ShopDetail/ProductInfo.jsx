@@ -5,18 +5,20 @@ import ShareIcon from "@mui/icons-material/Share";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import apiNoToken from "../../../token/AxiosConfig";
+import apiClient from "../../../token/AxiosConfig";
 
 const ProductInfo = ({ productId }) => {
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null); // Popover 상태
+  const [errorMessage, setErrorMessage] = useState(null); // Error message state
   const navigate = useNavigate();
 
   // 상품 정보 가져오기
   const fetchProduct = async () => {
     try {
-      const response = await axios.get(`http://localhost:8181/shop/findOne/${productId}`);
+      const response = await apiNoToken.get(`/shop/findOne/${productId}`);
       setProduct(response.data);
     } catch (error) {
       console.error("상품 정보를 불러오는 중 오류 발생:", error);
@@ -39,17 +41,23 @@ const ProductInfo = ({ productId }) => {
   // 장바구니에 담기 클릭 시 Popover 열기 및 장바구니 등록 API 호출
   const handleAddToCart = async (event) => {
     setAnchorEl(event.currentTarget); // Popover 열기
+    setErrorMessage(null); // Reset error message
 
     try {
       // cart/register API로 장바구니 등록 요청
-      await axios.post('http://localhost:8181/cart/register', {
+      await apiClient.post('/cart/register', {
         shopId: product.shopId,
         quantity: quantity,
         totalPrice: totalPrice
       });
       console.log('장바구니에 상품이 등록되었습니다.');
     } catch (error) {
-      console.error('장바구니 등록 중 오류 발생:', error);
+      // 로그인 안 되어 있으면 에러 메시지 설정
+      if (error.response && error.response.status === 401) {
+        setErrorMessage('로그인을 해야 사용할 수 있습니다.');
+      } else {
+        console.error('장바구니 등록 중 오류 발생:', error);
+      }
     }
 
     // 5초 후에 Popover 자동으로 닫기
@@ -75,7 +83,7 @@ const ProductInfo = ({ productId }) => {
         name: product.name,
         productPrice: product.price,
         totalAmount: totalPrice,
-        quantity: quantity,
+        quantity: quantity, 
       },
     });
   };
@@ -156,16 +164,18 @@ const ProductInfo = ({ productId }) => {
             <CloseIcon fontSize="small" />
           </IconButton>
           <Typography variant="body2" style={{ fontSize: '12px', paddingTop: '16px' }}>
-            상품이 장바구니에 담겼습니다.
+            {errorMessage || '상품이 장바구니에 담겼습니다.'}
           </Typography>
-          <StyledButton
-            variant="contained"
-            onClick={handleGoToCart}
-            color="primary"
-            style={{ marginTop: '8px', fontSize: '12px' }}
-          >
-            장바구니 바로가기
-          </StyledButton>
+          {!errorMessage && (
+            <StyledButton
+              variant="contained"
+              onClick={handleGoToCart}
+              color="primary"
+              style={{ marginTop: '8px', fontSize: '12px' }}
+            >
+              장바구니 바로가기
+            </StyledButton>
+          )}
         </PopoverContent>
       </Popover>
     </>

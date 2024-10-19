@@ -12,23 +12,27 @@ function CheckoutPage() {
   const {
     productNames = [],
     totalAmount = 0,
-    quantity = 1,
     isFunding = false,
     name,
-  } = location.state || {}; // 'name'은 상품명 또는 강아지 이름
-  const { shopId = "" } = location.state || {};
-  // const { name: productName = "", shopId = "" } = location.state || {};
-
-  const amount = totalAmount + (isFunding ? 0 : 3000); // 펀딩일 경우 배송비는 없음
+  } = location.state || {};
+  const quantity = productNames.reduce((acc, item) => acc + (item.quantity || 1), 0);
+  const amount = totalAmount + (isFunding ? 0 : 3000);
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState(null);
   const [user, setUser] = useState({});
-  const [isEditingAddress, setIsEditingAddress] = useState(false); // 주소 수정 상태 관리
+  const [isEditingAddress, setIsEditingAddress] = useState(false);
 
+  console.log('Received Quantity:', quantity); // 수량 로그 추가
+
+  // 사용자 정보 API 호출
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await apiClient.get("/member/myPage");
+        const response = await apiClient.get("/member/myPage", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, 
+          },
+        });
         setUser(response.data);
         console.log("Fetched User Info:", response.data);
       } catch (error) {
@@ -38,7 +42,6 @@ function CheckoutPage() {
     fetchUserInfo();
   }, []);
 
-  // 토스 결제 위젯 불러오기
   useEffect(() => {
     async function fetchPaymentWidgets() {
       const tossPayments = await loadTossPayments(clientKey);
@@ -48,17 +51,15 @@ function CheckoutPage() {
     fetchPaymentWidgets();
   }, []);
 
-  // 결제 위젯 렌더링
   useEffect(() => {
     async function renderPaymentWidgets() {
-      if (!widgets) return; // 위젯이 로드되지 않았다면 종료
+      if (!widgets) return;
 
       await widgets.setAmount({
         currency: "KRW",
-        value: parseInt(amount, 10), // 결제 금액 설정
+        value: parseInt(amount, 10),
       });
 
-      // 결제 수단 및 동의란 위젯 렌더링
       await Promise.all([
         widgets.renderPaymentMethods({
           selector: "#payment-method",
@@ -70,77 +71,72 @@ function CheckoutPage() {
         }),
       ]);
 
-      setReady(true); // 결제 준비 완료
+      setReady(true);
     }
     renderPaymentWidgets();
-  }, [widgets, amount]); // widgets와 amount가 변경될 때마다 렌더링
+  }, [widgets, amount]);
 
   const handlePayment = async () => {
     const paymentAmount = parseInt(amount, 10);
     const orderId = `order_${Date.now()}`;
-
+  
     if (!ready) {
       alert("결제 준비가 완료되지 않았습니다.");
       return;
     }
-
+  
     try {
-      // 펀딩일 경우 강아지 이름을 orderName으로 사용, 상품일 경우 상품명 사용
+      // orderName을 상품 이름으로 설정
       const orderName = isFunding
-        ? name // 펀딩일 때는 'name'이 강아지 이름으로 사용됨
-        : Array.isArray(productNames) && productNames.length > 1
-        ? productNames.map((item) => item.productName).join(", ")
-        : name || productNames[0]?.productName || "상품 이름 없음";
-
+        ? name
+        : Array.isArray(productNames) && productNames.length > 0
+        ? productNames.map((item) => item.shopName || item.name).join(", ") // 상품 이름들을 조합
+        : name || productNames[0]?.shopName || "상품 이름 없음"; // 이름이 없으면 기본값 설정
+  
       if (!orderName) {
-        // orderName이 없을 경우 경고 메시지 표시
         alert("필수 파라미터 'orderName'이 누락되었습니다.");
         return;
       }
-
-      console.log("Order Name:", orderName);
-
-      // 결제 정보 저장 (펀딩과 상품 구분)
+  
       const paymentData = isFunding
         ? {
             orderId,
-            name, // 강아지 이름
-            orderName, // orderName은 강아지 이름으로 설정됨
+            name,
+            orderName, // 주문 이름 추가
             memberID: user.memberID,
             customerName: user.name,
             customerMobilePhone: user.phone,
-            totalPrice: totalAmount, // 강아지 펀딩에서는 수량과 상관없이 총 금액
             amount: paymentAmount,
-            isFunding: true, // 펀딩 여부 저장
+            isFunding: true,
           }
         : {
             orderId,
-            productNames, // 상품 이름 목록
-            shopId,
-            orderName, // orderName은 상품명으로 설정됨
-            quantity, // 상품 수량
+            orderName, // 주문 이름 추가
+            productNames: productNames.map(item => ({
+              shopName: item.shopName || item.name,
+              quantity: item.quantity || 1,
+            })),
+            quantity: quantity,
             memberID: user.memberID,
             customerName: user.name,
             customerMobilePhone: user.phone,
-            userAddress: user.address || "주소 정보 없음", // 배송 주소
-            totalPrice: totalAmount * quantity, // 총 상품 금액
-            deliveryFee: 3000, // 배송비
+            userAddress: user.address || "주소 정보 없음",
+            deliveryFee: 3000,
             amount: paymentAmount,
-            isFunding: false, // 펀딩 여부 저장
+            shopId: user.shopId || "", // shopId 추가
+            isFunding: false,
           };
-
+  
+      // 세션에 paymentData 저장
       sessionStorage.setItem("paymentData", JSON.stringify(paymentData));
-      console.log(
-        "sessionStorage에 저장된 데이터:",
-        JSON.parse(sessionStorage.getItem("paymentData"))
-      );
-
+      console.log("sessionStorage에 저장된 데이터:", paymentData);
+  
       await widgets.requestPayment({
         orderId: orderId,
-        orderName, // 강아지 이름 또는 상품명을 포함한 orderName
+        orderName, // 요청할 때 orderName 사용
         successUrl: isFunding
-          ? `${window.location.origin}/dog/${name}` // 펀딩일 경우 강아지 이름 페이지로 이동
-          : `${window.location.origin}/success?orderId=${orderId}`, // 상품일 경우 성공 페이지로 이동
+          ? `${window.location.origin}/dog/${name}`
+          : `${window.location.origin}/success?orderId=${orderId}`,
         failUrl: `${window.location.origin}/fail`,
         customerEmail: user.email,
         customerName: user.name,
@@ -151,7 +147,7 @@ function CheckoutPage() {
       alert("결제 요청 중 오류가 발생했습니다. 다시 시도해 주세요.");
     }
   };
-
+  
   const handleAddressEdit = () => {
     setIsEditingAddress(true);
   };
@@ -192,25 +188,20 @@ function CheckoutPage() {
 
       <Divider />
 
-      {/* 펀딩일 때는 받는 사람 정보 숨김 */}
       {!isFunding && (
         <Section>
           <FlexRow>
             <SectionTitle>받는 사람 정보</SectionTitle>
             {isEditingAddress ? (
-              <SaveAddressButton onClick={handleAddressSave}>
-                저장
-              </SaveAddressButton>
+              <SaveAddressButton onClick={handleAddressSave}>저장</SaveAddressButton>
             ) : (
-              <EditAddressButton onClick={handleAddressEdit}>
-                수정
-              </EditAddressButton>
+              <EditAddressButton onClick={handleAddressEdit}>수정</EditAddressButton>
             )}
           </FlexRow>
           {isEditingAddress ? (
             <Input
               type="text"
-              value={user.address || ""} // 주소가 없을 경우 빈 문자열 처리
+              value={user.address || ""}
               onChange={handleAddressChange}
               placeholder="주소를 수정하세요"
             />
@@ -224,39 +215,31 @@ function CheckoutPage() {
 
       <Section>
         <SectionTitle>{isFunding ? "강아지 정보" : "상품 정보"}</SectionTitle>
-        <ProductInfoBox>
-          <ProductRow>
-            <Label>{isFunding ? "강아지 이름" : "상품명"}</Label>
-            <Value>
-              {
-                isFunding
-                  ? name || "정보 없음" // isFunding이 true일 경우 강아지 이름 출력
-                  : Array.isArray(productNames) && productNames.length > 0 // 장바구니 형태일 경우 배열 처리
-                  ? productNames
-                      .map((item) => item.shopName || item.name)
-                      .join(", ") // 장바구니 배열 처리
-                  : typeof name === "string" && name // 단일 값일 경우 처리
-                  ? name
-                  : "상품명 불러오기 실패" // 이름 불러오기 실패 처리
-              }
-            </Value>
-          </ProductRow>
-
-          {!isFunding && (
+        {Array.isArray(productNames) && productNames.length > 0 ? (
+          productNames.map((item, index) => (
+            <ProductInfoBox key={index}>
+              <ProductRow>
+                <Label>상품명</Label>
+                <Value>{item.shopName || item.name || "상품명 불러오기 실패"}</Value>
+              </ProductRow>
+              <ProductRow>
+                <Label>수량</Label>
+                <Value>{item.quantity || 1}개</Value>
+              </ProductRow>
+            </ProductInfoBox>
+          ))
+        ) : (
+          <ProductInfoBox>
+            <ProductRow>
+              <Label>상품명</Label>
+              <Value>{name || "상품명 불러오기 실패"}</Value>
+            </ProductRow>
             <ProductRow>
               <Label>수량</Label>
-              <Value>
-                {Array.isArray(productNames) && productNames.length > 0 // 장바구니로 리스트 형태로 넘어오는 경우
-                  ? productNames
-                      .map((item) => `${item.quantity || 1}개`)
-                      .join(", ")
-                  : typeof name === "string" && quantity // 프로덕트인포에서 하나만 넘어오는경우
-                  ? `${quantity || 1}개`
-                  : "수량 불러오기 실패"}
-              </Value>
+              <Value>{quantity || 1}개</Value>
             </ProductRow>
-          )}
-        </ProductInfoBox>
+          </ProductInfoBox>
+        )}
       </Section>
 
       <Divider />
@@ -264,22 +247,29 @@ function CheckoutPage() {
       <Section>
         <SectionTitle>결제 정보</SectionTitle>
         <InfoBox>
-          <InfoRow>
-            <Label>총 상품 가격</Label>
-            <Value>
-              {totalAmount
-                ? `${totalAmount.toLocaleString()}원`
-                : "가격 정보 없음"}
-            </Value>
-          </InfoRow>
-          <InfoRow>
-            <Label>배송비</Label>
-            <Value>3,000원</Value>
-          </InfoRow>
-          <TotalRow>
-            <Label>총 결제 금액</Label>
-            <Value>{amount.toLocaleString()}원</Value>
-          </TotalRow>
+          {isFunding ? (
+            <InfoRow>
+              <Label>총 결제 금액</Label>
+              <Value>{amount.toLocaleString()}원</Value>
+            </InfoRow>
+          ) : (
+            <>
+              <InfoRow>
+                <Label>총 상품 가격</Label>
+                <Value>
+                  {totalAmount ? `${totalAmount.toLocaleString()}원` : "가격 정보 없음"}
+                </Value>
+              </InfoRow>
+              <InfoRow>
+                <Label>배송비</Label>
+                <Value>3,000원</Value>
+              </InfoRow>
+              <TotalRow>
+                <Label>총 결제 금액</Label>
+                <Value>{amount.toLocaleString()}원</Value>
+              </TotalRow>
+            </>
+          )}
         </InfoBox>
       </Section>
 
@@ -306,7 +296,7 @@ const PageContainer = styled.div`
   margin: 0 auto;
   padding: 20px;
   margin-top: 100px;
-  background-color: #f0f0f0; /* 배경 색상 추가 */
+  background-color: #f0f0f0;
 `;
 
 const Header = styled.div`
@@ -352,6 +342,7 @@ const Value = styled.span``;
 const ProductInfoBox = styled.div`
   border: 1px solid #ddd;
   padding: 20px;
+  margin-bottom: 20px;
 `;
 
 const ProductRow = styled.div`
@@ -370,7 +361,7 @@ const PaymentSection = styled.div`
 
 const PayButton = styled.button`
   width: 100%;
-  background-color: #ffa150; /* 버튼 색상 #ffa150 */
+  background-color: #ffa150;
   color: white;
   padding: 15px;
   border-radius: 8px;
@@ -386,7 +377,7 @@ const FlexRow = styled.div`
 `;
 
 const EditAddressButton = styled.button`
-  background-color: #ffa150; /* 수정 버튼 색상 #ffa150 */
+  background-color: #ffa150;
   color: white;
   border: none;
   padding: 10px;
@@ -395,7 +386,7 @@ const EditAddressButton = styled.button`
 `;
 
 const SaveAddressButton = styled.button`
-  background-color: #ffa150; /* 저장 버튼 색상 #ffa150 */
+  background-color: #ffa150;
   color: white;
   border: none;
   padding: 10px;
