@@ -32,17 +32,16 @@ const StyledIconButton = styled.button`
 
 const HeartButton = (props) => {
   const { onHeartToggle, dog } = props;
-  const [heart, setHeart] = useState(props.dog.isHeart);
+  const [isHeart, setIsHeart] = useState(props.dog.isHeart);
   const { isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleHeartToggle = () => {
-    setHeart((prevHeart) => (prevHeart === 1 ? 0 : 1));
+    setIsHeart((prevHeart) => (prevHeart === 1 ? 0 : 1));
   };
   /* heart db추가 api 성공 시 던져주면 그거 */
   const apiHeartUpdate = async () => {
-    console.log(dog.dogId);
     try {
       const response = await apiClient.post("dog/addHeart", {
         dogId: dog.dogId,
@@ -50,7 +49,7 @@ const HeartButton = (props) => {
       if (onHeartToggle) {
         onHeartToggle();
         alert(
-          heart === 0
+          isHeart === 0
             ? `${dog.name} 하트를 눌렀습니다.`
             : `${dog.name} 하트를 취소하였습니다.`
         );
@@ -59,11 +58,11 @@ const HeartButton = (props) => {
       if (response.status === 200) {
         console.log("Heart Update Success");
       } else {
-        setHeart((prevHeart) => (prevHeart === 1 ? 0 : 1));
+        setIsHeart((prevHeart) => (prevHeart === 1 ? 0 : 1));
       }
     } catch (error) {
       console.error(error);
-      setHeart((prevHeart) => (prevHeart === 1 ? 0 : 1));
+      setIsHeart((prevHeart) => (prevHeart === 1 ? 0 : 1));
     }
   };
 
@@ -79,13 +78,13 @@ const HeartButton = (props) => {
 
   return (
     <StyledIconButton
-      $heart={heart}
+      $heart={isHeart}
       onClick={(e) => {
         e.stopPropagation(); // 부모 요소로 이벤트 전파 방지
         updateHeart();
       }}
     >
-      {heart === 1 ? <OnHeart /> : <OffHeart />}
+      {isHeart === 1 ? <OnHeart /> : <OffHeart />}
     </StyledIconButton>
   );
 };

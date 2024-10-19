@@ -1,12 +1,12 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Info from "../detailComponent/Info";
-import YouTubeContainer from "../detailComponent/YoutubeContainer";
-import DogHistory from "../detailComponent/DogHistory";
-import FundStory from "../detailComponent/FundStory";
+import Info from "../../detailComponent/Info";
+import YouTubeContainer from "../../detailComponent/YoutubeContainer";
+import DogHistory from "../../detailComponent/DogHistory";
+import FundStory from "../../detailComponent/FundStory";
 import styled from "styled-components";
-import { apiNoToken } from "../token/AxiosConfig";
+import { apiNoToken } from "../../token/AxiosConfig";
 
 const DogDetail = () => {
   const { dogId } = useParams();
