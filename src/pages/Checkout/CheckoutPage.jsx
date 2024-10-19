@@ -15,14 +15,17 @@ function CheckoutPage() {
     isFunding = false,
     name,
   } = location.state || {};
-  const quantity = productNames.reduce((acc, item) => acc + (item.quantity || 1), 0);
+
+  // 상품 개수 계산
+  const quantity = Array.isArray(productNames)
+    ? productNames.reduce((acc, item) => acc + (item.quantity || 1), 0)
+    : productNames.quantity || 1; // 단일 상품의 경우 수량을 가져옴
+
   const amount = totalAmount + (isFunding ? 0 : 3000);
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState(null);
   const [user, setUser] = useState({});
   const [isEditingAddress, setIsEditingAddress] = useState(false);
-
-  console.log('Received Quantity:', quantity); // 수량 로그 추가
 
   // 사용자 정보 API 호출
   useEffect(() => {
@@ -30,11 +33,10 @@ function CheckoutPage() {
       try {
         const response = await apiClient.get("/member/myPage", {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, 
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
         setUser(response.data);
-        console.log("Fetched User Info:", response.data);
       } catch (error) {
         console.error("Error fetching user info:", error);
       }
@@ -79,30 +81,36 @@ function CheckoutPage() {
   const handlePayment = async () => {
     const paymentAmount = parseInt(amount, 10);
     const orderId = `order_${Date.now()}`;
-  
+
     if (!ready) {
-      alert("결제 준비가 완료되지 않았습니다.");
-      return;
-    }
-  
-    try {
-      // orderName을 상품 이름으로 설정
-      const orderName = isFunding
-        ? name
-        : Array.isArray(productNames) && productNames.length > 0
-        ? productNames.map((item) => item.shopName || item.name).join(", ") // 상품 이름들을 조합
-        : name || productNames[0]?.shopName || "상품 이름 없음"; // 이름이 없으면 기본값 설정
-  
-      if (!orderName) {
-        alert("필수 파라미터 'orderName'이 누락되었습니다.");
+        alert("결제 준비가 완료되지 않았습니다.");
         return;
-      }
-  
+    }
+
+    try {
+        // orderName 설정
+        let orderName = isFunding ? name : ""; // 기본적으로 name을 사용
+
+        // 상품 정보가 있을 경우 orderName 설정
+        if (Array.isArray(productNames) && productNames.length > 0) {
+            orderName = productNames.map((item) => item.shopName || item.name).join(", ");
+        } else if (productNames && typeof productNames === 'object') { // 단일 상품의 경우
+            orderName = productNames.shopName || productNames.name || "";
+        }
+
+        // orderName 확인
+        console.log("현재 orderName:", orderName); // 현재 orderName 로그 확인
+
+        if (!orderName || orderName.trim() === "") {
+            alert("필수 파라미터 'orderName'이 누락되었습니다.");
+            return;
+        }
+
       const paymentData = isFunding
         ? {
             orderId,
             name,
-            orderName, // 주문 이름 추가
+            orderName,
             memberID: user.memberID,
             customerName: user.name,
             customerMobilePhone: user.phone,
@@ -111,11 +119,18 @@ function CheckoutPage() {
           }
         : {
             orderId,
-            orderName, // 주문 이름 추가
-            productNames: productNames.map(item => ({
-              shopName: item.shopName || item.name,
-              quantity: item.quantity || 1,
-            })),
+            orderName,
+            productNames: Array.isArray(productNames)
+              ? productNames.map(item => ({
+                  shopName: item.shopName || item.name,
+                  quantity: item.quantity || 1,
+                  shopId: item.shopId,
+                }))
+              : [{
+                  shopName: productNames.shopName || productNames.name,
+                  quantity: 1,
+                  shopId: productNames.shopId,
+                }],
             quantity: quantity,
             memberID: user.memberID,
             customerName: user.name,
@@ -123,17 +138,16 @@ function CheckoutPage() {
             userAddress: user.address || "주소 정보 없음",
             deliveryFee: 3000,
             amount: paymentAmount,
-            shopId: user.shopId || "", // shopId 추가
             isFunding: false,
           };
-  
-      // 세션에 paymentData 저장
+
+      console.log("결제 요청 데이터:", paymentData); // 요청 데이터 확인
+
       sessionStorage.setItem("paymentData", JSON.stringify(paymentData));
-      console.log("sessionStorage에 저장된 데이터:", paymentData);
-  
+
       await widgets.requestPayment({
         orderId: orderId,
-        orderName, // 요청할 때 orderName 사용
+        orderName,
         successUrl: isFunding
           ? `${window.location.origin}/dog/${name}`
           : `${window.location.origin}/success?orderId=${orderId}`,
@@ -147,7 +161,8 @@ function CheckoutPage() {
       alert("결제 요청 중 오류가 발생했습니다. 다시 시도해 주세요.");
     }
   };
-  
+
+  // 주소 수정 처리
   const handleAddressEdit = () => {
     setIsEditingAddress(true);
   };
@@ -226,6 +241,10 @@ function CheckoutPage() {
                 <Label>수량</Label>
                 <Value>{item.quantity || 1}개</Value>
               </ProductRow>
+              <ProductRow>
+                <Label>상점 ID</Label>
+                <Value>{item.shopId || "ID 정보 없음"}</Value>
+              </ProductRow>
             </ProductInfoBox>
           ))
         ) : (
@@ -291,6 +310,7 @@ function CheckoutPage() {
 
 export default CheckoutPage;
 
+// 스타일 정의
 const PageContainer = styled.div`
   width: 40%;
   margin: 0 auto;

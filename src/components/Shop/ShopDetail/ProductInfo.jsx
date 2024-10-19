@@ -11,8 +11,8 @@ import apiClient from "../../../token/AxiosConfig";
 const ProductInfo = ({ productId }) => {
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState(null);
-  const [anchorEl, setAnchorEl] = useState(null); // Popover 상태
-  const [errorMessage, setErrorMessage] = useState(null); // Error message state
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
 
   // 상품 정보 가져오기
@@ -20,6 +20,8 @@ const ProductInfo = ({ productId }) => {
     try {
       const response = await apiNoToken.get(`/shop/findOne/${productId}`);
       setProduct(response.data);
+      console.log("상품 정보:", response.data); // 데이터 확인
+
     } catch (error) {
       console.error("상품 정보를 불러오는 중 오류 발생:", error);
     }
@@ -35,24 +37,34 @@ const ProductInfo = ({ productId }) => {
 
   const handleIncrement = () => setQuantity(quantity + 1);
   const handleDecrement = () => quantity > 1 && setQuantity(quantity - 1);
-
   const totalPrice = quantity * product.price;
 
-  // 장바구니에 담기 클릭 시 Popover 열기 및 장바구니 등록 API 호출
   const handleAddToCart = async (event) => {
-    setAnchorEl(event.currentTarget); // Popover 열기
-    setErrorMessage(null); // Reset error message
+    setAnchorEl(event.currentTarget);
+    setErrorMessage(null);
 
     try {
-      // cart/register API로 장바구니 등록 요청
-      await apiClient.post('/cart/register', {
+      const cartResponse = await apiClient.get("cart/findAll");
+      const existingItem = cartResponse.data.find(item => item.shopId === product.shopId);
+
+      if (existingItem) {
+        await apiClient.put(`/cart/update/${existingItem.cartId}`, {
+          quantity: existingItem.quantity + quantity
+        });
+      } else {
+        await apiClient.post('/cart/register', {
+          shopId: product.shopId,
+          quantity: quantity,
+          totalPrice: totalPrice
+        });
+      }
+
+      console.log('장바구니 상태:', {
         shopId: product.shopId,
         quantity: quantity,
-        totalPrice: totalPrice
+        totalPrice: totalPrice,
       });
-      console.log('장바구니에 상품이 등록되었습니다.');
     } catch (error) {
-      // 로그인 안 되어 있으면 에러 메시지 설정
       if (error.response && error.response.status === 401) {
         setErrorMessage('로그인을 해야 사용할 수 있습니다.');
       } else {
@@ -60,51 +72,50 @@ const ProductInfo = ({ productId }) => {
       }
     }
 
-    // 5초 후에 Popover 자동으로 닫기
     setTimeout(() => {
       setAnchorEl(null);
     }, 5000);
   };
 
-  // Popover 닫기
   const handleClose = () => {
-    setAnchorEl(null); // Popover 닫기
+    setAnchorEl(null);
   };
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
 
-  // 바로구매 처리
   const handleBuyNow = () => {
     navigate("/Checkout", {
       state: {
         isFunding: false,
-        shopId: product.shopId,
-        name: product.name,
-        productPrice: product.price,
-        totalAmount: totalPrice,
-        quantity: quantity, 
+        productNames: [{
+          shopId: product.shopId,
+          name: product.name,
+          productPrice: product.price,
+          quantity: quantity,
+          totalAmount: totalPrice,
+        }],
+        totalAmount: totalPrice + 3000,
       },
     });
   };
 
-  // 장바구니로 이동
   const handleGoToCart = () => {
     navigate("/cart");
-    handleClose(); // 장바구니로 이동 시 Popover 닫기
+    handleClose();
   };
 
   return (
     <>
-      <TopSection className="flex flex-row justify-between">
-        <LeftSection className="flex flex-column align-start">
+      <TopSection>
+        <LeftSection>
           <img
             src={product.imageUrl || "https://img.biteme.co.kr/product/750/2308ae4a580a9e017ad5b07084b8cc51.jpg"}
             alt={product.name}
           />
         </LeftSection>
 
-        <RightSection className="flex flex-column align-start justify-center">
+        <RightSection>
           <Typography variant="h5" style={{ marginTop: "16px" }}>{product.name}</Typography>
           <Typography variant="body1" style={{ marginTop: "4px", color: "red", fontSize: "24px" }}>
             판매가: {product.price.toLocaleString()}원
@@ -127,7 +138,7 @@ const ProductInfo = ({ productId }) => {
             <StyledButton 
               variant="contained" 
               startIcon={<FavoriteBorderIcon />} 
-              onClick={handleAddToCart} // 장바구니 담기 클릭 시 Popover 열기
+              onClick={handleAddToCart}
             >
               장바구니 담기
             </StyledButton>
@@ -138,7 +149,6 @@ const ProductInfo = ({ productId }) => {
         </RightSection>
       </TopSection>
 
-      {/* Popover */}
       <Popover
         id={id}
         open={open}
@@ -153,7 +163,7 @@ const ProductInfo = ({ productId }) => {
           horizontal: 'center',
         }}
         PaperProps={{
-          style: { marginTop: '10px' }, // 팝업을 아래로 약간 내림
+          style: { marginTop: '10px' },
         }}
       >
         <PopoverContent>

@@ -18,12 +18,18 @@ const Cart = () => {
       if (response.data.length === 0) {
         setCartItems([]);
       } else {
-        const itemsWithQuantity = response.data.map((item) => ({
-          ...item,
-          quantity: 1,
-        }));
-        setCartItems(itemsWithQuantity);
-        calculateTotalPrice(itemsWithQuantity);
+        // 같은 shopId를 가진 아이템들을 그룹화하여 수량을 합산
+        const groupedItems = response.data.reduce((acc, item) => {
+          const existingItem = acc.find(i => i.shopId === item.shopId);
+          if (existingItem) {
+            existingItem.quantity += 1; // 수량 증가
+          } else {
+            acc.push({ ...item, quantity: 1 }); // 새로운 항목 추가
+          }
+          return acc;
+        }, []);
+        setCartItems(groupedItems);
+        calculateTotalPrice(groupedItems);
       }
     } catch (error) {
       console.error("Error fetching cart items:", error);
@@ -37,9 +43,9 @@ const Cart = () => {
     setTotalPrice(total);
   };
 
-  const updateQuantity = (id, delta) => {
+  const updateQuantity = async (shopId, delta) => {
     const updatedItems = cartItems.map((item) => {
-      if (item.cartId === id) {
+      if (item.shopId === shopId) { // shopId를 사용하여 수량 업데이트
         const newQuantity = Math.max(1, item.quantity + delta);
         return { ...item, quantity: newQuantity };
       }
@@ -47,13 +53,21 @@ const Cart = () => {
     });
     setCartItems(updatedItems);
     calculateTotalPrice(updatedItems);
+
+    // 서버에 수량 업데이트 요청
+    const cartItemToUpdate = updatedItems.find(item => item.shopId === shopId);
+    if (cartItemToUpdate) {
+      await apiClient.put(`/cart/update/${cartItemToUpdate.cartId}`, {
+        quantity: cartItemToUpdate.quantity,
+      });
+    }
   };
 
-  const removeItem = async (cartId) => {
+  const removeItem = async (shopId) => {
     try {
-      await apiClient.delete(`cart/remove/${cartId}`);
-      setCartItems((prevItems) => prevItems.filter((item) => item.cartId !== cartId));
-      calculateTotalPrice(cartItems.filter((item) => item.cartId !== cartId));
+      await apiClient.delete(`cart/remove/${shopId}`);
+      setCartItems((prevItems) => prevItems.filter((item) => item.shopId !== shopId));
+      calculateTotalPrice(cartItems.filter((item) => item.shopId !== shopId));
     } catch (error) {
       console.error("Error removing cart item:", error);
     }
@@ -69,6 +83,7 @@ const Cart = () => {
       productPrice: item.shopPrice,
       quantity: item.quantity,
       totalAmount: item.shopPrice * item.quantity,
+      shopId: item.shopId, 
     }));
 
     navigate("/Checkout", {
@@ -101,12 +116,12 @@ const Cart = () => {
                     </div>
                   ) : (
                     cartItems.map((item) => (
-                      <div className="product" key={item.cartId}>
+                      <div className="product" key={item.shopId}>
                         <img
                           src={logo}
                           alt="상품 이미지 대체 로고"
                           style={{ height: "80px", width: "80px" }}
-                        ></img>
+                        />
                         <div className="product-details">
                           <span>{item.shopName}</span>
                           <p className="price">
@@ -114,7 +129,7 @@ const Cart = () => {
                           </p>
                         </div>
                         <div className="quantity">
-                          <button onClick={() => updateQuantity(item.cartId, -1)}>
+                          <button onClick={() => updateQuantity(item.shopId, -1)}>
                             <svg fill="none" viewBox="0 0 24 24" height="14" width="14">
                               <path
                                 strokeLinejoin="round"
@@ -126,7 +141,7 @@ const Cart = () => {
                             </svg>
                           </button>
                           <label>{item.quantity}</label>
-                          <button onClick={() => updateQuantity(item.cartId, 1)}>
+                          <button onClick={() => updateQuantity(item.shopId, 1)}>
                             <svg fill="none" viewBox="0 0 24 24" height="14" width="14">
                               <path
                                 strokeLinejoin="round"
@@ -141,7 +156,7 @@ const Cart = () => {
                         <Button
                           variant="text"
                           color="secondary"
-                          onClick={() => removeItem(item.cartId)}
+                          onClick={() => removeItem(item.shopId)}
                           style={{
                             position: "absolute",
                             top: "10px",
@@ -192,7 +207,6 @@ const StyledWrapper = styled.div`
     align-items: center;
     flex-direction: column;
     width: 100%;
-    
   }
 
   .card {
