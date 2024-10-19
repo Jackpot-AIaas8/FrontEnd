@@ -12,6 +12,7 @@ import Grid from "@mui/material/Grid2";
 
 import { useNavigate } from "react-router-dom";
 import HeartButton from "./HeartButton";
+import getTimeAgo from "../detailComponent/GetTImeAgo";
 
 const Dog = ({ dog, onHeartToggle }) => {
   const [checkImage, setCheckImage] = useState(false);
@@ -68,9 +69,12 @@ const Dog = ({ dog, onHeartToggle }) => {
                 ></Skeleton>
               )}
               <CardContent>
-                <Typography>{dog.name}</Typography>
-                <Typography>{dog.species}</Typography>
-                <Typography>{dog.heart}</Typography>
+                <p>{dog.regDate.slice(0, 10)}</p>
+                <p>{getTimeAgo(dog.regDate)}</p>
+
+                <p>{dog.name}</p>
+                <p>{dog.species}</p>
+                <p>{dog.heart}</p>
               </CardContent>
             </CardActionArea>
             <HeartButton dog={dog} onHeartToggle={onHeartToggle} />

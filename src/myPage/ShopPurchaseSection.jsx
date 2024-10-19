@@ -1,15 +1,17 @@
 import styled from "styled-components";
 import { NoneContent } from "../pages/Memeber/Mypage";
 
-const PurchaseHistorySection = ({ shopData }) => {
-  console.log(shopData);
+const PurchaseHistorySection = ({ shopData, showAll }) => {
+  const displayedData = showAll ? shopData : shopData.slice(0, 3);
   return (
     <div>
       <h4 className="text-left p-0 m-0">구매내역</h4>
       {shopData?.length ? (
-        shopData.map((shopDatum) => (
-          <PurchaseHistory key={shopDatum.id} shopData={shopDatum} />
-        ))
+        <>
+          {displayedData.map((shopDatum) => (
+            <PurchaseHistory key={shopDatum.id} shopData={shopDatum} />
+          ))}
+        </>
       ) : (
         <NoneContent />
       )}
@@ -34,7 +36,7 @@ export const PurchaseHistory = ({ shopData, theme }) => {
   const stateInfo = getStateInfo(shopData.deliveryState);
 
   return (
-    <StyledPurchaseSection statecolor={stateInfo.color}>
+    <StyledPurchaseSection $statecolor={stateInfo.color}>
       {/* left-section */}
 
       <div className="section-left flex">
