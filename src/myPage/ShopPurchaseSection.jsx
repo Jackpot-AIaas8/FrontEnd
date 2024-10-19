@@ -1,7 +1,8 @@
 import styled from "styled-components";
-import { NoneContent } from "../pages/Mypage";
+import { NoneContent } from "../pages/Memeber/Mypage";
 
 const PurchaseHistorySection = ({ shopData }) => {
+  console.log(shopData);
   return (
     <div>
       <h4 className="text-left p-0 m-0">구매내역</h4>
@@ -44,13 +45,10 @@ export const PurchaseHistory = ({ shopData, theme }) => {
           alt="품목"
         />
         <div className="product-section align-center">
-          <p className="productTitle">{shopData.productDTO.exampleName}</p>{" "}
-          {/*상품명*/}
-          <span className="productPrice">
-            {shopData.productDTO.productPrice}
-          </span>
+          <p className="productTitle">{shopData.name}</p>
+          <span className="productPrice">{shopData.totalPrice}</span>
           <span>*</span>
-          <span className="quntity">{shopData.productDTO.quantity}개</span>
+          <span className="quntity">{shopData.quantity}개</span>
         </div>
         <button className="btn_detailed">상세정보</button>
       </div>
