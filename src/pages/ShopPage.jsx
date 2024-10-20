@@ -86,7 +86,6 @@ function ShopPage() {
     setCurrentPage(newPage);
   };
 
-  // console.log(searchResults);
   return (
     <PageContainer>
       <MainContentWrapper>

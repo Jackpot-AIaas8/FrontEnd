@@ -233,7 +233,6 @@ function CheckoutPage() {
               </ProductRow>
               <ProductRow>
                 <Label>상점 ID</Label>
-                <Value>{item.shopId || "ID 정보 없음"}</Value>
               </ProductRow>
             </ProductInfoBox>
           ))
