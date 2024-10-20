@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { NoneContent } from "../pages/Memeber/Mypage";
 
 const PurchaseHistorySection = ({ shopData, showAll }) => {
+  
   const displayedData = showAll ? shopData : shopData.slice(0, 3);
   return (
     <div>
@@ -20,6 +21,7 @@ const PurchaseHistorySection = ({ shopData, showAll }) => {
 };
 
 export const PurchaseHistory = ({ shopData, theme }) => {
+  
   const getStateInfo = (state) => {
     switch (state) {
       case 0:
@@ -50,7 +52,7 @@ export const PurchaseHistory = ({ shopData, theme }) => {
           <p className="productTitle">{shopData.name}</p>
           <span className="productPrice">{shopData.totalPrice}</span>
           <span>*</span>
-          <span className="quntity">{shopData.quantity}개</span>
+          <span className="quantity">{shopData.quantity}개</span>
         </div>
         <button className="btn_detailed">상세정보</button>
       </div>
@@ -64,11 +66,12 @@ export const StyledPurchaseSection = styled.div`
     height: fit-content;
     text-align: left;
     padding: 30px;
+    margin-bottom: 30px;
 
     > h5 {
       width: 100%;
       font-size: 1.5rem;
-      color: ${(props) => props.statecolor};
+      color: ${(props) => props.$statecolor};
     }
 
     > .thumbnail {
@@ -87,8 +90,11 @@ export const StyledPurchaseSection = styled.div`
     > .btn_detailed {
       width: 100px;
     }
+    
   }
-
+  .section-left>*:last-child {
+      margin-bottom: 0;
+    }
   .btn_detailed {
     flex: 1;
     align-self: center;

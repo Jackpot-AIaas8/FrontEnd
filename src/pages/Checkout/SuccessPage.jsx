@@ -44,7 +44,8 @@ export function SuccessPage() {
 
     // 펀딩일 경우의 데이터
     const fundingData = isFunding ? {
-      orderName: dogName, 
+      orderName: dogName,
+      name, 
       dogId, 
     } : {};
 

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import getTimeAgo from "../detailComponent/GetTImeAgo";
 import { NoneContent } from "../pages/Memeber/Mypage";
-import { StyledOneBoard } from "./Mypage.styles";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import apiClient from "../token/AxiosConfig";
 import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 
 const InquirySection = ({ showAll }) => {
   const [inquiry, setInquiry] = useState([]) || {};
@@ -60,3 +60,12 @@ const InquirySection = ({ showAll }) => {
 };
 
 export default InquirySection;
+
+const StyledOneBoard = styled.div`
+  .section-oneBoard {
+    padding: 30px;
+  }
+  .left-oneBoard {
+    align-self: center;
+  }
+`;

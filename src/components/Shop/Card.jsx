@@ -228,6 +228,8 @@ const Card = ({ category, searchResults }) => {
           },
         });
 
+
+        // API 응답 처리: dtoList가 배열인지 확인
         const fetchedProducts = Array.isArray(response.data.dtoList)
           ? response.data.dtoList
           : [];
@@ -247,6 +249,9 @@ const Card = ({ category, searchResults }) => {
       setProducts(searchResults.dtoList);
     }
   }, [category, currentPage, sortOrder, searchResults]);
+
+  console.log("현재 products 상태:", products); // 상태 업데이트 후 products 확인
+
 
   // 페이지 변경 처리
   const handlePageChange = (newPage) => {
@@ -314,10 +319,11 @@ const Card = ({ category, searchResults }) => {
             onClick={() => handleProductClick(product.shopId)}
           >
             <div className="image-container">
-              <img
-                src={product.imageUrl || "기본이미지경로"}
-                alt={product.name}
-              />
+            {console.log("Product 이미지 URL:", product.mainImage)} {/* 이미지 URL을 확인 */}
+            <img
+              src={product.mainImage || "기본이미지경로"}
+              alt={product.name}
+            />
             </div>
             <div className="card-content">
               <h3>{product.name}</h3>
