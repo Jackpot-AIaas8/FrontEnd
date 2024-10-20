@@ -3,7 +3,7 @@ import styled from "styled-components";
 import theme from "../../config/theme";
 import {useNavigate} from "react-router-dom";
 
-const AuctionButton = ({text}) => {
+const AuctionButton = ({text, onClick = null}) => {
     const navigate = useNavigate();
 
     const buttonHref = () => {
@@ -14,13 +14,12 @@ const AuctionButton = ({text}) => {
         } else if (text === "나가기") {
             navigate("/auction");
         } else if (text === "입찰하기"){
-
         }
     }
 
     return (
         <StyledWrapper>
-            <button onClick={buttonHref}>{text}</button>
+            <button onClick={onClick || buttonHref}>{text}</button>
         </StyledWrapper>
     );
 };
