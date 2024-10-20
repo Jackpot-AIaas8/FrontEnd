@@ -1,6 +1,5 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useLocation } from "react-router-dom";
 import Info from "../../detailComponent/Info";
 import YouTubeContainer from "../../detailComponent/YoutubeContainer";
 import DogHistory from "../../detailComponent/DogHistory";
@@ -11,11 +10,15 @@ import apiClient from "../../token/AxiosConfig";
 const DogDetail = () => {
   const { dogId } = useParams();
   const [dogData, setDogData] = useState({});
+  const location = useLocation();
 
   useEffect(() => {
+    // 성공 메시지 확인 및 기본 alert 창 표시
+    if (location.state?.successMessage) {
+      alert(location.state.successMessage); 
+    }
     apiDogDetail();
-  }, [dogId]);
-  console.log(dogData.isHeart);
+  }, [dogId, location.state]);
 
   const apiDogDetail = async () => {
     try {
@@ -23,13 +26,12 @@ const DogDetail = () => {
         params: { dogId: dogId },
       });
       const transformedData = {
-        ...response.data, // API에서 받은 데이터를 복사
-        gender: response.data.gender === 1 ? "여성" : "남성", // gender 변환
-        age: `${response.data.age}세`, // age 형식 변환
+        ...response.data,
+        gender: response.data.gender === 1 ? "여성" : "남성",
+        age: `${response.data.age}세`,
       };
 
       setDogData(transformedData);
-      console.log(transformedData);
     } catch (err) {
       console.error(err);
     }
