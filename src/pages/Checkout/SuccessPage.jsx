@@ -23,6 +23,9 @@ export function SuccessPage() {
     orderId,
     shopId = "",
     orderName: name,
+    isFunding = false, // 펀딩 여부 추가
+    name: dogName, // 펀딩일 경우 강아지 이름
+    dogId = "", // 강아지 ID 추가
     products = [] // 상품 배열 정보
   } = paymentData;
 
@@ -34,23 +37,45 @@ export function SuccessPage() {
       return;
     }
 
-    const requestData = {
+    // 공통 데이터 생성
+    const commonRequestData = {
       orderId: searchParams.get("orderId") || orderId,
       amount: searchParams.get("amount"),
       paymentKey: searchParams.get("paymentKey"),
-      shopId: shopId,
-      orderName: name,
-      memberID: memberID,
-      name: customerName,
-      phone: customerMobilePhone,
-      address: userAddress,
+      isFunding, // 펀딩 여부 포함
     };
-    console.log("전송할 requestData:", requestData);
 
-    console.log("결제 완료 후 백엔드로 전달할 데이터:", requestData);
+    // 펀딩일 경우의 데이터
+    const fundingData = isFunding ? {
+      orderName: dogName, // 펀딩일 때 강아지 이름을 orderName에 담기
+      dogId, // 펀딩일 때 강아지 ID를 dogId로 설정
+    } : {};
+
+    // 상품일 경우의 데이터
+    const productData = !isFunding
+      ? {
+          shopId, // 상품일 때는 shopId 사용
+          orderName: name, // 상품 이름
+          memberID,
+          name: customerName,
+          phone: customerMobilePhone,
+          address: userAddress,
+        }
+      : {};
+
+    // 최종 요청 데이터 생성
+    const requestData = {
+      ...commonRequestData,
+      ...fundingData,
+      ...productData,
+    };
+
+    console.log("전송할 requestData:", requestData);
 
     async function confirm() {
       try {
+        console.log("전송할 requestData:", requestData); // <- 이 부분을 추가
+
         const response = await apiClient.post("/api/confirm", requestData, {
           headers: {
             Authorization: "Basic " + btoa("test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6:"),
@@ -66,6 +91,13 @@ export function SuccessPage() {
 
         setPaymentInfo(response.data);
         setIsConfirming(false);
+
+        // 펀딩일 때 강아지 페이지로 이동
+        if (isFunding) {
+          navigate(`/dog/${dogId}`, {
+            state: { successMessage: "펀딩에 성공했습니다!" },
+          });
+        }
       } catch (error) {
         console.error("결제 확인 중 오류 발생:", error);
         navigate(`/fail?message=결제 확인 중 오류가 발생했습니다.`);
@@ -73,7 +105,7 @@ export function SuccessPage() {
     }
 
     confirm();
-  }, [searchParams, navigate, orderId]);
+  }, [searchParams, navigate, orderId, isFunding]);
 
   if (isConfirming) {
     return <div>결제 확인 중...</div>;
@@ -83,9 +115,9 @@ export function SuccessPage() {
     return <div>결제 정보를 불러올 수 없습니다.</div>;
   }
 
-  const { totalAmount } = paymentInfo; // totalAmount는 paymentInfo에서 가져옵니다.
+  const { totalAmount } = paymentInfo; 
 
-  return (
+  return !isFunding ? (
     <PageContainer>
       <Title>주문완료</Title>
       <Subtitle>주문이 완료되었습니다. 감사합니다!</Subtitle>
@@ -136,12 +168,11 @@ export function SuccessPage() {
         <Button primary={true}>쇼핑 계속하기</Button>
       </ButtonContainer>
     </PageContainer>
-  );
+  ) : null; // 펀딩일 경우 이 페이지를 렌더링하지 않음
 }
 
 export default SuccessPage;
 
-// 스타일 정의
 const PageContainer = styled.div`
   padding: 20px;
   max-width: 800px;
