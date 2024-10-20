@@ -9,7 +9,7 @@ const Search = ({ setSearchResults }) => {
   const handleSearch = async () => {
     try {
       const response = await apiClient.get(`shop/search`, {
-        params: { name, page: 1, size: 10 },
+        params: { name, page: 1, size: 12 },
       });
       // console.log(response);
       if (response.data.length === 0) {

@@ -20,7 +20,7 @@ const FreeBoardList = ({ boards }) => {
             params: { page, size: 10 }, // 페이지와 페이지 사이즈 요청
           });
           const allBoards = response.data.dtoList || [];
-          console.log(allBoards);
+          // console.log(allBoards);
 
           // 공지글과 자유글 분리
           const filteredType1 = allBoards.filter(
@@ -29,8 +29,8 @@ const FreeBoardList = ({ boards }) => {
           const filteredType2 = allBoards.filter(
             (boardDTO) => boardDTO.type === 2
           );
-          console.log(filteredType1);
-          console.log(filteredType2);
+          // console.log(filteredType1);
+          // console.log(filteredType2);
 
           setType1Boards(filteredType1); // 공지글 설정
           setType2Boards(filteredType2); // 자유글 설정
@@ -74,7 +74,7 @@ const FreeBoardList = ({ boards }) => {
             <th>작성일</th>
           </tr>
         </thead>
-        <tbody >
+        <tbody>
           {displayedBoards.length > 0 ? (
             displayedBoards.map((boardDTO) => (
               <tr key={boardDTO.boardId}>
@@ -127,4 +127,3 @@ const FreeBoardList = ({ boards }) => {
 };
 
 export default FreeBoardList;
-

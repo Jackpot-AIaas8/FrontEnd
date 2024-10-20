@@ -6,13 +6,14 @@ import MainCarousel from "../components/Shop/ShopCarousel";
 import Card from "../components/Shop/Card";
 import styled from "styled-components";
 import apiClient from "../token/AxiosConfig";
+import { SERVER_URL } from "../config/Constants";
 
 function ShopPage() {
   const [category, setCategory] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
   const [sortOrder, setSortOrder] = useState("latest");
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태 추가
-  const [totalPages, setTotalPages] = useState(1); // 총 페이지 상태 추가
+  const [totalPages, setTotalPages] = useState(0); // 총 페이지 상태 추가
   const location = useLocation();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
@@ -50,16 +51,26 @@ function ShopPage() {
   const fetchProducts = async (page = 1) => {
     try {
       const endpoint = category
-        ? `http://localhost:8181/shop/category/${category}`
-        : `http://localhost:8181/shop/findList`;
-
+        ? `${SERVER_URL}shop/category/${category}`
+        : `${SERVER_URL}shop/findList`;
       const response = await apiClient.get(endpoint, {
         params: { page, size: itemsPerPage, sortOrder },
       });
+      console.log(response);
 
-      if (response.data && Array.isArray(response.data.dtoList)) {
-        setProducts(response.data.dtoList);
-        setTotalPages(Math.ceil(response.data.total / itemsPerPage)); // 총 페이지 수 계산
+      // console.log("API 응답:", response);
+      const allProducts = response.data.dtoList || [];
+      // console.log(allProducts);
+      setTotalPages(response.data.total);
+      if (
+        response.data &&
+        Array.isArray(allProducts) &&
+        allProducts.length > 0
+      ) {
+        setProducts(allProducts);
+
+        // console.log(totalPages);
+        // setTotalPages(Math.ceil(response.data.total / itemsPerPage)); // 총 페이지 수 계산
       } else {
         setProducts([]);
       }
@@ -81,9 +92,9 @@ function ShopPage() {
     setSortOrder(newSortOrder);
   };
 
-  // 페이지 변경 처리
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
+    fetchProducts(newPage);
   };
 
   // console.log(searchResults);
@@ -113,7 +124,7 @@ function ShopPage() {
 
         {/* 페이지네이션 추가 */}
         <PaginationWrapper>
-          {currentPage > 1 && (
+          {/* {currentPage > 1 && (
             <button onClick={() => handlePageChange(currentPage - 1)}>
               &lt;
             </button>
@@ -131,7 +142,25 @@ function ShopPage() {
             <button onClick={() => handlePageChange(currentPage + 1)}>
               &gt;
             </button>
-          )}
+          )} */}
+
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            이전
+          </button>
+
+          <span>
+            {currentPage} / {totalPages}
+          </span>
+
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            다음
+          </button>
         </PaginationWrapper>
       </MainContentWrapper>
     </PageContainer>
@@ -216,7 +245,28 @@ const CardWrapper = styled.div`
   }
 `;
 
-// 페이지네이션 스타일 정의
+// // 페이지네이션 스타일 정의
+// const PaginationWrapper = styled.div`
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   gap: 10px;
+//   margin-top: 20px;
+
+//   button {
+//     padding: 5px 10px;
+//     background-color: #007bff;
+//     color: white;
+//     border: none;
+//     border-radius: 5px;
+//     cursor: pointer;
+//   }
+
+//   .active {
+//     background-color: #0056b3;
+//   }
+// `;
+
 const PaginationWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -225,15 +275,28 @@ const PaginationWrapper = styled.div`
   margin-top: 20px;
 
   button {
-    padding: 5px 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    background-color: #ff7600; /* 주황색 배경 */
+    color: white; /* 흰색 글자 */
+    border: none; /* 테두리 없애기 */
+    padding: 0.5rem 1rem; /* 패딩 추가 */
+    margin: 0 1rem; /* 버튼 사이의 간격 */
+    cursor: pointer; /* 커서 모양 변경 */
+    transition: background-color 0.3s; /* 배경색 변화 시 전환 효과 */
+    border-radius: 0.5rem; /* 모서리를 둥글게 설정 (값을 조절 가능) */
+
+    /* 호버 시 색상 변화 */
+    &:hover {
+      background-color: #d64229; /* 호버 시 어두운 주황색으로 변경 */
+    }
+
+    /* 비활성 버튼 색상 */
+    &:disabled {
+      background-color: gray; /* 비활성 버튼 색상 */
+      cursor: not-allowed; /* 비활성 버튼 시 커서 모양 변경 */
+    }
   }
 
   .active {
-    background-color: #0056b3;
+    background-color: #0056b3; /* 활성화된 페이지의 배경색 */
   }
 `;
