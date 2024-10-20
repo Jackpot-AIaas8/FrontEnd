@@ -4,7 +4,7 @@ import {
   StyledMypageWrapper,
   StyeldRightSection,
   StyledMypageSection,
-  StyledFundHistory,
+  
 } from "../../myPage/Mypage.styles";
 
 import { MockShopData } from "../../myPage/MockMypageData";
@@ -17,6 +17,7 @@ import apiClient from "../../token/AxiosConfig";
 import InquirySection from "../../myPage/InquirySection";
 import PurchaseHistorySection from "../../myPage/ShopPurchaseSection";
 import EditUserSection from "../../myPage/EditUserSection";
+import {FundHistorySection} from "../../myPage/FundHisorySection";
 
 const Mypage = () => {
   const [currentPage, setCurrentPage] = useState("all");
@@ -35,6 +36,7 @@ const Mypage = () => {
     inquiry: false,
     funding: false,
   });
+  
 
   useEffect(() => {
     const apiInfo = async () => {
@@ -66,17 +68,10 @@ const Mypage = () => {
     //   }
     // };
 
-    const apiFunding = async () => {
-      try {
-        const response = await apiClient.get("dog/fundListMyPage");
-        console.log(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
     apiInfo();
     // apiShopData();
-    apiFunding();
+    
+    
   }, []);
 
   useEffect(() => {
@@ -132,9 +127,9 @@ const Mypage = () => {
           />
         );
       case "inquiry":
-        return <InquirySection showAll={showAll[currentPage]} />;
+        return <InquirySection  showAll={showAll[currentPage]} />;
       case "funding":
-        return <FundHistorySection showAll={showAll[currentPage]} />;
+        return <FundHistorySection  showAll={showAll[currentPage]} />;
       default:
         return renderAllContent(); // 기본적으로 모든 섹션 렌더링
     }
@@ -200,16 +195,6 @@ const Mypage = () => {
     );
   };
 
-  const FundHistorySection = ({ showAll }) => {
-    return (
-      <StyledFundHistory>
-        <h4 className="text-left p-0 m-0">펀딩내역</h4>
-        <div className="section-fund flex w-full flex-column">
-          <span>dogDTO가 될것</span>
-        </div>
-      </StyledFundHistory>
-    );
-  };
 
   const handleMypage = (e) => {
     e.preventDefault();

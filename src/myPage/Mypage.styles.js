@@ -130,13 +130,6 @@ export const StyledMypageSection = styled.div`
   }
 `;
 
-export const StyledOneBoard = styled.div`
-  .section-oneBoard {
-    padding: 30px;
-  }
-  .left-oneBoard {
-    align-self: center;
-  }
-`;
 
-export const StyledFundHistory = styled.div``;
+
+
