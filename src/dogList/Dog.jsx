@@ -5,7 +5,7 @@ import {
   CardMedia,
   Container,
   Skeleton,
-  Typography,
+  
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import Grid from "@mui/material/Grid2";
@@ -16,19 +16,21 @@ import getTimeAgo from "../detailComponent/GetTImeAgo";
 
 const Dog = ({ dog, onHeartToggle }) => {
   const [checkImage, setCheckImage] = useState(false);
-  const [image, setImage] = useState("");
+  const [thumbNail, setThumbNail] = useState("");
 
   const navigate = useNavigate();
 
+  const categories = [dog.name , dog.species];
+
   useEffect(() => {
-    if (dog.image) {
+    if (dog.thumbNail) {
       setCheckImage(true);
-      setImage(dog.image);
+      setThumbNail(dog.thumbNail);
     } else {
       setCheckImage(false);
-      setImage("");
+      setThumbNail("");
     }
-  }, [dog.image]);
+  }, [dog.thumbNail]);
 
   const handleDogDetail = () => {
     navigate(`/dog/${dog.dogId}`);
@@ -51,7 +53,7 @@ const Dog = ({ dog, onHeartToggle }) => {
                 <CardMedia
                   sx={{ height: 140 }}
                   component="img"
-                  image={image}
+                  image={thumbNail}
                   loading="lazy"
                 />
               ) : (
@@ -69,11 +71,16 @@ const Dog = ({ dog, onHeartToggle }) => {
                 ></Skeleton>
               )}
               <CardContent>
+                
+                {categories.map((category, index)=>
+                  <p key={index}className="category">{category}</p>
+                )}
+                
                 <p>{dog.regDate.slice(0, 10)}</p>
                 <p>{getTimeAgo(dog.regDate)}</p>
 
-                <p>{dog.name}</p>
-                <p>{dog.species}</p>
+                
+                
                 <p>{dog.heart}</p>
               </CardContent>
             </CardActionArea>
