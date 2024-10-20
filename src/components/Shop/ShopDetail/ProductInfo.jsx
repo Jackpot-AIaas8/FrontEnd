@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import apiNoToken from "../../../token/AxiosConfig";
 import apiClient from "../../../token/AxiosConfig";
 
-const ProductInfo = ({ productId }) => {
+const ProductInfo = ({ shopId }) => {
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -18,7 +18,7 @@ const ProductInfo = ({ productId }) => {
   // 상품 정보 가져오기
   const fetchProduct = async () => {
     try {
-      const response = await apiNoToken.get(`/shop/findOne/${productId}`);
+      const response = await apiNoToken.get(`/shop/findOne/${shopId}`);
       setProduct(response.data);
       console.log("상품 정보:", response.data); // 데이터 확인
 
@@ -29,7 +29,7 @@ const ProductInfo = ({ productId }) => {
 
   useEffect(() => {
     fetchProduct();
-  }, [productId]);
+  }, [shopId]);
 
   if (!product) {
     return <div>상품 정보를 불러오는 중입니다...</div>;

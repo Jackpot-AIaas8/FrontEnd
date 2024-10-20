@@ -167,8 +167,6 @@ const Card = ({ category, searchResults }) => {
             </div>
             <div className="card-content">
               <h3>{product.name}</h3>
-
-              <p>{product.detail}</p>
               {/* <p className="price">{product.price.toLocaleString()}원</p>
                */}{" "}
               <p>
