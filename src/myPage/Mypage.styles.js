@@ -13,7 +13,7 @@ export const StyledNavBar = styled.div`
   flex: 1;
   padding: 0 20px;
   max-width: 400px;
-
+  height: fit-content;
   .section-nav {
     box-shadow: 10px 10px 5px rgb(0, 0, 0, 0.2);
     max-width: 100%;

@@ -6,6 +6,7 @@ import { NoneContent } from "../pages/Memeber/Mypage";
 import { ProgressBar } from "./ProgressBar";
 import { Avatar } from "@mui/material";
 import getTimeAgo from "../detailComponent/GetTImeAgo";
+import AnimatedNumber from "./AnimatedNumber";
 
 export const FundHistorySection = ({ showAll }) => {
   const [fundDTO, setFundDTO] = useState([]);
@@ -64,32 +65,38 @@ export const FundHistorySection = ({ showAll }) => {
         {/* 오른쪽: 개 정보 (두 개의 열로 구성) */}
 
         <StyledFundDetailSection>
-          <div>
-          <div>
-            <p style={{ fontWeight: "bold" }}>나이</p>
-            <p>{fund.age}살</p>
-
-            <p style={{ fontWeight: "bold", marginTop: "16px" }}>후원금액</p>
-            <p>{fund.collection}</p>
-
-            <p style={{ fontWeight: "bold", marginTop: "16px" }}>성별</p>
-            <p>{fund.gender}</p>
+          <div className="section-dogInfo w-full">
+            <div className="dogInfo-grid">
+              <div className="grid-item">
+                <p style={{ fontWeight: "bold" }}>나이</p>
+                <p>{fund.age}살</p>
+              </div>
+              <div className="grid-item">
+                <p style={{ fontWeight: "bold" }}>성별</p>
+                <p>{fund.gender}</p>
+              </div>
+              <div className="grid-item">
+                <p style={{ fontWeight: "bold" }}>좋아요 수</p>
+                <p>{fund.heart}</p>
+              </div>
+              <div className="grid-item">
+                <p style={{ fontWeight: "bold"}}>품종</p>
+                <p>{fund.species}</p>
+              </div>
+            </div >
+            <div className="regDate-section flex justify-end">
+              <span className="regDate">{fund.regDate.slice(0, 10)}</span>
+              <span className="regDateAgo">{getTimeAgo(fund.regDate)}</span>
+            </div>
           </div>
-
-          <div>
-            <p style={{ fontWeight: "bold" }}>좋아요 수</p>
-            <p>{fund.heart}</p>
-
-            <p style={{ fontWeight: "bold", marginTop: "16px" }}>품종</p>
-            <p>{fund.species}</p>
-            <span>{fund.regDate.slice(0,10)}</span>
-            <span style={{ fontWeight: "bold" }}>{getTimeAgo(fund.regDate)}</span>
-            
+          <div className="section-progressBar p-0 w-full">
+            <span style={{ fontWeight: "bold", marginRight:"20px" }}>
+              후원금액
+            </span>
+            <span><AnimatedNumber value={fund.collection}/></span>
+            <ProgressBar value={50} />
           </div>
-          </div>
-          
         </StyledFundDetailSection>
-        <ProgressBar value={50} />
       </StyledFundingSection>
     );
   };
@@ -123,8 +130,6 @@ const StyledFundHistory = styled.div`
     text-align: center;
     width: 100%;
   }
- 
-
 `;
 // --------------------------------------------------
 const StyledFundingSection = styled.div`
@@ -137,11 +142,17 @@ const StyledFundingSection = styled.div`
   justify-content: space-around;
   flex-wrap: wrap;
   align-items: center;
+
+  h5{
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: left;
+    padding-left: 20px;
+  }
 `;
 const StyledFundDetailSection = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 두 개의 열로 나눔 */
-  gap: 20px;
+  display: flex;
+  flex-direction: column;
 
   p {
     margin: 0;
@@ -149,5 +160,25 @@ const StyledFundDetailSection = styled.div`
     strong {
       font-weight: bold;
     }
+    
   }
+  .dogInfo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2열로 나누기 */
+  gap: 10px; 
+  border: 1px solid #3333;
+  box-shadow: 10px -20px 15px rgba(255, 161, 80, 0.8);
+
+}
+.grid-item{
+  display: flex;
+  flex-direction: column;
+  
+}
+.regDate-section {
+  font-size: 0.7rem;
+  gap: 20px;
+  margin-top: 20px;
+}
+
 `;

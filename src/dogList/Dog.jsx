@@ -42,19 +42,21 @@ const Dog = ({ dog, onHeartToggle }) => {
         <Grid container flexDirection={"column"}>
           <Card
             onClick={handleDogDetail}
-            sx={{ minWidth: "100%", position: "relative", overflow: "visible" }}
+            sx={{ minWidth: "100%", position: "relative", paddingTop:"10px" }}
           >
             <CardActionArea
               sx={{
-                zIndex: 0,
+                zIndex: 0
               }}
             >
               {checkImage ? (
                 <CardMedia
-                  sx={{ height: 140 }}
+                  sx={{ height: 140, objectFit: "scale-down"}}
                   component="img"
                   image={thumbNail}
                   loading="lazy"
+                  
+                  
                 />
               ) : (
                 <Skeleton

@@ -2,25 +2,30 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const AnimatedNumber = ({ value, duration = 2000 }) => {
-  const [displayValue, setDisplayValue] = useState(0);
+  // 랜덤한 초기값 설정
+  const [displayValue, setDisplayValue] = useState(Math.floor(Math.random() * value));
 
   useEffect(() => {
-    const increment = value / (duration / 10); // 10ms마다 값을 증가
-    let currentValue = 0;
+    const totalSteps = duration / 10; // 전체 스텝 수
+    const increment = (value - displayValue) / totalSteps; // 현재값에서 목표값까지의 증가분 계산
 
+    let currentValue = displayValue;
+    
     const interval = setInterval(() => {
       currentValue += increment;
+
+      // 목표값에 도달하면 정지
       if (currentValue >= value) {
         currentValue = value;
         clearInterval(interval);
       }
-      setDisplayValue(Math.round(currentValue)); // 반올림하여 표시
+
+      setDisplayValue(Math.round(currentValue));
     }, 10);
 
     return () => clearInterval(interval); // 컴포넌트 언마운트 시 setInterval 해제
   }, [value, duration]);
 
-  // JSX에서 StyledAnimatedSpan을 값으로 바로 사용
   return <StyledAnimatedSpan>{displayValue}</StyledAnimatedSpan>;
 };
 

@@ -14,7 +14,7 @@ const StyledIconButton = styled.button`
   top: 8px;
   right: 8px;
   color: ${(props) =>
-    props.$heart === 1 ? theme.colors.red : theme.colors.white};
+    props.$heart === 1 ? theme.colors.red : theme.colors.gray};
   background: none;
   border: none;
   padding: 0;
