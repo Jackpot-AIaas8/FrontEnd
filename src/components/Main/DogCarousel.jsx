@@ -12,7 +12,7 @@ function DogCarousel() {
   useEffect(() => {
     const dogListAPI = async () => {
       try {
-        const response = await apiClient.get("dog/dogList", {
+        const response = await apiNoToken.get("dog/dogList", {
           params: {
             page: 1,
             size: 10,
@@ -42,14 +42,16 @@ function DogCarousel() {
       className="slider-container"
       style={{ marginBottom: "200px", width: "100%" }}
     >
+   
       <Slider {...settings}>
-        {dogs.map((dog) => (
+      {dogs?.length > 0 && (
+        dogs.map((dog) => (
           <StyledWrapper key={dog.dogId}>
             <div className="card">
               <div className="card-image">
                 <img
                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWAKSR0zHQrRZfEUhbpewPESqP85h9afAquw&s"
-                  alt=""
+                  alt={dog.name}
                   style={{ width: "100%", height: "100%" }}
                 />
               </div>
@@ -60,8 +62,10 @@ function DogCarousel() {
               <p className="card-body">{dog.species}</p>
             </div>
           </StyledWrapper>
-        ))}
+        ))
+      )}
       </Slider>
+    
     </div>
   );
 }
