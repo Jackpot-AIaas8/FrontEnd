@@ -61,8 +61,11 @@ const Cart = () => {
       (item) => item.shopId === shopId
     );
     if (cartItemToUpdate) {
-      await apiClient.put(`/cart/update/${cartItemToUpdate.cartId}`, {
-        quantity: cartItemToUpdate.quantity,
+      await apiClient.post(`/cart/update`, null, {
+        params: {
+          cartId: cartItemToUpdate.cartId,
+          quantity: cartItemToUpdate.quantity,
+        },
       });
     }
   };
