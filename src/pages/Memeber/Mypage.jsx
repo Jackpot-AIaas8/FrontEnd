@@ -18,6 +18,8 @@ import InquirySection from "../../myPage/InquirySection";
 import PurchaseHistorySection from "../../myPage/ShopPurchaseSection";
 import EditUserSection from "../../myPage/EditUserSection";
 import {FundHistorySection} from "../../myPage/FundHisorySection";
+import DogProfile from "../../myPage/FundHistoryDemo";
+
 
 const Mypage = () => {
   const [currentPage, setCurrentPage] = useState("all");
@@ -112,6 +114,7 @@ const Mypage = () => {
       />
       <InquirySection showAll={showAll[currentPage]} />
       <FundHistorySection showAll={showAll[currentPage]} />
+      {/* <DogProfile/> */}
     </>
   );
 
