@@ -10,16 +10,17 @@ const customerKey = "e6Bp3EiNGF0nTmXJ05nvg";
 function CheckoutPage() {
   const location = useLocation();
   const {
-    productNames = [],
+    productNames = [], // 상품 배열 정보
     totalAmount = 0,
     isFunding = false,
-    name,
+    name, // 강아지 이름
+    dogId = null, // 강아지 ID
   } = location.state || {};
 
   // 상품 개수 계산
   const quantity = Array.isArray(productNames)
     ? productNames.reduce((acc, item) => acc + (item.quantity || 1), 0)
-    : productNames.quantity || 1; // 단일 상품의 경우 수량을 가져옴
+    : productNames.quantity || 1;
 
   const amount = totalAmount + (isFunding ? 0 : 3000);
   const [ready, setReady] = useState(false);
@@ -81,36 +82,38 @@ function CheckoutPage() {
   const handlePayment = async () => {
     const paymentAmount = parseInt(amount, 10);
     const orderId = `order_${Date.now()}`;
-
+  
     if (!ready) {
-        alert("결제 준비가 완료되지 않았습니다.");
-        return;
+      alert("결제 준비가 완료되지 않았습니다.");
+      return;
     }
-
+  
     try {
-        // orderName 설정
-        let orderName = isFunding ? name : ""; // 기본적으로 name을 사용
-
-        // 상품 정보가 있을 경우 orderName 설정
+      // orderName 설정
+      let orderName = "";
+  
+      if (isFunding) {
+        orderName = name;
+      } else {
         if (Array.isArray(productNames) && productNames.length > 0) {
-            orderName = productNames.map((item) => item.shopName || item.name).join(", ");
-        } else if (productNames && typeof productNames === 'object') { // 단일 상품의 경우
-            orderName = productNames.shopName || productNames.name || "";
+          orderName = productNames.map((item) => item.shopName || item.name).join(", ");
+        } else if (productNames && typeof productNames === "object") {
+          orderName = productNames.shopName || productNames.name || "";
         }
+      }
 
-        // orderName 확인
-        console.log("현재 orderName:", orderName); // 현재 orderName 로그 확인
-
-        if (!orderName || orderName.trim() === "") {
-            alert("필수 파라미터 'orderName'이 누락되었습니다.");
-            return;
-        }
+      // productNames 배열의 각 항목에서 총 상품 가격 계산
+      const updatedProductNames = productNames.map(item => ({
+        ...item,
+        totalProductPrice: (item.productPrice || 0) * (item.quantity || 1), // 상품 가격 계산
+      }));
 
       const paymentData = isFunding
         ? {
             orderId,
             name,
             orderName,
+            dogId,
             memberID: user.memberID,
             customerName: user.name,
             customerMobilePhone: user.phone,
@@ -120,18 +123,8 @@ function CheckoutPage() {
         : {
             orderId,
             orderName,
-            productNames: Array.isArray(productNames)
-              ? productNames.map(item => ({
-                  shopName: item.shopName || item.name,
-                  quantity: item.quantity || 1,
-                  shopId: item.shopId,
-                }))
-              : [{
-                  shopName: productNames.shopName || productNames.name,
-                  quantity: 1,
-                  shopId: productNames.shopId,
-                }],
-            quantity: quantity,
+            productNames: updatedProductNames, // 계산된 상품 정보 포함
+            quantity,
             memberID: user.memberID,
             customerName: user.name,
             customerMobilePhone: user.phone,
@@ -141,16 +134,14 @@ function CheckoutPage() {
             isFunding: false,
           };
 
-      console.log("결제 요청 데이터:", paymentData); // 요청 데이터 확인
+      console.log("결제 요청 데이터:", paymentData);
 
       sessionStorage.setItem("paymentData", JSON.stringify(paymentData));
 
       await widgets.requestPayment({
-        orderId: orderId,
+        orderId,
         orderName,
-        successUrl: isFunding
-          ? `${window.location.origin}/dog/${name}`
-          : `${window.location.origin}/success?orderId=${orderId}`,
+        successUrl: `${window.location.origin}/success?orderId=${orderId}`,
         failUrl: `${window.location.origin}/fail`,
         customerEmail: user.email,
         customerName: user.name,
@@ -161,7 +152,7 @@ function CheckoutPage() {
       alert("결제 요청 중 오류가 발생했습니다. 다시 시도해 주세요.");
     }
   };
-
+  
   // 주소 수정 처리
   const handleAddressEdit = () => {
     setIsEditingAddress(true);
@@ -250,11 +241,11 @@ function CheckoutPage() {
         ) : (
           <ProductInfoBox>
             <ProductRow>
-              <Label>상품명</Label>
+              <Label>{isFunding ? "강아지 이름" : "상품명"}</Label>
               <Value>{name || "상품명 불러오기 실패"}</Value>
             </ProductRow>
             <ProductRow>
-              <Label>수량</Label>
+              <Label>{isFunding ? "후원" : "수량"}</Label>
               <Value>{quantity || 1}개</Value>
             </ProductRow>
           </ProductInfoBox>
@@ -309,6 +300,9 @@ function CheckoutPage() {
 }
 
 export default CheckoutPage;
+
+// 스타일 정의 (생략)
+
 
 // 스타일 정의
 const PageContainer = styled.div`

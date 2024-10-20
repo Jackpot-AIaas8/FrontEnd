@@ -9,7 +9,6 @@ export function SuccessPage() {
   const navigate = useNavigate();
   const [isConfirming, setIsConfirming] = useState(true);
 
-  // sessionStorage에서 데이터 가져오기
   const paymentData = JSON.parse(sessionStorage.getItem("paymentData")) || {}; 
   console.log("sessionStorage에서 가져온 결제 데이터:", paymentData);
 
@@ -18,15 +17,16 @@ export function SuccessPage() {
     customerName = "",
     customerMobilePhone = "",
     userAddress = "",
-    amount = 0,
     deliveryFee = 3000,
     orderId,
     shopId = "",
     orderName: name,
-    products = [] // 상품 배열 정보
+    isFunding = false, 
+    name: dogName = "", 
+    dogId = "", 
+    productNames = [] 
   } = paymentData;
 
-  // sessionStorage에서 가져온 orderId가 존재하는지 확인
   useEffect(() => {
     if (!orderId) {
       console.log("orderId가 없습니다. 결제 정보가 유실되었습니다.");
@@ -34,23 +34,51 @@ export function SuccessPage() {
       return;
     }
 
-    const requestData = {
+    // 공통 데이터 생성
+    const commonRequestData = {
       orderId: searchParams.get("orderId") || orderId,
       amount: searchParams.get("amount"),
       paymentKey: searchParams.get("paymentKey"),
-      shopId: shopId,
-      orderName: name,
-      memberID: memberID,
-      name: customerName,
-      phone: customerMobilePhone,
-      address: userAddress,
+      isFunding, 
     };
-    console.log("전송할 requestData:", requestData);
 
-    console.log("결제 완료 후 백엔드로 전달할 데이터:", requestData);
+    // 펀딩일 경우의 데이터
+    const fundingData = isFunding ? {
+      orderName: dogName, 
+      dogId, 
+    } : {};
+
+    // 상품일 경우의 데이터
+    const productData = !isFunding
+      ? {
+          shopId, 
+          orderName: name, 
+          memberID,
+          name: customerName,
+          phone: customerMobilePhone,
+          address: userAddress,
+          productNames: productNames.map(item => ({
+            shopName: item.shopName || item.name,
+            quantity: item.quantity || 1,
+            shopId: item.shopId,
+            totalProductPrice: (item.productPrice || 0) * (item.quantity || 1), 
+          }))
+        }
+      : {};
+
+    // 최종 요청 데이터 생성
+    const requestData = {
+      ...commonRequestData,
+      ...fundingData,
+      ...productData,
+    };
+
+    console.log("전송할 requestData:", requestData);
 
     async function confirm() {
       try {
+        console.log("전송할 requestData:", requestData); 
+
         const response = await apiClient.post("/api/confirm", requestData, {
           headers: {
             Authorization: "Basic " + btoa("test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6:"),
@@ -66,6 +94,12 @@ export function SuccessPage() {
 
         setPaymentInfo(response.data);
         setIsConfirming(false);
+
+        if (isFunding) {
+          navigate(`/dog/${dogId}`, {
+            state: { successMessage: "펀딩에 성공했습니다!" },
+          });
+        }
       } catch (error) {
         console.error("결제 확인 중 오류 발생:", error);
         navigate(`/fail?message=결제 확인 중 오류가 발생했습니다.`);
@@ -73,7 +107,7 @@ export function SuccessPage() {
     }
 
     confirm();
-  }, [searchParams, navigate, orderId]);
+  }, [searchParams, navigate, orderId, isFunding]);
 
   if (isConfirming) {
     return <div>결제 확인 중...</div>;
@@ -83,16 +117,16 @@ export function SuccessPage() {
     return <div>결제 정보를 불러올 수 없습니다.</div>;
   }
 
-  const { totalAmount } = paymentInfo; // totalAmount는 paymentInfo에서 가져옵니다.
+  const { totalAmount } = paymentInfo; 
 
-  return (
+  return !isFunding ? (
     <PageContainer>
       <Title>주문완료</Title>
       <Subtitle>주문이 완료되었습니다. 감사합니다!</Subtitle>
       <Section>
         <SectionTitle>상품배송 정보</SectionTitle>
-        {products.length > 0 ? (
-          products.map((product, index) => (
+        {productNames.length > 0 ? (
+          productNames.map((product, index) => (
             <InfoRow key={index}>
               <InfoLabel>{product.shopName} ({product.quantity}개)</InfoLabel>
             </InfoRow>
@@ -136,12 +170,11 @@ export function SuccessPage() {
         <Button primary={true}>쇼핑 계속하기</Button>
       </ButtonContainer>
     </PageContainer>
-  );
+  ) : null; 
 }
 
 export default SuccessPage;
 
-// 스타일 정의
 const PageContainer = styled.div`
   padding: 20px;
   max-width: 800px;

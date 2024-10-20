@@ -100,6 +100,7 @@ const DogInfo = ({ dogData }) => {
     navigate("/Checkout", {
       state: {
         isFunding: true,
+        dogId: dogData.dogId, 
         name: dogData.name,
         totalAmount: parsedPrice,
       },
