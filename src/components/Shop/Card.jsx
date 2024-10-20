@@ -1,10 +1,183 @@
+// import React, { useState, useEffect } from "react";
+// import styled from "styled-components";
+// import { useNavigate, useLocation } from "react-router-dom";
+// import apiNoToken from "../../token/AxiosConfig"; // apiNoToken을 import
+
+// const Card = ({ category, searchResults }) => {
+//   // console.log(searchResults); 여기까진 정상적으로 데이터가 들어옴
+//   const navigate = useNavigate();
+//   const location = useLocation();
+
+//   const [products, setProducts] = useState([]);
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const [totalPages, setTotalPages] = useState(1);
+//   const [sortOrder, setSortOrder] = useState("latest");
+//   const [isLoading, setIsLoading] = useState(true);
+//   const itemsPerPage = 12;
+
+//   // URL의 쿼리 파라미터를 읽어와 정렬 순서와 페이지를 설정합니다.
+//   useEffect(() => {
+//     const queryParams = new URLSearchParams(location.search);
+//     const sortOrderFromUrl = queryParams.get("sortOrder");
+//     const pageFromUrl = queryParams.get("page");
+
+//     if (sortOrderFromUrl) setSortOrder(sortOrderFromUrl);
+//     if (pageFromUrl) setCurrentPage(parseInt(pageFromUrl, 10));
+//   }, [location]);
+
+//   // URL 파라미터를 업데이트하여 정렬 순서 및 페이지를 관리합니다.
+//   const updateUrlParams = (sortOrder, page) => {
+//     const queryParams = new URLSearchParams();
+
+//     if (category !== null) queryParams.set("category", category);
+//     if (sortOrder) queryParams.set("sortOrder", sortOrder);
+//     if (page) queryParams.set("page", page);
+
+//     navigate({
+//       search: queryParams.toString(),
+//     });
+//   };
+
+//   // 상품 데이터를 가져옵니다.
+//   useEffect(() => {
+//     const fetchProducts = async () => {
+//       setIsLoading(true);
+//       try {
+//         const endpoint = category
+//           ? `/shop/category/${category}`
+//           : "/shop/findList";
+
+//         const response = await apiNoToken.get(endpoint, {
+//           params: {
+//             page: currentPage,
+//             size: itemsPerPage,
+//             sortOrder,
+//           },
+//         });
+
+//         // API 응답 처리: dtoList가 배열인지 확인
+//         const fetchedProducts = Array.isArray(response.data.dtoList)
+//           ? response.data.dtoList
+//           : [];
+
+//         setProducts(fetchedProducts);
+//         setTotalPages(Math.ceil(response.data.total / itemsPerPage));
+//       } catch (error) {
+//         console.error("상품 데이터를 가져오는 중 오류 발생:", error);
+//       } finally {
+//         setIsLoading(false);
+//       }
+//     };
+//     // console.log(searchResults); 당연하겠지만 여기서도 정상적으로 데이터가 들어옴.
+//     // 검색 결과가 없으면 전체 리스트를 보여줍니다.
+//     if (!searchResults || searchResults.length === 0) {
+//       fetchProducts();
+//     } else {
+//       // 검색 결과가 있으면 검색 결과를 출력합니다.
+//       // console.log(searchResults);여기서도 정상적으로 들어옴.
+//       setProducts(searchResults.dtoList);
+//     }
+//   }, [category, currentPage, sortOrder, searchResults]);
+
+//   // 페이지 변경 처리
+//   const handlePageChange = (newPage) => {
+//     setCurrentPage(newPage);
+//     updateUrlParams(sortOrder, newPage);
+//   };
+
+//   // 정렬 순서 변경 처리
+//   const handleSortChange = (newSortOrder) => {
+//     setSortOrder(newSortOrder);
+//     updateUrlParams(newSortOrder, currentPage);
+//   };
+
+//   // 상품 클릭 시 상세 페이지로 이동
+//   const handleProductClick = (shopId) => {
+//     navigate(`/shop/${shopId}`);
+//   };
+
+//   // 로딩 상태일 때
+//   if (isLoading) {
+//     return <StyledWrapper>로딩 중...</StyledWrapper>;
+//   }
+
+//   // // 상품 데이터가 유효하지 않을 때
+//   // if (!Array.isArray(products)) {
+//   //   return <StyledWrapper>상품 데이터가 유효하지 않습니다.</StyledWrapper>;
+//   // }
+
+//   // 상품이 없을 때
+//   if (products.length === 0) {
+//     return (
+//       <StyledWrapper>
+//         <p className="no-products">해당 카테고리에 상품이 없습니다.</p>
+//       </StyledWrapper>
+//     );
+//   }
+
+//   return (
+//     <StyledWrapper>
+//       <div className="controls">
+//         <div className="sort-buttons">
+//           <button
+//             className={sortOrder === "latest" ? "active" : ""}
+//             onClick={() => handleSortChange("latest")}
+//           >
+//             최신순
+//           </button>
+//           <button
+//             className={sortOrder === "lowToHigh" ? "active" : ""}
+//             onClick={() => handleSortChange("lowToHigh")}
+//           >
+//             낮은 가격순
+//           </button>
+//           <button
+//             className={sortOrder === "highToLow" ? "active" : ""}
+//             onClick={() => handleSortChange("highToLow")}
+//           >
+//             높은 가격순
+//           </button>
+//         </div>
+//       </div>
+
+//       <div className="products-container">
+//         {products.map((product) => (
+//           <div
+//             className="card"
+//             key={product.shopId}
+//             onClick={() => handleProductClick(product.shopId)}
+//           >
+//             <div className="image-container">
+//               <img
+//                 src={product.imageUrl || "기본이미지경로"}
+//                 alt={product.name}
+//               />
+//             </div>
+//             <div className="card-content">
+//               <h3>{product.name}</h3>
+//               <p>{product.detail}</p>
+//               {/* <p className="price">{product.price.toLocaleString()}원</p>
+//                */}{" "}
+//               <p>
+//                 {product.price
+//                   ? product.price.toLocaleString()
+//                   : "가격 정보 없음"}
+//                 원
+//               </p>
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+//     </StyledWrapper>
+//   );
+// };
+
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
 import apiNoToken from "../../token/AxiosConfig"; // apiNoToken을 import
 
 const Card = ({ category, searchResults }) => {
-  // console.log(searchResults); 여기까진 정상적으로 데이터가 들어옴
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -55,7 +228,6 @@ const Card = ({ category, searchResults }) => {
           },
         });
 
-        // API 응답 처리: dtoList가 배열인지 확인
         const fetchedProducts = Array.isArray(response.data.dtoList)
           ? response.data.dtoList
           : [];
@@ -68,28 +240,20 @@ const Card = ({ category, searchResults }) => {
         setIsLoading(false);
       }
     };
-    // console.log(searchResults); 당연하겠지만 여기서도 정상적으로 데이터가 들어옴.
-    // 검색 결과가 없으면 전체 리스트를 보여줍니다.
+
     if (!searchResults || searchResults.length === 0) {
       fetchProducts();
     } else {
-      // 검색 결과가 있으면 검색 결과를 출력합니다.
-      // console.log(searchResults);여기서도 정상적으로 들어옴.
       setProducts(searchResults.dtoList);
-      // setProducts([...searchResults]);
-      // const productsToSet = Array.isArray(searchResults.dtoList)
-      //   ? searchResults.dtoList
-      //   : [searchResults];
-      // console.log(productsToSet);
-      // setProducts(productsToSet);
-      // console.log(products); 여기서 이상하게 변함. 이유: searchResealt.dtoList안에 검색결과가 있어서. searchList가 아니라.
     }
   }, [category, currentPage, sortOrder, searchResults]);
 
   // 페이지 변경 처리
   const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-    updateUrlParams(sortOrder, newPage);
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      updateUrlParams(sortOrder, newPage);
+    }
   };
 
   // 정렬 순서 변경 처리
@@ -107,11 +271,6 @@ const Card = ({ category, searchResults }) => {
   if (isLoading) {
     return <StyledWrapper>로딩 중...</StyledWrapper>;
   }
-
-  // // 상품 데이터가 유효하지 않을 때
-  // if (!Array.isArray(products)) {
-  //   return <StyledWrapper>상품 데이터가 유효하지 않습니다.</StyledWrapper>;
-  // }
 
   // 상품이 없을 때
   if (products.length === 0) {
@@ -162,8 +321,7 @@ const Card = ({ category, searchResults }) => {
             </div>
             <div className="card-content">
               <h3>{product.name}</h3>
-              {/* <p className="price">{product.price.toLocaleString()}원</p>
-               */}{" "}
+              <p>{product.detail}</p>
               <p>
                 {product.price
                   ? product.price.toLocaleString()
@@ -174,10 +332,33 @@ const Card = ({ category, searchResults }) => {
           </div>
         ))}
       </div>
+
+      {/* 페이지네이션 추가 */}
+      {/* <PaginationWrapper>
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            이전
+          </button>
+
+          <span>
+            {currentPage} / {totalPages}
+          </span>
+
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            다음
+          </button>
+        </PaginationWrapper> */}
     </StyledWrapper>
   );
 };
-// 스타일 정의는 그대로 유지합니다.
+
+export default Card;
+
 const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -302,4 +483,36 @@ const StyledWrapper = styled.div`
   }
 `;
 
-export default Card;
+const PaginationWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+
+  button {
+    background-color: #ff7600; /* 주황색 배경 */
+    color: white; /* 흰색 글자 */
+    border: none; /* 테두리 없애기 */
+    padding: 0.5rem 1rem; /* 패딩 추가 */
+    margin: 0 1rem; /* 버튼 사이의 간격 */
+    cursor: pointer; /* 커서 모양 변경 */
+    transition: background-color 0.3s; /* 배경색 변화 시 전환 효과 */
+    border-radius: 0.5rem; /* 모서리를 둥글게 설정 (값을 조절 가능) */
+
+    /* 호버 시 색상 변화 */
+    &:hover {
+      background-color: #d64229; /* 호버 시 어두운 주황색으로 변경 */
+    }
+
+    /* 비활성 버튼 색상 */
+    &:disabled {
+      background-color: gray; /* 비활성 버튼 색상 */
+      cursor: not-allowed; /* 비활성 버튼 시 커서 모양 변경 */
+    }
+  }
+
+  .active {
+    background-color: #0056b3; /* 활성화된 페이지의 배경색 */
+  }
+`;
