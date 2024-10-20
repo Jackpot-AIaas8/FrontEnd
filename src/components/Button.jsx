@@ -1,6 +1,6 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import HeadsetMicIcon from '@mui/icons-material/HeadsetMic';
+import HeadsetMicIcon from "@mui/icons-material/HeadsetMic";
 import Chatbot from "react-chatbot-kit";
 import config from "../chat-bot/config.js";
 import MessageParser from "../chat-bot/MessageParser.js";
@@ -8,7 +8,6 @@ import ActionProvider from "../chat-bot/ActionProvider.js";
 import "../chat-bot/style.css";
 import "remixicon/fonts/remixicon.css";
 import theme from "../config/theme.js";
-import Header from "../chat-bot/Header.js";
 
 const Button = () => {
   const [isChatbotOpen, setChatbotOpen] = useState(false);
@@ -20,14 +19,16 @@ const Button = () => {
   const chatClose = () => {
     setChatbotOpen(false); // 챗봇 닫기
   };
-  
-    return (
-      <>
-        <StyledWrapper>
-            <button onClick={chatOpen}>
-              <HeadsetMicIcon style={{ color: "white" , width:"30", height:"30"}} />
-            </button>
-            {isChatbotOpen && (
+
+  return (
+    <>
+      <StyledWrapper>
+        <button onClick={chatOpen}>
+          <HeadsetMicIcon
+            style={{ color: "white", width: "30", height: "30" }}
+          />
+        </button>
+        {isChatbotOpen && (
           <>
             <Chatbot
               config={config(chatClose)}
@@ -36,9 +37,9 @@ const Button = () => {
             />
           </>
         )}
-        </StyledWrapper>
-      </>
-    );
+      </StyledWrapper>
+    </>
+  );
 };
 
 const StyledWrapper = styled.div`
@@ -47,8 +48,8 @@ const StyledWrapper = styled.div`
     height: 70px;
     bottom: 40px;
     right: 40px;
-    background-color: ${theme.colors.lightOrange};;
-    color: #FFF;
+    background-color: ${theme.colors.lightOrange};
+    color: #fff;
     border-radius: 50px;
     text-align: center;
     font-size: 30px;

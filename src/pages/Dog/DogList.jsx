@@ -13,7 +13,7 @@ import image from "../../static/fundingBanner.jpg";
 const DogListPage = () => {
   const [dogsData, setDogsData] = useState([]);
   const [pageInfo, setPageInfo] = useState({
-    sort: "heart",
+    sort: "recent",
     page: 1,
     size: 9,
   });
@@ -59,7 +59,7 @@ const DogListPage = () => {
   };
 
   return (
-    <div className="container flex flex-column align-center justify-center">
+    <div className="container flex flex-column align-center ">
       <StyledImageBox className=" section-Image flex">
         <img src={image} alt="대표 사진 " style={{ width: "1200px" }} />
       </StyledImageBox>

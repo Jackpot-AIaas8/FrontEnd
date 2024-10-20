@@ -6,7 +6,7 @@ import YouTubeContainer from "../../detailComponent/YoutubeContainer";
 import DogHistory from "../../detailComponent/DogHistory";
 import FundStory from "../../detailComponent/FundStory";
 import styled from "styled-components";
-import { apiNoToken } from "../../token/AxiosConfig";
+import apiClient from "../../token/AxiosConfig";
 
 const DogDetail = () => {
   const { dogId } = useParams();
@@ -15,31 +15,44 @@ const DogDetail = () => {
   useEffect(() => {
     apiDogDetail();
   }, [dogId]);
+  console.log(dogData.isHeart);
 
   const apiDogDetail = async () => {
     try {
-      const response = await apiNoToken.get("dog/findOne", {
+      const response = await apiClient.get("dog/findOne", {
         params: { dogId: dogId },
       });
-      setDogData(response.data);
-      console.log(response.data);
+      const transformedData = {
+        ...response.data, // API에서 받은 데이터를 복사
+        gender: response.data.gender === 1 ? "여성" : "남성", // gender 변환
+        age: `${response.data.age}세`, // age 형식 변환
+      };
+
+      setDogData(transformedData);
+      console.log(transformedData);
     } catch (err) {
       console.error(err);
     }
   };
 
   return (
-    <StyledContainer className="container flex justify-center align-center">
-      <div className=" flex flex-column justify-center align-center detail-wrapper w-full">
-        <Info className="flex" dogData={dogData} />
+    <>
+      {dogData?.dogId && (
+        <StyledContainer>
+          <div className="section-dogDetail">
+            <Info dogData={dogData} />
 
-        <div className="flex flex-column align-center justify-center w-full">
-          <YouTubeContainer youtubeLink={dogData.videoUrl} />
-          <FundStory />
-        </div>
-        <DogHistory dogData={dogData} />
-      </div>
-    </StyledContainer>
+            <div className="flex flex-column align-center justify-center w-full">
+              {dogData.videoUrl && (
+                <YouTubeContainer youtubeLink={dogData.videoUrl} />
+              )}
+              <FundStory />
+            </div>
+            <DogHistory dogData={dogData} />
+          </div>
+        </StyledContainer>
+      )}
+    </>
   );
 };
 export default DogDetail;

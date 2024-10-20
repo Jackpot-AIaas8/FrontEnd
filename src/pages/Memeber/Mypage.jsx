@@ -4,43 +4,22 @@ import {
   StyledMypageWrapper,
   StyeldRightSection,
   StyledMypageSection,
-  StyledOneBoard,
   StyledFundHistory,
 } from "../../myPage/Mypage.styles";
 
 import { MockShopData } from "../../myPage/MockMypageData";
 
 import Grid2 from "@mui/material/Grid2";
-import {
-  Avatar,
-  Button,
-  CardContent,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  Typography,
-} from "@mui/material";
+import { Avatar, CardContent, Divider, Typography } from "@mui/material";
 import MypageSideBar from "../../myPage/MyPageSideBar";
 
 import apiClient from "../../token/AxiosConfig";
 import InquirySection from "../../myPage/InquirySection";
-import PurchaseHistorySection, {
-  PurchaseHistory,
-} from "../../myPage/ShopPurchaseSection";
+import PurchaseHistorySection from "../../myPage/ShopPurchaseSection";
+import EditUserSection from "../../myPage/EditUserSection";
 
 const Mypage = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
   const [currentPage, setCurrentPage] = useState("all");
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
-  const [name, setName] = useState("");
-  const [nickname, setNickname] = useState("");
-  const [address, setAddress] = useState("");
 
   const [infoData, setInfoData] = useState({
     memberId: "",
@@ -51,6 +30,11 @@ const Mypage = () => {
   });
 
   const [shopData, setShopData] = useState([]);
+  const [showAll, setShowAll] = useState({
+    purchase: false,
+    inquiry: false,
+    funding: false,
+  });
 
   useEffect(() => {
     const apiInfo = async () => {
@@ -105,102 +89,58 @@ const Mypage = () => {
     mockShopData();
   }, []);
 
-  const renderSingleContent = () => {
-    switch (currentPage) {
-      case "info":
-        return <InfoSection />;
-      case "purchase":
-        return <PurchaseHistorySection shopData={shopData} />;
-      case "inquiry":
-        return <InquirySection />;
-      case "funding":
-        return <FundHisotrySection />;
-      default:
-        return renderAllContent(); // 기본적으로 모든 섹션 렌더링
+  // section 조건 변경에 따른 렌더링 함수
+  const handleSectionChange = (section) => {
+    setCurrentPage(section);
+    if (section === "all") {
+      setShowAll({
+        purchase: false,
+        inquiry: false,
+        funding: false,
+      });
+    } else {
+      setShowAll({
+        purchase: false,
+        inquiry: false,
+        funding: false,
+        [section]: true,
+      });
     }
   };
 
   const renderAllContent = () => (
     <>
-      <InfoSection />
-      <div>
-        <h4 className="text-left p-0 m-0">구매내역</h4>
-        {shopData?.length ? (
-          shopData
-            .slice(0, 3)
-            .map((shopDatum) => (
-              <PurchaseHistory key={shopDatum.Id} shopData={shopDatum} />
-            ))
-        ) : (
-          <NoneContent />
-        )}
-      </div>
-
-      <InquirySection />
-      <FundHisotrySection />
+      <InfoSection infoData={infoData} />
+      <PurchaseHistorySection
+        shopData={shopData}
+        showAll={showAll[currentPage]}
+      />
+      <InquirySection showAll={showAll[currentPage]} />
+      <FundHistorySection showAll={showAll[currentPage]} />
     </>
   );
 
-  const editUser = () => {
-    return (
-      <>
-        <>
-          <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
-            <DialogTitle>개인정보 수정</DialogTitle>
-            <DialogContent>
-              <input
-                type="text"
-                placeholder="이메일 수정"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <Button onClick={(e) => e.preventDefault()} color="primary">
-                이메일 중복검사
-              </Button>
-              <input
-                type="password"
-                placeholder="비밀번호 수정"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="전화번호 수정"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="이름 수정"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="닉네임 수정"
-                value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
-              />
-              <Button onClick={(e) => e.preventDefault()} color="primary">
-                닉네임 중복검사
-              </Button>
-              <input
-                type="text"
-                placeholder="주소 수정"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseDialog} color="primary">
-                닫기
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </>
-      </>
-    );
+  const renderSingleContent = () => {
+    switch (currentPage) {
+      case "info":
+        return <EditUserSection infoData={infoData} />;
+      case "purchase":
+        return (
+          <PurchaseHistorySection
+            shopData={shopData}
+            showAll={showAll[currentPage]}
+          />
+        );
+      case "inquiry":
+        return <InquirySection showAll={showAll[currentPage]} />;
+      case "funding":
+        return <FundHistorySection showAll={showAll[currentPage]} />;
+      default:
+        return renderAllContent(); // 기본적으로 모든 섹션 렌더링
+    }
   };
+
+  // ---------------------------------------------------------------------
 
   const InfoSection = () => {
     return (
@@ -236,20 +176,20 @@ const Mypage = () => {
             <Typography variant="h6">Information</Typography>
             <Divider sx={{ my: 2 }} />
             <ul className="flex justify-around">
-              <li>
+              <li key="email">
                 <h3 className="info-title">Email</h3>
                 <span>{infoData.email}</span>
               </li>
-              <li>
+              <li key="phone">
                 <h3 className="info-title">Phone</h3>
                 <span>{infoData.phone}</span>
               </li>
 
-              <li>
+              <li key="nickName">
                 <h3 className="info-title">닉네임</h3>
                 <span>{infoData.nickName}</span>
               </li>
-              <li>
+              <li key="address">
                 <h3 className="info-title">{infoData.address}</h3>
                 <span>집 주소</span>
               </li>
@@ -260,7 +200,7 @@ const Mypage = () => {
     );
   };
 
-  const FundHisotrySection = () => {
+  const FundHistorySection = ({ showAll }) => {
     return (
       <StyledFundHistory>
         <h4 className="text-left p-0 m-0">펀딩내역</h4>
@@ -275,9 +215,6 @@ const Mypage = () => {
     e.preventDefault();
     // 조건이 눌렸을 경우 개인정보 수정 창이 떠야한다.
   };
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
-  };
 
   return (
     <>
@@ -287,7 +224,7 @@ const Mypage = () => {
           <MypageSideBar
             infoData={infoData}
             currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
+            handleSectionChange={handleSectionChange}
           />
           {/* RightSection */}
           <StyeldRightSection className="right-section flex flex-column  w-full justify-around  ">

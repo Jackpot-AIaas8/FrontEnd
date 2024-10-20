@@ -6,15 +6,16 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import apiClient from "../token/AxiosConfig";
 import { useNavigate } from "react-router-dom";
 
-const InquirySection = () => {
+const InquirySection = ({ showAll }) => {
   const [inquiry, setInquiry] = useState([]) || {};
   const navigate = useNavigate();
 
   useEffect(() => {
     const apiOninquiry = async () => {
       try {
+        const pageSize = showAll ? 10 : 3; // 최대 10개의 데이터를 가져옵니다.
         const response = await apiClient.get("board/findAllAskMyPage", {
-          params: { page: 1, size: 3 },
+          params: { page: 1, size: pageSize },
         });
 
         setInquiry(response.data);
@@ -23,13 +24,13 @@ const InquirySection = () => {
       }
     };
     apiOninquiry();
-  }, []);
+  }, [showAll]);
 
   return (
     <StyledOneBoard>
       <h4 className="text-left p-0 m-0">나의 문의내역</h4>
       {inquiry?.length ? (
-        inquiry.slice(0, 3).map((board) => (
+        inquiry.map((board) => (
           <div
             key={board.boardId}
             className="section-oneBoard flex flex-row justify-between align-center"
