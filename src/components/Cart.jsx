@@ -131,7 +131,7 @@ const Cart = () => {
                 <div className="left-section">
                   {cartItems.length === 0 ? (
                     <div className="empty-cart">
-                      <p className="p-2" style={{ height: "150px" }}>
+                      <p className="p-2" style={{ height: "200px" }}>
                         장바구니에 상품이 없습니다
                       </p>
                       <Button
