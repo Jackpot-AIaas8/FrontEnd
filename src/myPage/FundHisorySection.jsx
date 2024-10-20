@@ -3,6 +3,10 @@ import styled from "styled-components";
 import apiClient from "../token/AxiosConfig";
 import { NoneContent } from "../pages/Memeber/Mypage";
 
+import { ProgressBar } from "./ProgressBar";
+import { Avatar } from "@mui/material";
+import getTimeAgo from "../detailComponent/GetTImeAgo";
+
 export const FundHistorySection = ({ showAll }) => {
   const [fundDTO, setFundDTO] = useState([]);
 
@@ -16,7 +20,8 @@ export const FundHistorySection = ({ showAll }) => {
         const extractedData = fundList?.map((fund) => {
           const dog = dogResponseList?.find((dog) => dog.dogId === fund.dogId); // dogResponseList가 있을 때만 찾음
           return {
-            // regDate: fund.regDate,
+            regDate: fund.regDate,
+            name: dog.name,
             collection: fund.collection,
             title: dog.title,
             species: dog.species,
@@ -24,7 +29,7 @@ export const FundHistorySection = ({ showAll }) => {
             fundMemberNum: dog.fundMemberNum,
             gender: dog.gender === 1 ? "남성" : "여성",
             heart: dog.heart,
-            mainImage: dog.mainImage
+            mainImage: dog.mainImage,
           };
         });
         setFundDTO(extractedData);
@@ -39,20 +44,53 @@ export const FundHistorySection = ({ showAll }) => {
   const displayedData = showAll ? fundDTO : fundDTO.slice(0, 3);
 
   const FundItem = ({ fund }) => {
+    console.log(fund);
+    const categories = [fund.species, `${fund.age}살`, fund.gender];
     return (
-      <div className="section-fundingHistory">
-        <h5 className="fundTitle">{fund.title}</h5>
-        <div className="section-image">
-        <img className="fundImage" src={fund.mainImage} alt="" />
+      <StyledFundingSection className="flex flex-row">
+        <h5 className="funding-title">{fund.title}</h5>
+        {/* 왼쪽: 이미지와 이름 */}
+        <div className="flex flex-column align-center">
+          <Avatar
+            alt={fund.name}
+            src={fund.mainImage}
+            sx={{ width: 150, height: 150, marginBottom: 2, boxShadow: 3 }}
+          />
+          <p style={{ fontSize: "1.5rem", fontWeight: "bold", margin: 0 }}>
+            {fund.name}
+          </p>
         </div>
-        <span>{fund.species}</span> 
-        <span> {fund.age}살</span>
-        <p className="fundMembers">참여자 수: {fund.fundMemberNum}</p>
-        <p className="fundGenger">{fund.gender}</p>
-        <p className="fundCollection">{fund.collection}원</p>
-        {/* <p>등록일: {fund.regDate}</p> */}
-        <p className="fundHearts">좋아하는 사람수: {fund.heart}명</p>
-      </div>
+
+        {/* 오른쪽: 개 정보 (두 개의 열로 구성) */}
+
+        <StyledFundDetailSection>
+          <div>
+          <div>
+            <p style={{ fontWeight: "bold" }}>나이</p>
+            <p>{fund.age}살</p>
+
+            <p style={{ fontWeight: "bold", marginTop: "16px" }}>후원금액</p>
+            <p>{fund.collection}</p>
+
+            <p style={{ fontWeight: "bold", marginTop: "16px" }}>성별</p>
+            <p>{fund.gender}</p>
+          </div>
+
+          <div>
+            <p style={{ fontWeight: "bold" }}>좋아요 수</p>
+            <p>{fund.heart}</p>
+
+            <p style={{ fontWeight: "bold", marginTop: "16px" }}>품종</p>
+            <p>{fund.species}</p>
+            <span>{fund.regDate.slice(0,10)}</span>
+            <span style={{ fontWeight: "bold" }}>{getTimeAgo(fund.regDate)}</span>
+            
+          </div>
+          </div>
+          
+        </StyledFundDetailSection>
+        <ProgressBar value={50} />
+      </StyledFundingSection>
     );
   };
 
@@ -69,20 +107,47 @@ export const FundHistorySection = ({ showAll }) => {
 };
 
 const StyledFundHistory = styled.div`
- h5{
-  font-size: 1.3rem;
-  text-align: left;
- }
- .section-image{
-  height: 10%;
-  min-width:100px;
-  max-width: 200px;
-  
- }
- img{
   width: 100%;
-  object-fit: scale-down;
+  .section-fundingHistory {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
 
- }
+  h5 {
+    font-size: 1.3rem;
+    text-align: center;
+    width: 100%;
+  }
+ 
 
+`;
+// --------------------------------------------------
+const StyledFundingSection = styled.div`
+  border-radius: 8px;
+  width: 100%;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 30px 0;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  align-items: center;
+`;
+const StyledFundDetailSection = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 두 개의 열로 나눔 */
+  gap: 20px;
+
+  p {
+    margin: 0;
+
+    strong {
+      font-weight: bold;
+    }
+  }
 `;
