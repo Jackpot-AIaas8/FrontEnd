@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import axios from "axios";
+import apiClient from "../../token/AxiosConfig";
 
 // 검색 컴포넌트
 const Search = ({ setSearchResults }) => {
@@ -8,13 +8,22 @@ const Search = ({ setSearchResults }) => {
 
   const handleSearch = async () => {
     try {
-      const response = await axios.get(`http://localhost:8181/shop/search?name=${name}`);
+      const response = await apiClient.get(`shop/search`, {
+        params: { name, page: 1, size: 10 },
+      });
+      // console.log(response);
       if (response.data.length === 0) {
         alert(`${name}에 대한 검색결과가 없습니다.`);
       }
       setSearchResults(response.data);
     } catch (error) {
       console.error("검색 중 오류 발생:", error);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
     }
   };
 
@@ -28,6 +37,7 @@ const Search = ({ setSearchResults }) => {
           placeholder="Search..."
           value={name}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
         <svg
           onClick={handleSearch}
@@ -43,6 +53,7 @@ const Search = ({ setSearchResults }) => {
     </StyledWrapper>
   );
 };
+export default Search;
 
 const StyledWrapper = styled.div`
   position: relative;
@@ -51,7 +62,8 @@ const StyledWrapper = styled.div`
   .group {
     display: flex;
     align-items: center;
-    max-width: 1000px;
+    max-width: 1200px;
+    width: 1200px !important ;
     padding: 10px;
     margin: 0 auto;
   }
@@ -83,5 +95,3 @@ const StyledWrapper = styled.div`
     cursor: pointer;
   }
 `;
-
-export default Search;
