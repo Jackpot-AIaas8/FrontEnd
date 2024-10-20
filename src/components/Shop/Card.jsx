@@ -55,6 +55,7 @@ const Card = ({ category, searchResults }) => {
           },
         });
 
+
         // API 응답 처리: dtoList가 배열인지 확인
         const fetchedProducts = Array.isArray(response.data.dtoList)
           ? response.data.dtoList
@@ -85,6 +86,9 @@ const Card = ({ category, searchResults }) => {
       // console.log(products); 여기서 이상하게 변함. 이유: searchResealt.dtoList안에 검색결과가 있어서. searchList가 아니라.
     }
   }, [category, currentPage, sortOrder, searchResults]);
+
+  console.log("현재 products 상태:", products); // 상태 업데이트 후 products 확인
+
 
   // 페이지 변경 처리
   const handlePageChange = (newPage) => {
@@ -155,13 +159,15 @@ const Card = ({ category, searchResults }) => {
             onClick={() => handleProductClick(product.shopId)}
           >
             <div className="image-container">
-              <img
-                src={product.imageUrl || "기본이미지경로"}
-                alt={product.name}
-              />
+            {console.log("Product 이미지 URL:", product.mainImage)} {/* 이미지 URL을 확인 */}
+            <img
+              src={product.mainImage || "기본이미지경로"}
+              alt={product.name}
+            />
             </div>
             <div className="card-content">
               <h3>{product.name}</h3>
+
               <p>{product.detail}</p>
               {/* <p className="price">{product.price.toLocaleString()}원</p>
                */}{" "}
