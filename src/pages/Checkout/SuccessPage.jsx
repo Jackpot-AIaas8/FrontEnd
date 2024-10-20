@@ -9,7 +9,6 @@ export function SuccessPage() {
   const navigate = useNavigate();
   const [isConfirming, setIsConfirming] = useState(true);
 
-  // sessionStorage에서 데이터 가져오기
   const paymentData = JSON.parse(sessionStorage.getItem("paymentData")) || {}; 
   console.log("sessionStorage에서 가져온 결제 데이터:", paymentData);
 
@@ -18,18 +17,16 @@ export function SuccessPage() {
     customerName = "",
     customerMobilePhone = "",
     userAddress = "",
-    amount = 0,
     deliveryFee = 3000,
     orderId,
     shopId = "",
     orderName: name,
-    isFunding = false, // 펀딩 여부 추가
-    name: dogName, // 펀딩일 경우 강아지 이름
-    dogId = "", // 강아지 ID 추가
-    products = [] // 상품 배열 정보
+    isFunding = false, 
+    name: dogName = "", 
+    dogId = "", 
+    productNames = [] 
   } = paymentData;
 
-  // sessionStorage에서 가져온 orderId가 존재하는지 확인
   useEffect(() => {
     if (!orderId) {
       console.log("orderId가 없습니다. 결제 정보가 유실되었습니다.");
@@ -42,24 +39,25 @@ export function SuccessPage() {
       orderId: searchParams.get("orderId") || orderId,
       amount: searchParams.get("amount"),
       paymentKey: searchParams.get("paymentKey"),
-      isFunding, // 펀딩 여부 포함
+      isFunding, 
     };
 
     // 펀딩일 경우의 데이터
     const fundingData = isFunding ? {
-      orderName: dogName, // 펀딩일 때 강아지 이름을 orderName에 담기
-      dogId, // 펀딩일 때 강아지 ID를 dogId로 설정
+      orderName: dogName, 
+      dogId, 
     } : {};
 
     // 상품일 경우의 데이터
     const productData = !isFunding
       ? {
-          shopId, // 상품일 때는 shopId 사용
-          orderName: name, // 상품 이름
+          shopId, 
+          orderName: name, 
           memberID,
           name: customerName,
           phone: customerMobilePhone,
           address: userAddress,
+          productNames 
         }
       : {};
 
@@ -74,7 +72,7 @@ export function SuccessPage() {
 
     async function confirm() {
       try {
-        console.log("전송할 requestData:", requestData); // <- 이 부분을 추가
+        console.log("전송할 requestData:", requestData); 
 
         const response = await apiClient.post("/api/confirm", requestData, {
           headers: {
@@ -92,7 +90,6 @@ export function SuccessPage() {
         setPaymentInfo(response.data);
         setIsConfirming(false);
 
-        // 펀딩일 때 강아지 페이지로 이동
         if (isFunding) {
           navigate(`/dog/${dogId}`, {
             state: { successMessage: "펀딩에 성공했습니다!" },
@@ -123,8 +120,8 @@ export function SuccessPage() {
       <Subtitle>주문이 완료되었습니다. 감사합니다!</Subtitle>
       <Section>
         <SectionTitle>상품배송 정보</SectionTitle>
-        {products.length > 0 ? (
-          products.map((product, index) => (
+        {productNames.length > 0 ? (
+          productNames.map((product, index) => (
             <InfoRow key={index}>
               <InfoLabel>{product.shopName} ({product.quantity}개)</InfoLabel>
             </InfoRow>
@@ -168,7 +165,7 @@ export function SuccessPage() {
         <Button primary={true}>쇼핑 계속하기</Button>
       </ButtonContainer>
     </PageContainer>
-  ) : null; // 펀딩일 경우 이 페이지를 렌더링하지 않음
+  ) : null; 
 }
 
 export default SuccessPage;
