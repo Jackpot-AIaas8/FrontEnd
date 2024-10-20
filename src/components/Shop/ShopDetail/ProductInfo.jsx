@@ -99,8 +99,7 @@ const ProductInfo = ({ shopId }) => {
           quantity: quantity,
           totalAmount: totalPrice,
         }],
-        totalAmount: totalPrice + 3000,
-
+        totalAmount: totalPrice 
       },
     });
   };
