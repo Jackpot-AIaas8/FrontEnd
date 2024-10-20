@@ -33,3 +33,7 @@ export const formatPhoneNumber = (value) => {
   }
   return value; // 3자리 이하일 때 그대로 반환
 };
+
+export const getOnlyNumbers = (value) => {
+  return value.replace(/[^0-9]/g, ""); // 숫자가 아닌 것은 모두 제거
+};

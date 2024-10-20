@@ -93,7 +93,7 @@ export const StyeldRightSection = styled.div`
   gap: 15px;
 
   h4 {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     line-height: 1.5rem;
   }
 

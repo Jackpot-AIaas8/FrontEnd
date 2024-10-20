@@ -8,6 +8,7 @@ import { apiNoToken } from "../../token/AxiosConfig";
 import usePasswordCheck from "../../login/components/usePasswordCheck";
 import {
   formatPhoneNumber,
+  getOnlyNumbers,
   validateEmail,
   validateName,
   validateNickname,
@@ -64,7 +65,7 @@ const SignUp = () => {
     const value = event.target.value;
     const formattedValue = formatPhoneNumber(value); // 포맷팅된 전화번호
     setDisplayPhone(formattedValue);
-    setFormData({ ...formData, phone: value.replace(/[^0-9]/g, "") }); // 숫자만 저장
+    setFormData({ ...formData, phone: getOnlyNumbers(value) }); // 숫자만 저장
   };
 
   const checkNickName = async (event) => {
