@@ -23,12 +23,15 @@ export const StyledInfo = styled.div`
   }
   .mainImage {
     object-fit: scale-down;
+    width: 100%;
+    height: auto;
   }
 
   .right-section {
     flex: 1;
     width: 100%;
     flex-wrap: wrap;
+    gap:30px;
 
     .category-section {
       font-size: 1rem; /* body2 크기와 동일 */
