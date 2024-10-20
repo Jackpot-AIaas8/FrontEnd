@@ -18,7 +18,9 @@ import InquirySection from "../../myPage/InquirySection";
 import PurchaseHistorySection from "../../myPage/ShopPurchaseSection";
 import EditUserSection from "../../myPage/EditUserSection";
 import {FundHistorySection} from "../../myPage/FundHisorySection";
-import DogProfile from "../../myPage/FundHistoryDemo";
+import { formatPhoneNumber } from "../../login/components/Validation";
+import MypagePwModal from "../../myPage/PwdModal";
+
 
 
 const Mypage = () => {
@@ -38,6 +40,10 @@ const Mypage = () => {
     inquiry: false,
     funding: false,
   });
+
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림 상태
+  const [targetPage, setTargetPage] = useState("all"); // 이동할 페이지
+  const [isPasswordVerified, setIsPasswordVerified] = useState(false); // 비밀번호 인증 상태
   
 
   useEffect(() => {
@@ -88,22 +94,38 @@ const Mypage = () => {
 
   // section 조건 변경에 따른 렌더링 함수
   const handleSectionChange = (section) => {
-    setCurrentPage(section);
-    if (section === "all") {
-      setShowAll({
-        purchase: false,
-        inquiry: false,
-        funding: false,
-      });
+    if (section === "info") {
+      setTargetPage(section);
+      if (!isPasswordVerified) {
+        setIsModalOpen(true); // 인증 모달 열기
+      } else {
+        setCurrentPage(section); // 이미 인증된 경우 바로 페이지 변경
+      }
     } else {
-      setShowAll({
-        purchase: false,
-        inquiry: false,
-        funding: false,
-        [section]: true,
-      });
+      setCurrentPage(section);
+      if (section === "all") {
+        setShowAll({
+          purchase: false,
+          inquiry: false,
+          funding: false,
+        });
+      } else {
+        setShowAll({
+          purchase: false,
+          inquiry: false,
+          funding: false,
+          [section]: true,
+        });
+      }
     }
   };
+
+  const handlePasswordSuccess = () => {
+    setIsPasswordVerified(true);
+    setIsModalOpen(false); // 모달 닫기
+    setCurrentPage(targetPage); // 인증 성공 후 targetPage로 이동
+  };
+
 
   const renderAllContent = () => (
     <>
@@ -180,7 +202,7 @@ const Mypage = () => {
               </li>
               <li key="phone">
                 <h3 className="info-title">Phone</h3>
-                <span>{infoData.phone}</span>
+                <span>{formatPhoneNumber(infoData.phone) }</span>
               </li>
 
               <li key="nickName">
@@ -219,6 +241,11 @@ const Mypage = () => {
             {currentPage === "all" ? renderAllContent() : renderSingleContent()}
           </StyeldRightSection>
         </StyledMypageWrapper>
+        <MypagePwModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={handlePasswordSuccess}
+      />
       </div>
     </>
   );

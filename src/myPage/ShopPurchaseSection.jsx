@@ -51,7 +51,7 @@ export const PurchaseHistory = ({ shopData, theme }) => {
         <div className="product-section align-center">
           <p className="productTitle">{shopData.name}</p>
           <span className="productPrice">{shopData.totalPrice}</span>
-          <span>*</span>
+          <span className="div">*</span>
           <span className="quantity">{shopData.quantity}개</span>
         </div>
         <button className="btn_detailed">상세정보</button>
@@ -92,7 +92,7 @@ export const StyledPurchaseSection = styled.div`
     }
     
   }
-  .section-left>*:last-child {
+  .section-left >*:last-child {
       margin-bottom: 0;
     }
   .btn_detailed {
@@ -108,5 +108,9 @@ export const StyledPurchaseSection = styled.div`
   .product-section {
     margin-left: 20px;
   }
+  .div {
+    margin : 0 5px;
+  }
+  
 `;
 export default PurchaseHistorySection;

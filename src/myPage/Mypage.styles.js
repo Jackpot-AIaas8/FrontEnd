@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const StyledMypageWrapper = styled.div`
   padding: 30px;
   gap: 100px;
-
+width: 100%;
   max-width: 1200px;
 `;
 

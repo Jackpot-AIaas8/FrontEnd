@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import React, { useState } from "react";
 import styled from "styled-components";
 import {
@@ -10,6 +10,7 @@ import {
   formatPhoneNumber,
   getOnlyNumbers,
 } from "../login/components/Validation";
+import MypagePwModal from "./PwdModal";
 
 const EditUserSection = ({ infoData }) => {
   const [formUser, setFormUser] = useState({
@@ -27,7 +28,10 @@ const EditUserSection = ({ infoData }) => {
   });
 
   const [isEditing, setIsEditing] = useState(false); // 수정 모드 관리
-
+  const [isModalOpen, setIsModalOpen] = useState(false); // 비밀번호 인증 모달 상태
+  const [isPasswordVerified, setIsPasswordVerified] = useState(false); // 비밀번호 인증 상태
+  const [nextAction, setNextAction] = useState("");
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   // 입력 변경 처리 함수
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -71,18 +75,23 @@ const EditUserSection = ({ infoData }) => {
 
   // 수정 모드로 전환
   const handleEdit = () => {
-    setIsEditing(true);
+    if (!isPasswordVerified) {
+      setNextAction("edit"); // 다음 작업을 수정으로 설정
+      setIsModalOpen(true); // 비밀번호 인증 모달 열기
+    } else {
+      setIsEditing(true); // 비밀번호 인증 완료 시 수정 모드로 전환
+    }
   };
 
   // 저장 처리 함수
   const handleSave = () => {
     setIsEditing(false);
 
-    // 서버로 전송할 데이터 준비 (전화번호에서 숫자만 추출)
     const dataToSend = {
       ...formUser,
       phone: getOnlyNumbers(formUser.phone),
     };
+    
 
     console.log("수정된 회원 정보:", dataToSend);
     // 여기에서 API 호출 등을 통해 서버에 저장하는 로직을 추가하세요
@@ -105,10 +114,29 @@ const EditUserSection = ({ infoData }) => {
     });
   };
 
+
+  const handlePasswordSuccess = () => {
+    setIsPasswordVerified(true);
+    setIsModalOpen(false);
+
+    if (nextAction === "edit") {
+      setIsEditing(true); // 인증 성공 후 수정 모드로 전환
+    } else if (nextAction === "delete") {
+      console.log("회원 탈퇴 처리");
+      // 탈퇴 처리 로직 실행
+    }
+  };
+
   // 회원 탈퇴 처리 함수
   const handleDelete = () => {
-    console.log("회원 탈퇴");
-    // 회원 탈퇴 로직을 추가하세요
+    setIsDeleteConfirmOpen(true); // 탈퇴 확인 모달 열기
+  };
+
+  // 탈퇴 확인 모달에서 "예"를 눌렀을 때
+  const handleConfirmDelete = () => {
+    setIsDeleteConfirmOpen(false); // 탈퇴 확인 모달 닫기
+    setNextAction("delete"); // 다음 작업을 탈퇴로 설정
+    setIsModalOpen(true); // 비밀번호 인증 모달 열기
   };
 
   // 닉네임 중복 검사 함수
@@ -116,6 +144,8 @@ const EditUserSection = ({ infoData }) => {
     // 닉네임 중복 검사 로직 추가
     console.log("닉네임 중복 검사:", formUser.nickName);
   };
+
+  
 
   const input = [
     { label: "이메일", name: "email", type: "text", readOnly: true },
@@ -223,6 +253,30 @@ const EditUserSection = ({ infoData }) => {
           )}
         </div>
       </form>
+
+      <Dialog
+        open={isDeleteConfirmOpen}
+        onClose={() => setIsDeleteConfirmOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        
+      >
+        <DialogTitle>회원 탈퇴 확인</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            정말로 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsDeleteConfirmOpen(false)}>아니오</Button>
+          <Button onClick={handleConfirmDelete}>예</Button>
+        </DialogActions>
+      </Dialog>
+      <MypagePwModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={handlePasswordSuccess}
+      />
     </StyledEditMember>
   );
 };
