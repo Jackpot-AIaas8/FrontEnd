@@ -57,7 +57,12 @@ export function SuccessPage() {
           name: customerName,
           phone: customerMobilePhone,
           address: userAddress,
-          productNames 
+          productNames: productNames.map(item => ({
+            shopName: item.shopName || item.name,
+            quantity: item.quantity || 1,
+            shopId: item.shopId,
+            totalProductPrice: (item.productPrice || 0) * (item.quantity || 1), 
+          }))
         }
       : {};
 
