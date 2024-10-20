@@ -54,6 +54,9 @@ const Card = ({ category, searchResults }) => {
           },
         });
 
+        console.log("API 응답 데이터:", response.data.dtoList); // 여기서 응답 데이터를 확인합니다.
+
+
         setProducts(response.data.dtoList || []);
         setTotalPages(Math.ceil(response.data.total / itemsPerPage));
       } catch (error) {
@@ -65,6 +68,9 @@ const Card = ({ category, searchResults }) => {
 
     fetchProducts();
   }, [category, currentPage, sortOrder]);
+
+  console.log("현재 products 상태:", products); // 상태 업데이트 후 products 확인
+
 
   // 페이지 변경 처리
   const handlePageChange = (newPage) => {
@@ -128,15 +134,15 @@ const Card = ({ category, searchResults }) => {
             onClick={() => handleProductClick(product.shopId)}
           >
             <div className="image-container">
-              <img
-                src={product.imageUrl || "기본이미지경로"}
-                alt={product.name}
-              />
+            {console.log("Product 이미지 URL:", product.mainImage)} {/* 이미지 URL을 확인 */}
+            <img
+              src={product.mainImage || "기본이미지경로"}
+              alt={product.name}
+            />
             </div>
             <div className="card-content">
               <h3>{product.name}</h3>
-              <p>{product.detail}</p>
-              <p className="price">{product.price.toLocaleString()}원</p>
+            <p className="price">{product.price.toLocaleString()}원</p>
             </div>
           </div>
         ))}

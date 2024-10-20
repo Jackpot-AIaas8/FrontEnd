@@ -114,13 +114,10 @@ const ProductInfo = ({ productId }) => {
     <>
       <TopSection>
         <LeftSection>
-          <img
-            src={
-              product.imageUrl ||
-              "https://img.biteme.co.kr/product/750/2308ae4a580a9e017ad5b07084b8cc51.jpg"
-            }
-            alt={product.name}
-          />
+        <img
+              src={product.mainImage || "기본이미지경로"}
+              alt={product.name}
+            />
         </LeftSection>
 
         <RightSection>
