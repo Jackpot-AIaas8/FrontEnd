@@ -2,14 +2,37 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import styled from "styled-components";
+import React, {useEffect, useState} from "react";
+import apiClient from "../../token/AxiosConfig";
 
-function AuctionCarousel() {
-  const auctionCarousels = [
-    "https://sitem.ssgcdn.com/84/39/75/item/1000572753984_i1_1200.jpg",
-    "https://sitem.ssgcdn.com/84/39/75/item/1000572753984_i4_1200.jpg",
-    "https://sitem.ssgcdn.com/84/39/75/item/1000572753984_i5_1200.jpg",
-    "https://sitem.ssgcdn.com/84/39/75/item/1000572753984_i6_1200.jpg",
-  ];
+function AuctionCarousel({shopId}) {
+  const [product, setProductDetails] = useState({
+
+    detail: "",
+    detailImages: [],
+  });
+  useEffect(() => {
+    const fetchProductDetails = async () => {
+      console.log(shopId);
+      try {
+        const response = await apiClient.get(`/shop/findOne/${shopId}`);
+        const data = response.data;
+
+        setProductDetails({
+          detail: data.detail || "",
+          detailImages: [
+            data.detailImage1,
+            data.detailImage2,
+            data.detailImage3,
+            data.detailImage4,
+          ],
+        });
+      } catch (error) {
+        console.error("상품 세부 정보를 불러오는 중 오류 발생:", error);
+      }
+    };
+    fetchProductDetails();
+  }, [shopId]);
 
   const settings = {
     dots: false,
@@ -24,10 +47,10 @@ function AuctionCarousel() {
   return (
     <SliderContainer>
       <Slider {...settings}>
-        {auctionCarousels.map((carousel, index) => (
+        {product.detailImages.map((image, index) => (
           <div key={index} style={{borderRadius:'20px', border:'none'}}>
             <img
-              src={carousel}
+              src={image}
               alt={`carousel-${index}`}
               style={{ height: "400px", width: "100%", borderRadius:'20px', border:'none' }}
             />
