@@ -1,15 +1,5 @@
-// class MessageParser {
-//     constructor(actionProvider, state) {
-//       this.actionProvider = actionProvider;
-//       this.state = state;
-//     }
-  
-//     parse(message) {
-//       console.log(message);
-//     }
-//   }
-  
-//   export default MessageParser;
+import { apiNoToken } from "../token/AxiosConfig";
+
 class MessageParser {
   constructor(actionProvider, state) {
     this.actionProvider = actionProvider;
@@ -17,26 +7,25 @@ class MessageParser {
   }
 
   parse(message) {
-    console.log(message);
   
     // 백엔드로 메시지 전송
-    fetch("http://localhost:8181/api/chatbot/send", {
-      method: "POST",
+    apiNoToken.post("/api/chatbot/send", 
+      {
+        message:message,
+      },
+      {
       headers: {
         "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message: message }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // 받은 메시지를 파싱하고 로그로 확인
-        console.log("Response data:", data);
+      }
+    }
+  )
+      .then((response) => {
         
         // data.message가 실제로 존재하는지 확인하고 처리
-        if (data && data.message) {
-          this.actionProvider.handleBotResponse(data.message);
+        if (response.data && response.data.message) {
+          this.actionProvider.handleBotResponse(response.data.message);
         } else {
-          console.error("Invalid response format:", data);
+          console.error("Invalid response format:", response.data);
         }
       })
       .catch((error) => {
