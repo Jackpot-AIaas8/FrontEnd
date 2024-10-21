@@ -2,29 +2,30 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import apiNoToken from "../../token/AxiosConfig";
 
-const Search = ({ setSearchResults }) => {
-  const [name, setQuery] = useState(""); // 빈 문자열로 초기화
+const Search = ({ setSearchResults, setName }) => {
+  const [query, setQuery] = useState(""); 
 
   const handleSearch = async () => {
-    if (!name.trim()) { // 검색어가 비어있으면 검색하지 않음
+    if (!query.trim()) { 
       alert("검색어를 입력해주세요.");
       return;
     }
 
     try {
       const response = await apiNoToken.get(`shop/search`, {
-        params: { name, page: 1, size: 12 },
+        params: { name: query, page: 1, size: 12 },
       });
-      console.log("검색 응답 데이터:", response.data); // 응답 데이터 확인
 
-      if (response.data.dtoList.length === 0) {
-        alert(`${name}에 대한 검색결과가 없습니다.`);
+      if (!response.data || !response.data.dtoList || response.data.dtoList.length === 0) {
+        alert(`${query}에 대한 검색결과가 없습니다.`);
+        setSearchResults([]); // 검색결과 초기화
       } else {
-        console.log("Setting search results:", response.data.dtoList); // 확인용 로그 추가
         setSearchResults(response.data.dtoList || []);
+        setName(query); 
       }
     } catch (error) {
       console.error("검색 중 오류 발생:", error);
+      alert("검색 중 오류가 발생했습니다. 다시 시도해주세요."); // 오류 알림 추가
     }
   };
 
@@ -32,6 +33,11 @@ const Search = ({ setSearchResults }) => {
     if (e.key === "Enter") {
       handleSearch();
     }
+  };
+
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setQuery(value);
   };
 
   return (
@@ -42,8 +48,8 @@ const Search = ({ setSearchResults }) => {
           className="input"
           type="search"
           placeholder="Search..."
-          value={name}
-          onChange={(e) => setQuery(e.target.value)}
+          value={query}
+          onChange={handleChange}
           onKeyDown={handleKeyDown}
         />
         <svg
@@ -60,6 +66,7 @@ const Search = ({ setSearchResults }) => {
     </StyledWrapper>
   );
 };
+
 export default Search;
 
 

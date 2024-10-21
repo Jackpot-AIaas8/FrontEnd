@@ -2,7 +2,63 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import apiNoToken from "../../../token/AxiosConfig"; // API 클라이언트 임포트
 
-// 전체 스타일을 하나의 컨테이너 컴포넌트로 관리
+const ProductDetail = ({ shopId }) => {
+  const [product, setProductDetails] = useState({
+    
+    detail: "",
+    detailImages: [],
+  });
+  console.log("Received shopId: ", shopId);
+
+  useEffect(() => {
+
+    const fetchProductDetails = async () => {
+      try {
+        const response = await apiNoToken.get(`/shop/findOne/${shopId}`);
+        const data = response.data;
+
+        setProductDetails({
+          detail: data.detail || "",
+          detailImages: [
+            data.detailImage1,
+            data.detailImage2,
+            data.detailImage3,
+            data.detailImage4,
+          ],
+        });
+      } catch (error) {
+        console.error("상품 세부 정보를 불러오는 중 오류 발생:", error);
+      }
+    };
+
+    fetchProductDetails();
+  }, [shopId]);
+
+  return (
+    <StyledContainer>
+      <div className="box-wrapper">
+        <h2 className="title">상품 정보</h2>
+      </div>
+      <div className="history-section">
+        <div className="pictures-section">
+          {product.detailImages.map((image, index) => (
+            <div key={index}>
+              <img src={image} alt={`detail-image-${index}`} />
+            </div>
+          ))}
+        </div>
+
+        <div className="dog-info-section">
+          <h3>상세 설명</h3>
+          <p>{product.detail}</p>
+        </div>
+      </div>
+    </StyledContainer>
+  );
+};
+
+export default ProductDetail;
+
 const StyledContainer = styled.div`
   margin-top: 20px;
 
@@ -53,62 +109,3 @@ const StyledContainer = styled.div`
     justify-content: center;
   }
 `;
-
-// 컴포넌트 렌더링
-const ProductDetail = ({ shopId }) => {
-  const [product, setProductDetails] = useState({
-    
-    detail: "",
-    detailImages: [],
-  });
-  console.log("Received shopId: ", shopId);
-
-  useEffect(() => {
-    // API를 통해 상품 정보를 가져옵니다.
-    const fetchProductDetails = async () => {
-      try {
-        const response = await apiNoToken.get(`/shop/findOne/${shopId}`);
-        const data = response.data;
-
-        // 서버에서 가져온 상품 설명과 이미지를 상태에 저장
-        setProductDetails({
-          detail: data.detail || "",
-          detailImages: [
-            data.detailImage1,
-            data.detailImage2,
-            data.detailImage3,
-            data.detailImage4,
-          ],
-        });
-      } catch (error) {
-        console.error("상품 세부 정보를 불러오는 중 오류 발생:", error);
-      }
-    };
-
-    fetchProductDetails();
-  }, [shopId]);
-
-  return (
-    <StyledContainer>
-      <div className="box-wrapper">
-        <h2 className="title">상품 정보</h2>
-      </div>
-      <div className="history-section">
-        <div className="pictures-section">
-          {product.detailImages.map((image, index) => (
-            <div key={index}>
-              <img src={image} alt={`detail-image-${index}`} />
-            </div>
-          ))}
-        </div>
-
-        <div className="dog-info-section">
-          <h3>상세 설명</h3>
-          <p>{product.detail}</p>
-        </div>
-      </div>
-    </StyledContainer>
-  );
-};
-
-export default ProductDetail;

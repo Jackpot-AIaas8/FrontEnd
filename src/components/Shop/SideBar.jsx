@@ -92,7 +92,7 @@ const SidebarContainer = styled(Box)`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 10px;
   height: 100%;
-  min-height: 700px;
+  min-height: 1200px;
   overflow-y: auto;
 `;
 
