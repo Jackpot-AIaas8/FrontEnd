@@ -4,7 +4,7 @@ import { logout } from "../token/Logout";
 export const deleteUser = async () => {
   try {
     const response = await apiClient.delete(`member/remove`);
-
+    console.log(response.status);
     if (response.status === 204) {
       alert("회원탈퇴에 성공했습니다.");
       logout();

@@ -16,13 +16,14 @@ export const FundHistorySection = ({ showAll }) => {
       try {
         const response = await apiClient.get("dog/fundListMyPage");
         const { fundList, dogResponseList } = response.data;
-
+        console.log(response, "1111111111111111111111111111");
         // fundList에 있는 정보만을 우선적으로 사용
         const extractedData = fundList?.map((fund) => {
           const dog = dogResponseList?.find((dog) => dog.dogId === fund.dogId); // dogResponseList가 있을 때만 찾음
           return {
             regDate: fund.regDate,
             name: dog.name,
+            fundCollection: dog.fundCollection,
             collection: fund.collection,
             title: dog.title,
             species: dog.species,
@@ -46,7 +47,6 @@ export const FundHistorySection = ({ showAll }) => {
 
   const FundItem = ({ fund }) => {
     console.log(fund);
-    const categories = [fund.species, `${fund.age}살`, fund.gender];
     return (
       <StyledFundingSection className="flex flex-row">
         <h5 className="funding-title">{fund.title}</h5>
@@ -80,21 +80,26 @@ export const FundHistorySection = ({ showAll }) => {
                 <p>{fund.heart}</p>
               </div>
               <div className="grid-item">
-                <p style={{ fontWeight: "bold"}}>품종</p>
+                <p style={{ fontWeight: "bold" }}>품종</p>
                 <p>{fund.species}</p>
               </div>
-            </div >
+            </div>
             <div className="regDate-section flex justify-end">
               <span className="regDate">{fund.regDate.slice(0, 10)}</span>
               <span className="regDateAgo">{getTimeAgo(fund.regDate)}</span>
             </div>
           </div>
           <div className="section-progressBar p-0 w-full">
-            <span style={{ fontWeight: "bold", marginRight:"20px" }}>
+            <span style={{ fontWeight: "bold", marginRight: "20px" }}>
               후원금액
             </span>
-            <span><AnimatedNumber value={fund.collection}/></span>
-            <ProgressBar value={50} />
+            <span>
+              <AnimatedNumber value={fund.collection} />
+            </span>
+            <ProgressBar
+              value={fund.collection}
+              fundCollection={fund.fundCollection}
+            />
           </div>
         </StyledFundDetailSection>
       </StyledFundingSection>
@@ -143,7 +148,7 @@ const StyledFundingSection = styled.div`
   flex-wrap: wrap;
   align-items: center;
 
-  h5{
+  h5 {
     font-size: 1.5rem;
     font-weight: bold;
     text-align: left;
@@ -160,25 +165,21 @@ const StyledFundDetailSection = styled.div`
     strong {
       font-weight: bold;
     }
-    
   }
   .dogInfo-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2열로 나누기 */
-  gap: 10px; 
-  border: 1px solid #3333;
-  box-shadow: 10px -20px 15px rgba(255, 161, 80, 0.8);
-
-}
-.grid-item{
-  display: flex;
-  flex-direction: column;
-  
-}
-.regDate-section {
-  font-size: 0.7rem;
-  gap: 20px;
-  margin-top: 20px;
-}
-
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2열로 나누기 */
+    gap: 10px;
+    border: 1px solid #3333;
+    box-shadow: 10px -20px 15px rgba(255, 161, 80, 0.8);
+  }
+  .grid-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .regDate-section {
+    font-size: 0.7rem;
+    gap: 20px;
+    margin-top: 20px;
+  }
 `;

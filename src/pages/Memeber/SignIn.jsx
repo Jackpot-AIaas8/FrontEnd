@@ -7,7 +7,7 @@ import InputField from "../../login/components/InputField";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../token/AuthContext";
 import { apiNoToken } from "../../token/AxiosConfig";
-import FindMember from "../../login/components/FIndMember";
+import FindMember from "../../login/components/FindMember";
 
 const SignIn = () => {
   const [user, setUser] = useState({ email: "", pwd: "" });
