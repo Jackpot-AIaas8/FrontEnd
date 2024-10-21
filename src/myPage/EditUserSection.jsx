@@ -1,11 +1,4 @@
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from "@mui/material";
+import { Button } from "@mui/material";
 import React, { useState } from "react";
 import styled from "styled-components";
 import {
@@ -19,7 +12,7 @@ import {
 } from "../login/components/Validation";
 import MypagePwModal from "./PwdModal";
 
-import { checkNickName, deleteUser, editUser } from "./api";
+import { checkNickName, editUser } from "./api";
 
 const EditUserSection = ({ infoData }) => {
   const [formUser, setFormUser] = useState({
@@ -39,7 +32,6 @@ const EditUserSection = ({ infoData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false); // 비밀번호 인증 모달 상태
   const [isPasswordVerified, setIsPasswordVerified] = useState(false); // 비밀번호 인증 상태
   const [nextAction, setNextAction] = useState(""); // 비밀번호 인증 후 다음 작업 지정
-  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false); // 탈퇴 확인 모달
 
   // ------------------------
   // 1. 입력값 검증 및 상태 업데이트
@@ -130,20 +122,6 @@ const EditUserSection = ({ infoData }) => {
     });
   };
 
-  // ------------------------
-  // 3. 회원 탈퇴 처리 로직
-  // ------------------------
-  const handleDeleteUser = () => {
-    setIsDeleteConfirmOpen(true); // 탈퇴 확인 모달 열기
-  };
-
-  const handleConfirmDelete = async () => {
-    // 탈퇴 확인 후 처리
-    setIsDeleteConfirmOpen(false);
-    setNextAction("delete");
-    setIsModalOpen(true); // 비밀번호 확인 후 탈퇴 처리
-  };
-
   const handlePasswordSuccess = () => {
     // 비밀번호 인증 성공 시 처리
     setIsPasswordVerified(true);
@@ -151,8 +129,6 @@ const EditUserSection = ({ infoData }) => {
 
     if (nextAction === "edit") {
       setIsEditing(true); // 수정 모드로 전환
-    } else if (nextAction === "delete") {
-      deleteUser(); // 회원 탈퇴 처리
     }
   };
 
@@ -233,9 +209,6 @@ const EditUserSection = ({ infoData }) => {
             </>
           ) : (
             <>
-              <Button onClick={handleDeleteUser} color="primary">
-                탈퇴하기
-              </Button>
               <Button onClick={handleEditMode} color="primary">
                 수정하기
               </Button>
@@ -243,24 +216,6 @@ const EditUserSection = ({ infoData }) => {
           )}
         </div>
       </form>
-
-      <Dialog
-        open={isDeleteConfirmOpen}
-        onClose={() => setIsDeleteConfirmOpen(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle>회원 탈퇴 확인</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            정말로 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsDeleteConfirmOpen(false)}>아니오</Button>
-          <Button onClick={handleConfirmDelete}>예</Button>
-        </DialogActions>
-      </Dialog>
       <MypagePwModal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
