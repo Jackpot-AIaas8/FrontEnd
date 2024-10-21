@@ -2,26 +2,31 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import apiNoToken from "../../token/AxiosConfig";
 
-const Search = ({ setSearchResults }) => { // setSearchResults로 변경
-  const [name, setQuery] = useState("");
+const Search = ({ setSearchResults }) => {
+  const [name, setQuery] = useState(""); // 빈 문자열로 초기화
 
-const handleSearch = async () => {
-  try {
-    const response = await apiNoToken.get(`shop/search`, {
-      params: { name, page: 1, size: 12 },
-    });
-    console.log("검색 응답 데이터:", response.data); // 응답 데이터 확인
-
-    if (response.data.dtoList.length === 0) {
-      alert(`${name}에 대한 검색결과가 없습니다.`);
-    } else {
-      console.log("Setting search results:", response.data.dtoList); // 확인용 로그 추가
-      setSearchResults(response.data.dtoList || []);
+  const handleSearch = async () => {
+    if (!name.trim()) { // 검색어가 비어있으면 검색하지 않음
+      alert("검색어를 입력해주세요.");
+      return;
     }
-  } catch (error) {
-    console.error("검색 중 오류 발생:", error);
-  }
-};
+
+    try {
+      const response = await apiNoToken.get(`shop/search`, {
+        params: { name, page: 1, size: 12 },
+      });
+      console.log("검색 응답 데이터:", response.data); // 응답 데이터 확인
+
+      if (response.data.dtoList.length === 0) {
+        alert(`${name}에 대한 검색결과가 없습니다.`);
+      } else {
+        console.log("Setting search results:", response.data.dtoList); // 확인용 로그 추가
+        setSearchResults(response.data.dtoList || []);
+      }
+    } catch (error) {
+      console.error("검색 중 오류 발생:", error);
+    }
+  };
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -56,6 +61,7 @@ const handleSearch = async () => {
   );
 };
 export default Search;
+
 
 const StyledWrapper = styled.div`
   position: relative;

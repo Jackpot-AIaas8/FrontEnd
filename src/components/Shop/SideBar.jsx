@@ -17,11 +17,9 @@ import StrollerIcon from "@mui/icons-material/Stroller";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import GavelIcon from "@mui/icons-material/Gavel";
 import styled from "styled-components";
-import apiNoToken from "../../token/AxiosConfig";
 
-const Sidebar = ({ setSelectedCategory, onNavigate }) => {
+const Sidebar = ({ setSelectedCategory }) => {
   const navigate = useNavigate();
-  const handleNavigate = onNavigate || navigate;
 
   const menuItemsGroup1 = [
     { text: "식품", icon: <RestaurantIcon />, category: 0 },
@@ -35,22 +33,11 @@ const Sidebar = ({ setSelectedCategory, onNavigate }) => {
     { text: "실시간 경매", icon: <GavelIcon />, link: "/auction" },
   ];
 
-  const handleCategorySelect = async (item) => {
-    try {
-      if (setSelectedCategory) {
-        setSelectedCategory(item.category); // 카테고리 상태 업데이트
-      }
-      
-      // API 호출 및 데이터 업데이트
-      const response = await apiNoToken.get(`/shop/category/${item.category}`);
-      console.log("카테고리별 데이터:", response.data);
-      
-      // 카테고리별 데이터가 필요에 따라 이곳에서 처리 가능
-
-      handleNavigate(`/shop?category=${item.category}`);
-    } catch (error) {
-      console.error("카테고리 선택 중 오류 발생:", error);
+  const handleCategorySelect = (item) => {
+    if (setSelectedCategory) {
+      setSelectedCategory(item.category);
     }
+    navigate(`/shop?category=${item.category}`);
   };
 
   return (
@@ -100,24 +87,24 @@ const SidebarContainer = styled(Box)`
   width: 100%;
   max-width: 250px;
   min-width: 200px;
-  background: #ffffff; /* Box와 Accordion의 배경색을 동일하게 설정 */
+  background: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 10px;
-  height: 100%; 
+  height: 100%;
   min-height: 700px;
   overflow-y: auto;
 `;
 
 const AccordionWrapper = styled(Accordion)`
   margin-bottom: 10px;
-  background-color: #ffffff; /* Box와 동일한 배경색으로 설정 */
-  border: none; /* 기본 테두리 제거 */
-  box-shadow: none; /* 기본 그림자 제거 */
+  background-color: #ffffff;
+  border: none;
+  box-shadow: none;
   & .MuiAccordionSummary-root {
-    background-color: #ffffff; /* AccordionSummary의 배경색도 동일하게 설정 */
+    background-color: #ffffff;
   }
   & .MuiAccordionDetails-root {
-    padding: 0; /* Accordion 내부 여백 최소화 */
+    padding: 0;
   }
 `;

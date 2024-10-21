@@ -18,15 +18,11 @@ const Cart = () => {
       if (response.data.length === 0) {
         setCartItems([]);
       } else {
-        const groupedItems = response.data.reduce((acc, item) => {
-          const existingItem = acc.find((i) => i.shopId === item.shopId);
-          if (existingItem) {
-            existingItem.quantity += 1;
-          } else {
-            acc.push({ ...item, quantity: 1 });
-          }
-          return acc;
-        }, []);
+        // 서버에서 받아온 수량을 그대로 반영
+        const groupedItems = response.data.map((item) => ({
+          ...item,
+          quantity: item.quantity, // 서버에서 받아온 수량을 그대로 사용
+        }));
         setCartItems(groupedItems);
         calculateTotalPrice(groupedItems);
       }
@@ -34,6 +30,8 @@ const Cart = () => {
       console.error("Error fetching cart items:", error);
     }
   };
+  
+  
 
   const calculateTotalPrice = (items) => {
     const total = items.reduce((acc, item) => {
@@ -45,36 +43,45 @@ const Cart = () => {
   const updateQuantity = async (shopId, delta) => {
     const updatedItems = cartItems.map((item) => {
       if (item.shopId === shopId) {
-        const newQuantity = Math.max(1, item.quantity + delta);
+        const newQuantity = Math.max(1, item.quantity + delta); // 최소 수량을 1로 유지
         return { ...item, quantity: newQuantity };
       }
       return item;
     });
+  
     setCartItems(updatedItems);
     calculateTotalPrice(updatedItems);
-
-    const cartItemToUpdate = updatedItems.find(
-      (item) => item.shopId === shopId
-    );
+  
+    const cartItemToUpdate = updatedItems.find((item) => item.shopId === shopId);
     if (cartItemToUpdate) {
-      await apiClient.post(`/cart/update`, null, {
-        params: {
-          cartId: cartItemToUpdate.cartId,
-          quantity: cartItemToUpdate.quantity,
-        },
+      // 여기에 console.log 추가
+      console.log("Updating quantity for cart item:", {
+        cartId: cartItemToUpdate.cartId,
+        quantity: cartItemToUpdate.quantity,
       });
+      try {
+        await apiClient.put(`/cart/update/${cartItemToUpdate.cartId}`, {
+          quantity: cartItemToUpdate.quantity,
+        });
+      } catch (error) {
+        console.error("Error updating item quantity:", error);
+      }
     }
   };
-
+  
   const handleRemoveItem = async (cartId) => {
     try {
       await apiClient.delete(`cart/remove`, { params: { cartId: cartId } });
       alert("장바구니에서 상품이 삭제되었습니다.");
-      window.location.reload();
+  
+      // 상태를 갱신하지 않고 페이지 전체를 새로고침하는 대신 상태 갱신
+      setCartItems(cartItems.filter((item) => item.cartId !== cartId));
+      calculateTotalPrice(cartItems.filter((item) => item.cartId !== cartId));
     } catch (error) {
       console.error("Error fetching cart items:", error);
     }
   };
+  
 
   useEffect(() => {
     fetchCartItems();
@@ -101,9 +108,6 @@ const Cart = () => {
   return (
     <PageContainer>
       <ContentWrapper>
-        <SidebarContainer>
-          <Sidebar />
-        </SidebarContainer>
         <DetailContentWrapper>
           <StyledWrapper>
             <div className="card">
@@ -242,11 +246,6 @@ const ContentWrapper = styled.div`
   gap: 40px; /* 사이드바와 메인 콘텐츠 사이의 간격 */
   margin-top: 150px; /* NavBar와의 간격을 추가 */
 `;
-
-const SidebarContainer = styled.div`
-  flex: 0 0 250px; /* 사이드바의 고정 너비 설정 */
-`;
-
 const DetailContentWrapper = styled.div`
   flex-grow: 1;
   display: flex;
@@ -269,8 +268,11 @@ const StyledWrapper = styled.div`
       0px 105px 63px rgba(0, 0, 0, 0.05), 0px 47px 47px rgba(0, 0, 0, 0.09),
       0px 12px 26px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    height: 600px; /* 원하는 높이값을 지정 */
+    min-height: 900px; /* 기본 최소 높이 */
+    overflow: hidden; /* 필요에 따라 추가 가능 */
   }
+
+
 
   .header {
     width: 100%;

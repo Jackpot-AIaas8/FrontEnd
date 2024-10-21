@@ -12,10 +12,7 @@ const Card = ({ name }) => {
   const [totalPages, setTotalPages] = useState(1);
   const [sortOrder, setSortOrder] = useState("latest");
   const [isLoading, setIsLoading] = useState(true);
-  const [categories] = useState([]); // 카테고리 상태 추가
-  const [selectedCategory, setSelectedCategory] = useState(null); // 선택된 카테고리 상태 추가
   const itemsPerPage = 12;
-
 
   // URL에서 현재 페이지와 정렬 순서, 선택된 카테고리 가져오기
   useEffect(() => {
@@ -26,82 +23,41 @@ const Card = ({ name }) => {
 
     setSortOrder(sortOrderFromUrl);
     setCurrentPage(pageFromUrl);
-    setSelectedCategory(categoryFromUrl || null);
+    fetchProducts(categoryFromUrl || null, pageFromUrl, sortOrderFromUrl);
   }, [location.search]);
 
-  const updateUrlParams = useCallback(
-    (newSortOrder, newPage, newCategory) => {
-      const queryParams = new URLSearchParams(location.search);
-      if (newCategory) {
-        queryParams.set("category", newCategory);
-      } else {
-        queryParams.delete("category");
-      }
-      queryParams.set("sortOrder", newSortOrder);
-      queryParams.set("page", newPage);
-      navigate({ search: queryParams.toString() }, { replace: true });
-    },
-    [navigate, location.search]
-  );
-
   // 상품 목록 가져오기
-  const fetchProducts = useCallback(async () => {
+  const fetchProducts = async (category, page, sortOrder) => {
     setIsLoading(true);
     try {
       let endpoint;
-      const params = { page: currentPage, size: itemsPerPage, sortOrder };
+      const params = { page, size: itemsPerPage, sortOrder };
 
       if (name) {
-        // 이름이 있으면 해당 이름으로 검색
         endpoint = `/shop/search`;
         params.name = name;
-      } else if (selectedCategory) {
-        // 선택된 카테고리가 있으면 해당 카테고리로 검색
-        endpoint = `/shop/category/${selectedCategory}`;
+      } else if (category) {
+        endpoint = `/shop/category/${category}`;
       } else {
-        // 기본 전체 상품 목록
         endpoint = "/shop/findList";
       }
 
       const response = await apiNoToken.get(endpoint, { params });
-
-      const fetchedProducts = response.data.dtoList || [];
-      setFetchedProducts(fetchedProducts);
+      setFetchedProducts(response.data.dtoList || []);
       setTotalPages(Math.ceil(response.data.total / itemsPerPage));
     } catch (error) {
       console.error("상품 데이터를 가져오는 중 오류 발생:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [name, selectedCategory, currentPage, sortOrder, itemsPerPage]);
-
-  // 데이터를 가져오는 useEffect
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+  };
 
   // 페이지 변경 처리
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
-      updateUrlParams(sortOrder, newPage, selectedCategory);
+      navigate({ search: `?page=${newPage}&sortOrder=${sortOrder}` }, { replace: true });
     }
-  };
-
-  // 정렬 순서 변경 처리
-  const handleSortChange = (newSortOrder) => {
-    if (newSortOrder !== sortOrder) {
-      setSortOrder(newSortOrder);
-      setCurrentPage(1); // 정렬 순서 변경 시 페이지를 1로 초기화
-      updateUrlParams(newSortOrder, 1, selectedCategory);
-    }
-  };
-
-  // 카테고리 변경 처리
-  const handleCategoryChange = (category) => {
-    setSelectedCategory(category);
-    setCurrentPage(1); // 카테고리 변경 시 페이지를 1로 초기화
-    updateUrlParams(sortOrder, 1, category);
   };
 
   // 상품 클릭 시 상세 페이지로 이동
@@ -109,12 +65,10 @@ const Card = ({ name }) => {
     navigate(`/shop/${shopId}`);
   };
 
-  // 로딩 상태일 때
   if (isLoading) {
     return <StyledWrapper>로딩 중...</StyledWrapper>;
   }
 
-  // 상품이 없을 때
   if (fetchedProducts.length === 0) {
     return (
       <StyledWrapper>
@@ -125,42 +79,6 @@ const Card = ({ name }) => {
 
   return (
     <StyledWrapper>
-      <div className="controls">
-        {/* 카테고리 선택 버튼 추가 */}
-        <div className="category-buttons">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              className={selectedCategory === category.id ? "active" : ""}
-              onClick={() => handleCategoryChange(category.id)}
-            >
-              {category.name}
-            </button>
-          ))}
-        </div>
-
-        <div className="sort-buttons">
-          <button
-            className={sortOrder === "latest" ? "active" : ""}
-            onClick={() => handleSortChange("latest")}
-          >
-            최신순
-          </button>
-          <button
-            className={sortOrder === "lowToHigh" ? "active" : ""}
-            onClick={() => handleSortChange("lowToHigh")}
-          >
-            낮은 가격순
-          </button>
-          <button
-            className={sortOrder === "highToLow" ? "active" : ""}
-            onClick={() => handleSortChange("highToLow")}
-          >
-            높은 가격순
-          </button>
-        </div>
-      </div>
-
       <div className="products-container">
         {fetchedProducts.map((product) => (
           <div
@@ -169,38 +87,22 @@ const Card = ({ name }) => {
             onClick={() => handleProductClick(product.shopId)}
           >
             <div className="image-container">
-              <img
-                src={product.mainImage || "기본이미지경로"}
-                alt={product.name}
-              />
+              <img src={product.mainImage || "기본이미지경로"} alt={product.name} />
             </div>
             <div className="card-content">
               <h3>{product.name}</h3>
-              <p>
-                {product.price
-                  ? product.price.toLocaleString()
-                  : "가격 정보 없음"}
-                원
-              </p>
+              <p>{product.price ? product.price.toLocaleString() : "가격 정보 없음"} 원</p>
             </div>
           </div>
         ))}
       </div>
 
       <PaginationWrapper>
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
+        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
           이전
         </button>
-        <span>
-          {currentPage} / {totalPages}
-        </span>
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
+        <span>{currentPage} / {totalPages}</span>
+        <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
           다음
         </button>
       </PaginationWrapper>
@@ -209,6 +111,7 @@ const Card = ({ name }) => {
 };
 
 export default Card;
+
 
 
 const PaginationWrapper = styled.div`

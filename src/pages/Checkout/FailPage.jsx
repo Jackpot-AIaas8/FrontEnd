@@ -1,19 +1,98 @@
-import { useSearchParams } from "react-router-dom";
+// FailPage.jsx
+import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import styled from "styled-components";
 
 export function FailPage() {
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  // URL에서 전달된 실패 메시지 및 코드 추출
+  const searchParams = new URLSearchParams(location.search);
+  const message = searchParams.get("message") || "결제가 실패했습니다.";
+  const code = searchParams.get("code") || "오류 코드 없음";
+
+  const handleRetry = () => {
+    navigate(-1); // 이전 페이지로 이동 (재시도)
+  };
+
+  const handleGoHome = () => {
+    navigate("/shop"); 
+  };
 
   return (
-    <div className="result wrapper">
-      <div className="box_section">
-        <h2>
-          결제 실패
-        </h2>
-        <p>{`에러 코드: ${searchParams.get("code")}`}</p>
-        <p>{`실패 사유: ${searchParams.get("message")}`}</p>
-      </div>
-    </div>
+    <PageWrapper>
+      <PageContainer>
+        <Title>결제 실패</Title>
+        <Subtitle>아래의 오류로 인해 결제가 실패하였습니다:</Subtitle>
+        <MessageBox>
+          <ErrorMessage>오류 메시지: {message}</ErrorMessage>
+          <ErrorCode>오류 코드: {code}</ErrorCode>
+        </MessageBox>
+        <ButtonContainer>
+          <Button onClick={handleGoHome} primary>쇼핑몰로 돌아가기</Button>
+        </ButtonContainer>
+      </PageContainer>
+    </PageWrapper>
   );
 }
 
 export default FailPage;
+
+const PageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 50vh;
+  margin-top: 400px;
+`;
+
+const PageContainer = styled.div`
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  flex: 1;
+`;
+
+const Title = styled.h1`
+  font-size: 28px;
+  margin-bottom: 10px;
+`;
+
+const Subtitle = styled.p`
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 20px;
+`;
+
+const MessageBox = styled.div`
+  padding: 20px;
+  margin-bottom: 20px;
+`;
+
+const ErrorMessage = styled.p`
+  font-size: 16px;
+  color: #f00;
+  margin-bottom: 10px;
+`;
+
+const ErrorCode = styled.p`
+  font-size: 14px;
+  color: #999;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+`;
+
+const Button = styled.button`
+  padding: 10px 20px;
+  border: none;
+  background-color: ${({ primary }) => (primary ? "#ffa150" : "#ddd")};
+  color: ${({ primary }) => (primary ? "#fff" : "#333")};
+  font-size: 16px;
+  cursor: pointer;
+`;
+
