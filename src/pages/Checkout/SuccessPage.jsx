@@ -9,7 +9,7 @@ export function SuccessPage() {
   const navigate = useNavigate();
   const [isConfirming, setIsConfirming] = useState(true);
 
-  const paymentData = JSON.parse(sessionStorage.getItem("paymentData")) || {}; 
+  const paymentData = JSON.parse(sessionStorage.getItem("paymentData")) || {};
   console.log("sessionStorage에서 가져온 결제 데이터:", paymentData);
 
   const {
@@ -76,6 +76,7 @@ export function SuccessPage() {
 
     console.log("전송할 requestData:", requestData);
 
+
     async function confirm() {
       try {
         console.log("전송할 requestData:", requestData); 
@@ -107,7 +108,7 @@ export function SuccessPage() {
       }
     }
 
-    confirm();
+      confirm();
   }, [searchParams, navigate, orderId, isFunding]);
 
   if (isConfirming) {
@@ -126,17 +127,11 @@ export function SuccessPage() {
       <Subtitle>주문이 완료되었습니다. 감사합니다!</Subtitle>
       <Section>
         <SectionTitle>상품배송 정보</SectionTitle>
-        {productNames.length > 0 ? (
-          productNames.map((product, index) => (
+        {productNames.map((product, index) => (
             <InfoRow key={index}>
-              <InfoLabel>{product.shopName} ({product.quantity}개)</InfoLabel>
+              <InfoLabel>{product.name} ({product.quantity}개)</InfoLabel>
             </InfoRow>
-          ))
-        ) : (
-          <InfoRow>
-            <InfoLabel>{name} (1개)</InfoLabel>
-          </InfoRow>
-        )}
+        ))}
       </Section>
       <InfoContainer>
         <LeftColumn>

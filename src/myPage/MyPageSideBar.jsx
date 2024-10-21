@@ -12,6 +12,7 @@ const MypageLeftSection = ({ currentPage, handleSectionChange, infoData }) => {
     { id: "purchase", label: "구매 내역" },
     { id: "inquiry", label: "1:1 문의 내역" },
     { id: "funding", label: "펀딩내역" },
+    { id: "deleteUser", label: "회원 탈퇴" },
   ];
 
   return (
