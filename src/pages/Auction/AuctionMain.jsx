@@ -111,7 +111,7 @@ const AuctionMain = () => {
       <Container style={{ marginTop: "200px" }}>
         <Grid container rowSpacing={10} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid size={7} style={{ height: "400px" }}>
-            <AuctionCarousel />
+           <AuctionCarousel shopId={auction.shopId}/>
           </Grid>
           <Grid size={5}>
             <Grid container spacing={2}>
