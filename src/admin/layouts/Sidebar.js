@@ -28,6 +28,11 @@ const navigation = [
         icon: "bi bi-basket",
     },
     {
+        title: "판매내역",
+        href: "/admin/ordertable",
+        icon: "bi bi-clipboard2",
+    },
+    {
         title: "게시판",
         href: "/admin/boardtable",
         icon: "bi bi-clipboard2",
