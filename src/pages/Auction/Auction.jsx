@@ -66,7 +66,20 @@ const Auction = () => {
             alert("현재 입찰가가 최고 입찰가보다 높아야 합니다.");
         }
     };
-
+    const handleAuctionUpdate = useCallback(
+        (data) => {
+            if (data.auctionStatus === 1 || new Date(data.startTime) < new Date(auction.startTime)) {
+                setAuction(data);  // WebSocket에서 받은 경매 데이터를 상태로 업데이트
+                console.log("경매 바뀜 : " , auction)
+                return auction;
+            }
+            if (data.auctionStatus === 2) {
+                // 경매가 종료되었을 때 다음 경매 데이터를 가져옴
+                navigate('/auction') // 현재 또는 다음 경매 데이터를 가져오는 함수
+            }
+        },
+        [auction]
+    );
     const fetchCurrentAuction = useCallback(() => {
         apiClient
             .get(`/auction/current`)  // 하나의 엔드포인트로 현재 또는 다음 경매를 가져옴
@@ -107,22 +120,48 @@ const Auction = () => {
         console.log("경매 종료 이벤트 수신:", data);
         setAuction(prevAuction => ({ ...prevAuction, auctionStatus: 2 }));
         setIsAuctionEnded(true); // 경매 종료 상태로 설정
-        // 여기서 추가적인 종료 처리 로직을 작성
+        endAuction();
     }, []);
 
     const handleLastBidder = (winner) => {
         console.log(`경매 종료, 낙찰자는 ${winner}`);
+        if (winner === user.name) {
+            const proceedToPayment = window.confirm("낙찰 되셨습니다! 결재창으로 이동 하시겠습니까? 취소를 할시 낙찰이 취소됩니다.");
+            if (proceedToPayment) {
+                // 결제 페이지로 리디렉션
+                navigate("/Checkout",{
+                    state:{
+                        isFunding: false,
+                        productNames: [{
+                            shopId : auction.shopId,
+                            name: auction.shopName,
+                            productPrice: highestBidPrice,
+                            quantity:1,
+                            totalAmount: highestBidPrice
+                        }],
+                       totalAmount: highestBidPrice
+                    }
+                }) // 결제 페이지로 이동하는 코드 추가
+            }
+        } else {
+            alert(`경매 종료! 낙찰자는 ${winner}입니다.`);
+            navigate('/auction');
+        }
     };
 
     const endAuction = useCallback(() => {
+        // if (isAuctionEnded) {
+        //     console.log("경매 종료 API가 이미 호출되었습니다.");  // 이미 종료된 경매 처리 방지
+        //     return;
+        // }
         if (auction.auctionStatus === 2) {
             console.log("경매가 이미 종료되었습니다.");  // 경매가 이미 종료된 경우 더 이상 요청을 보내지 않음
+            console.log("종료: auction" + auction);
             return;
         }
-        apiClient.get(`/bid/end`)  // 경매 종료 API 호출
+        apiClient.get('/bid/end')  // 경매 종료 API 호출
             .then(() => {
                 console.log("경매 종료 API 호출 완료");
-
                 // 입찰 테이블의 데이터를 삭제 (필요에 따라 API 호출)
                 apiClient.delete(`/bid/remove?auctionId=${auction.auctionId}&memberID=${user.memberID}`)
                     .then(() => {
@@ -142,7 +181,7 @@ const Auction = () => {
             if (timeLeft === 0 && auction.auctionStatus !== 2) {
                 endAuction(); // 타이머가 0이 되었을 때 경매 종료 함수 호출
             }
-        }, [timeLeft, endAuction]);
+        }, [timeLeft, endAuction, auction.auctionStatus]);
 
         // useEffect에서 fetchCurrentAuction을 사용
         useEffect(() => {
@@ -153,10 +192,12 @@ const Auction = () => {
 
         return (
             <>
-                <AuctionWebSocket onAuctionUpdate={setAuction} onTimerUpdate={handleTimerUpdate}
-                                  onBidUpdate={handleBidUpdate} onAuctionStart={auction.auctionStatus}
-                                  onAuctionEnd={handleAuctionEnd}
-                                  onLastBidder={handleLastBidder}/> {/* 실시간 입찰 업데이트 처리 */}
+                <AuctionWebSocket  onTimerUpdate={handleTimerUpdate}
+                                   onBidUpdate={handleBidUpdate}
+                                   onAuctionEnd={handleAuctionEnd}
+                                   onLastBidder={handleLastBidder}
+                                   onAuctionUpdate={handleAuctionUpdate}
+                /> {/* 실시간 입찰 업데이트 처리 */}
                 <Container>
                     <Grid container spacing={6} columns={16} style={{marginTop: "200px", height: "600px"}}>
                         <Grid size={9}>
@@ -167,9 +208,8 @@ const Auction = () => {
                             <Stack spacing={4}>
                                 <Stack spacing={2}>
                                     <Typography variant="h4">낙찰까지 남은 시간</Typography>
-                                    {/*<Timer onTimerUpdate={timeLeft}/>*/}
                                     <Typography variant="h4">
-                                        남은 시간: {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+                                        {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
                                     </Typography> {/* 남은 시간을 분:초 형식으로 표시 */}
                                 </Stack>
                                 <Stack>
