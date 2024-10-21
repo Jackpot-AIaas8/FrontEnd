@@ -34,7 +34,9 @@ const PurchaseHistorySection = ({ showAll }) => {
     return acc;
   }, {});
 
-  const displayedOrderKeys = showAll ? Object.keys(groupedOrders) : Object.keys(groupedOrders).slice(0, 3);
+  const displayedOrderKeys = showAll
+    ? Object.keys(groupedOrders)
+    : Object.keys(groupedOrders).slice(0, 3);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -53,7 +55,9 @@ const PurchaseHistorySection = ({ showAll }) => {
             <OrderGroup
               key={selectedOrder}
               orderId={selectedOrder}
-              orderDate={groupedOrders[selectedOrder]?.[0]?.orderDate || "알 수 없음"}
+              orderDate={
+                groupedOrders[selectedOrder]?.[0]?.orderDate || "알 수 없음"
+              }
               shopData={groupedOrders[selectedOrder]}
               setSelectedOrder={setSelectedOrder}
             />
@@ -63,7 +67,9 @@ const PurchaseHistorySection = ({ showAll }) => {
               <OrderGroup
                 key={orderId}
                 orderId={orderId}
-                orderDate={groupedOrders[orderId]?.[0]?.orderDate || "알 수 없음"}
+                orderDate={
+                  groupedOrders[orderId]?.[0]?.orderDate || "알 수 없음"
+                }
                 shopData={groupedOrders[orderId]}
                 setSelectedOrder={setSelectedOrder}
               />
@@ -75,9 +81,7 @@ const PurchaseHistorySection = ({ showAll }) => {
       )}
 
       {/* 선택된 주문이 있을 때만 상세 정보 컴포넌트 렌더링 */}
-      {selectedOrderData && (
-        <OrderDetails orderData={selectedOrderData} />
-      )}
+      {selectedOrderData && <OrderDetails orderData={selectedOrderData} />}
     </div>
   );
 };
@@ -162,7 +166,7 @@ export const PurchaseHistory = ({ shopData }) => {
         />
         <div className="product-section align-center">
           <p className="productTitle">{shopData.name}</p>
-          <span className="productPrice">{shopData.totalPrice}원</span>
+          <span className="productPrice">{shopData.totalPrice}</span>
           <span>*</span>
           <span className="quantity">{shopData.quantity}개</span>
         </div>
@@ -205,21 +209,24 @@ export const StyledPurchaseSection = styled.div`
       flex-grow: 1;
     }
   }
-
-  .productTitle {
-    font-size: 1rem;
-    font-weight: bold;
-    margin-bottom: 5px;
+  .section-left > *:last-child {
+    margin-bottom: 0;
+  }
+  .btn_detailed {
+    flex: 1;
+    align-self: center;
+    height: 30%;
   }
 
-  .productPrice,
-  .quantity {
-    font-size: 0.9rem;
-    color: #555;
+  .productInfo {
+    margin: 20px 0;
   }
 
   .product-section span {
     margin-right: 5px;
+  }
+  .div {
+    margin: 0 5px;
   }
 `;
 

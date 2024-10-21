@@ -3,8 +3,8 @@ import styled from "styled-components";
 export const StyledMypageWrapper = styled.div`
   padding: 30px;
   gap: 100px;
-
-  min-width: 1200px;
+  width: 100%;
+  max-width: 1200px;
 `;
 
 export const StyledNavBar = styled.div`
@@ -13,7 +13,7 @@ export const StyledNavBar = styled.div`
   flex: 1;
   padding: 0 20px;
   max-width: 400px;
-
+  height: fit-content;
   .section-nav {
     box-shadow: 10px 10px 5px rgb(0, 0, 0, 0.2);
     max-width: 100%;
@@ -129,7 +129,3 @@ export const StyledMypageSection = styled.div`
     display: block;
   }
 `;
-
-
-
-
