@@ -50,15 +50,15 @@ const DeleteAccount = () => {
     setIsModalOpen(true); // 비밀번호 인증 모달 열기
   };
 
-  const handlePasswordSuccess = (isVerified) => {
-    if (isVerified) {
-      setIsPasswordVerified(true);
-      setIsModalOpen(false);
-      deleteUser();
-      alert("회원 탈퇴가 완료되었습니다."); // 실제 탈퇴 로직을 여기에 추가
-    } else {
-      alert("비밀번호가 일치하지 않습니다. 다시 시도해 주세요.");
-    }
+  const handlePasswordSuccess = () => {
+    setIsPasswordVerified(true);
+    deleteUser();
+    setIsModalOpen(false);
+    alert(
+      isPasswordVerified
+        ? "회원 탈퇴가 완료되었습니다."
+        : "비밀번호가 일치하지 않습니다. 다시 시도해 주세요."
+    ); // 실제 탈퇴 로직을 여기에 추가
   };
 
   const ConfirmModal = () => (

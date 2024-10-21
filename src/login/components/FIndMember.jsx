@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -11,12 +11,8 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-import {
-  findId,
-  sendAuthCode,
-  verifyAuthCode,
-  resetPassword,
-} from "./memberAPI";
+import { findId, resetPassword } from "./memberAPI";
+import { useEmailVerification } from "./EmailVerification";
 
 const initialUserState = {
   phone: "",
@@ -65,18 +61,19 @@ const FindMember = () => {
   const [user, setUser] = useState(initialUserState);
   const [foundEmail, setFoundEmail] = useState("");
   const [showEmailModal, setShowEmailModal] = useState(false);
-  const [isAuthCodeSent, setIsAuthCodeSent] = useState(false);
-  const [isAuthVerified, setIsAuthVerified] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(180);
-  const [sendAttempts, setSendAttempts] = useState(0);
-  const timerRef = useRef(null);
+  const [duplicateMessage, setDuplicateMessage] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  const {
+    sendVerificationCode,
+    verifyCode,
+    isEmailVerified,
+    verificationCode,
+    setVerificationCode,
+  } = useEmailVerification(user.email, setDuplicateMessage, setOpenSnackbar);
 
   const resetStates = () => {
     setUser(initialUserState);
-    setIsAuthCodeSent(false);
-    setIsAuthVerified(false);
-    setTimeLeft(180);
-    clearInterval(timerRef.current);
   };
 
   const openDialog = () => {
@@ -115,58 +112,11 @@ const FindMember = () => {
     }
   };
 
-  useEffect(() => {
-    if (isAuthCodeSent && timeLeft > 0 && !isAuthVerified) {
-      timerRef.current = setInterval(
-        () => setTimeLeft((prev) => prev - 1),
-        1000
-      );
-    } else if (timeLeft === 0) {
-      clearInterval(timerRef.current);
-      alert("인증 시간이 만료되었습니다. 다시 시도해주세요.");
-    } else if (isAuthVerified) {
-      clearInterval(timerRef.current); // 인증 완료 시 타이머 종료
-    }
-    return () => clearInterval(timerRef.current);
-  }, [isAuthCodeSent, timeLeft, isAuthVerified]);
-
-  const formatTime = (seconds) => {
-    const min = Math.floor(seconds / 60);
-    const sec = seconds % 60;
-    return `${min}:${sec < 10 ? `0${sec}` : sec}`;
-  };
-
-  const handleSendAuthCode = async () => {
-    if (sendAttempts >= 3) {
-      alert("인증 코드 전송 시도 횟수를 초과했습니다.");
-      return;
-    }
-    alert("인증 코드가 이메일로 전송되었습니다.");
-
-    setSendAttempts((prev) => prev + 1);
-    setIsAuthCodeSent(true);
-
-    setTimeLeft(180); // 타이머 초기화
-    await sendAuthCode(user.email);
-  };
-
-  const handleVerifyAuthCode = async () => {
-    try {
-      console.log(user.name, user.code, user.email);
-      await verifyAuthCode(user.name, user.code, user.email);
-      alert("인증이 완료되었습니다.");
-      setIsAuthVerified(true);
-    } catch (error) {
-      alert(error.message);
-    }
-  };
-
   const handleResetPassword = async () => {
     if (user.pwd !== user.confirmPassword) {
       alert("비밀번호가 일치하지 않습니다.");
       return;
     }
-
     try {
       const result = await resetPassword(user.email, user.pwd);
 
@@ -259,54 +209,30 @@ const FindMember = () => {
                 name="name"
                 value={user.name}
                 onChange={handleChange}
-                disabled={isAuthVerified}
                 fullWidth
               />
               <TextField
                 margin="dense"
                 label="이메일"
                 name="email"
-                type="email"
                 value={user.email}
                 onChange={handleChange}
                 fullWidth
-                disabled={isAuthVerified}
+                disabled={isEmailVerified}
               />
-              <Button
-                onClick={handleSendAuthCode}
-                variant="contained"
-                color="primary"
-                fullWidth
-                style={{ marginTop: "10px" }}
-                disabled={sendAttempts >= 3}
-              >
-                {sendAttempts > 0 ? "재전송" : "인증번호 받기"}
-              </Button>
-
-              {isAuthCodeSent && (
-                <>
-                  <TextField
-                    margin="dense"
-                    label="인증번호"
-                    name="code"
-                    value={user.code}
-                    onChange={handleChange}
-                    fullWidth
-                  />
-                  <Button
-                    onClick={handleVerifyAuthCode}
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    style={{ marginTop: "10px" }}
-                  >
-                    인증번호 인증
-                  </Button>
-                  <p>남은 시간: {formatTime(timeLeft)}</p>
-                </>
+              {!isEmailVerified && (
+                <Button
+                  onClick={sendVerificationCode}
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  style={{ marginTop: "10px" }}
+                >
+                  인증 코드 받기
+                </Button>
               )}
 
-              {isAuthVerified && (
+              {isEmailVerified ? (
                 <>
                   <TextField
                     margin="dense"
@@ -334,6 +260,26 @@ const FindMember = () => {
                     style={{ marginTop: "10px" }}
                   >
                     비밀번호 변경
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <TextField
+                    margin="dense"
+                    label="인증 코드 입력"
+                    name="verificationCode"
+                    value={verificationCode}
+                    onChange={(e) => setVerificationCode(e.target.value)}
+                    fullWidth
+                  />
+                  <Button
+                    onClick={verifyCode}
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    style={{ marginTop: "10px" }}
+                  >
+                    인증 코드 확인
                   </Button>
                 </>
               )}

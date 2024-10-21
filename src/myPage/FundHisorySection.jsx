@@ -23,6 +23,7 @@ export const FundHistorySection = ({ showAll }) => {
           return {
             regDate: fund.regDate,
             name: dog.name,
+            fundCollection: dog.fundCollection,
             collection: fund.collection,
             title: dog.title,
             species: dog.species,
@@ -46,7 +47,6 @@ export const FundHistorySection = ({ showAll }) => {
 
   const FundItem = ({ fund }) => {
     console.log(fund);
-    const categories = [fund.species, `${fund.age}살`, fund.gender];
     return (
       <StyledFundingSection className="flex flex-row">
         <h5 className="funding-title">{fund.title}</h5>
@@ -96,7 +96,10 @@ export const FundHistorySection = ({ showAll }) => {
             <span>
               <AnimatedNumber value={fund.collection} />
             </span>
-            <ProgressBar value={50} />
+            <ProgressBar
+              value={fund.collection}
+              fundCollection={fund.fundCollection}
+            />
           </div>
         </StyledFundDetailSection>
       </StyledFundingSection>

@@ -1,11 +1,4 @@
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from "@mui/material";
+import { Button } from "@mui/material";
 import React, { useState } from "react";
 import styled from "styled-components";
 import {
@@ -19,7 +12,7 @@ import {
 } from "../login/components/Validation";
 import MypagePwModal from "./PwdModal";
 
-import { checkNickName, deleteUser, editUser } from "./api";
+import { checkNickName, editUser } from "./api";
 
 const EditUserSection = ({ infoData }) => {
   const [formUser, setFormUser] = useState({
@@ -39,7 +32,6 @@ const EditUserSection = ({ infoData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false); // 비밀번호 인증 모달 상태
   const [isPasswordVerified, setIsPasswordVerified] = useState(false); // 비밀번호 인증 상태
   const [nextAction, setNextAction] = useState(""); // 비밀번호 인증 후 다음 작업 지정
-  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false); // 탈퇴 확인 모달
 
   // ------------------------
   // 1. 입력값 검증 및 상태 업데이트
