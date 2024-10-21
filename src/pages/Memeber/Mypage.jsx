@@ -19,6 +19,7 @@ import EditUserSection from "../../myPage/EditUserSection";
 import { FundHistorySection } from "../../myPage/FundHisorySection";
 import { formatPhoneNumber } from "../../login/components/Validation";
 import MypagePwModal from "../../myPage/PwdModal";
+import DeleteAccount from "../../myPage/DeleteAccount";
 
 const Mypage = () => {
   const [currentPage, setCurrentPage] = useState("all");
@@ -150,6 +151,8 @@ const Mypage = () => {
         );
       case "inquiry":
         return <InquirySection showAll={showAll[currentPage]} />;
+      case "deleteUser":
+        return <DeleteAccount />;
 
       default:
         return renderAllContent(); // 기본적으로 모든 섹션 렌더링
@@ -232,7 +235,7 @@ const Mypage = () => {
             handleSectionChange={handleSectionChange}
           />
           {/* RightSection */}
-          <StyeldRightSection className="right-section flex flex-column  w-full justify-around  ">
+          <StyeldRightSection className="right-section flex flex-column  w-full ">
             {currentPage === "all" ? renderAllContent() : renderSingleContent()}
           </StyeldRightSection>
         </StyledMypageWrapper>
