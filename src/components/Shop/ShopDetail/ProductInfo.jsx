@@ -42,32 +42,39 @@ const ProductInfo = ({ shopId }) => {
   const handleAddToCart = async (event) => {
     setAnchorEl(event.currentTarget);
     setErrorMessage(null);
-
+  
     try {
-
+      // 장바구니의 기존 항목 확인
       const cartResponse = await apiClient.get("cart/findAll");
-      const existingItem = cartResponse.data.find(item => item.shopId === product.shopId);
-
+      const existingItem = cartResponse.data.find(
+        (item) => item.shopId === product.shopId
+      );
+  
       if (existingItem) {
+        // 기존 아이템이 있다면 수량을 더해서 업데이트
+        const updatedQuantity = existingItem.quantity + quantity;
         await apiClient.put(`/cart/update/${existingItem.cartId}`, {
-          quantity: existingItem.quantity + quantity
+          quantity: updatedQuantity, // 누적된 수량
         });
       } else {
-        await apiClient.post('/cart/register', {
+        // 기존 아이템이 없다면 새로 등록
+        await apiClient.post("/cart/register", {
           shopId: product.shopId,
-          quantity: quantity,
-          totalPrice: totalPrice
+          quantity: quantity, // 현재 선택된 수량
+          totalPrice: product.price * quantity, // 상품 가격과 수량을 곱한 총 가격
         });
       }
+      console.log("상품 정보:", product); // 전체 데이터 확인
+      console.log("상품 ID:", product.shopId); // 특정 값 확인
+      console.log("상품 가격:", product.price); // 특정 값 확인
 
-      console.log('장바구니 상태:', {
-
+  
+      // 로그 확인
+      console.log("장바구니 등록 상태:", {
         shopId: product.shopId,
         quantity: quantity,
-        totalPrice: totalPrice,
+        totalPrice: product.price * quantity,
       });
-
-
     } catch (error) {
       if (error.response && error.response.status === 401) {
         setErrorMessage("로그인을 해야 사용할 수 있습니다.");
@@ -75,12 +82,13 @@ const ProductInfo = ({ shopId }) => {
         console.error("장바구니 등록 중 오류 발생:", error);
       }
     }
-
+  
     setTimeout(() => {
       setAnchorEl(null);
     }, 5000);
   };
-
+  
+  
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -222,16 +230,21 @@ const TopSection = styled.div`
   flex-direction: row;
   justify-content: space-between;
   padding: 16px;
-  gap: 32px;
+  gap: 2px;
+  min-height: 600px;
+
 `;
 
 const LeftSection = styled.div`
   flex: 2;
   margin-right: 16px;
+  margin-top: 10px;
 `;
 
 const RightSection = styled.div`
   flex: 1;
+    margin-top: 250px;
+
 `;
 
 const QuantityContainer = styled.div`
