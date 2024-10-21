@@ -16,6 +16,21 @@ import ChairIcon from '@mui/icons-material/Chair';
 import StrollerIcon from '@mui/icons-material/Stroller';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import GavelIcon from '@mui/icons-material/Gavel';
+import styled from 'styled-components'; // styled-components를 사용하여 스타일링
+
+const SidebarContainer = styled(Box)`
+  width: 100%;
+  max-width: 250px;
+  min-width: 200px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+`;
+
+const AccordionWrapper = styled(Accordion)`
+  margin-bottom: 10px;
+`;
 
 const Sidebar = ({ setCategory }) => {
   const navigate = useNavigate();
@@ -38,8 +53,8 @@ const Sidebar = ({ setCategory }) => {
   };
 
   return (
-    <Box>
-      <Accordion>
+    <SidebarContainer>
+      <AccordionWrapper>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <ListItemText primary="카테고리" />
         </AccordionSummary>
@@ -55,7 +70,7 @@ const Sidebar = ({ setCategory }) => {
             ))}
           </List>
         </AccordionDetails>
-      </Accordion>
+      </AccordionWrapper>
 
       <List>
         {menuItemsGroup2.map((item) => (
@@ -67,7 +82,7 @@ const Sidebar = ({ setCategory }) => {
           </ListItem>
         ))}
       </List>
-    </Box>
+    </SidebarContainer>
   );
 };
 

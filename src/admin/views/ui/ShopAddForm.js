@@ -20,8 +20,7 @@ const ShopAddFrom = () => {
         price: '',
         category: '',
         detail: '',
-        buy_count: 0,
-        img: null
+        buy_count: 0
     });
 
     const [files, setFiles] = useState({

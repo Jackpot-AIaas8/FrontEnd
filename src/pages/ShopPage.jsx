@@ -99,7 +99,6 @@ function ShopPage() {
     }
   };
 
-  // console.log(searchResults);
   return (
     <PageContainer>
       <MainContentWrapper>
