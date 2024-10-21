@@ -16,7 +16,6 @@ const Card = ({ name }) => {
   const [selectedCategory, setSelectedCategory] = useState(null); // 선택된 카테고리 상태 추가
   const itemsPerPage = 12;
 
-
   // URL에서 현재 페이지와 정렬 순서, 선택된 카테고리 가져오기
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -64,6 +63,14 @@ const Card = ({ name }) => {
       }
 
       const response = await apiNoToken.get(endpoint, { params });
+      console.log('총 상품 수:', response.data.total);
+      console.log('총 페이지 수:', totalPages);
+      console.log('API 요청 파라미터:', params);
+console.log('API 응답 데이터:', response.data);
+
+console.log("현재 페이지:", currentPage);
+console.log("총 페이지 수:", totalPages);
+console.log("응답에서 받은 total 값:", response.data.total);
 
       const fetchedProducts = response.data.dtoList || [];
       setFetchedProducts(fetchedProducts);
@@ -74,6 +81,8 @@ const Card = ({ name }) => {
       setIsLoading(false);
     }
   }, [name, selectedCategory, currentPage, sortOrder, itemsPerPage]);
+  
+  console.log("상품 개수:", fetchedProducts.length);
 
   // 데이터를 가져오는 useEffect
   useEffect(() => {
@@ -111,16 +120,13 @@ const Card = ({ name }) => {
 
   // 로딩 상태일 때
   if (isLoading) {
-    return <StyledWrapper>로딩 중...</StyledWrapper>;
+    return <StyledWrapper></StyledWrapper>;
   }
 
   // 상품이 없을 때
   if (fetchedProducts.length === 0) {
-    return (
-      <StyledWrapper>
-        <p className="no-products">해당 이름에 대한 상품이 없습니다.</p>
-      </StyledWrapper>
-    );
+    alert("해당 이름에 대한 상품이 없습니다.");
+    return null;
   }
 
   return (
@@ -210,27 +216,27 @@ const Card = ({ name }) => {
 
 export default Card;
 
-
+// 스타일 수정
 const PaginationWrapper = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: center; /* 중앙 정렬 */
   align-items: center;
   gap: 10px;
   margin-top: 20px;
-  grid-column: 1 / -1; /* 전체 그리드를 차지하게 함 */
+  width: 100%; /* 부모 요소의 너비를 가득 채움 */
 
   button {
-    background-color: #ff7600; /* 주황색 배경 */
-    color: white; /* 흰색 글자 */
-    border: none; /* 테두리 없애기 */
-    padding: 0.5rem 1rem; /* 패딩 추가 */
-    margin: 0 1rem; /* 버튼 사이의 간격 */
-    cursor: pointer; /* 커서 모양 변경 */
-    transition: background-color 0.3s; /* 배경색 변화 시 전환 효과 */
-    border-radius: 0.5rem; /* 모서리를 둥글게 설정 (값을 조절 가능) */
+    background-color: #ff7600;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    margin: 0 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border-radius: 0.5rem;
 
     &:hover {
-      background-color: #d64229; /* 호버 시 어두운 주황색으로 변경 */
+      background-color: #d64229;
     }
 
     &:disabled {
@@ -249,15 +255,17 @@ const StyledWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
   box-sizing: border-box;
   justify-content: center;
   align-items: center;
   position: relative;
+  min-height: 300px; /* 필요한 최소 높이 지정 */
 
   .controls {
     display: flex;
     justify-content: flex-start;
+      width: 100%; /* 부모 요소의 전체 너비를 차지 */
+
     margin-bottom: 20px;
   }
 
@@ -289,9 +297,14 @@ const StyledWrapper = styled.div`
   }
 
   .no-products {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
     font-size: 18px;
     color: #666;
+    height: 100%;
+    min-height: 600px; /* 최소 높이로 세로 가운데 정렬 */
   }
 
   .card {
@@ -342,4 +355,3 @@ const StyledWrapper = styled.div`
     color: #333;
   }
 `;
-

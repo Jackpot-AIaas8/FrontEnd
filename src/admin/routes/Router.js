@@ -19,6 +19,7 @@ const BoardDetailForm = lazy(() => import("../views/ui/BoardDetailForm.js"));
 const BoardAddFrom = lazy(() => import("../views/ui/BoardAddForm.js"));
 const AuctionAddFrom = lazy(() => import("../views/ui/AuctionAddForm.js"));
 const AuctionTables = lazy(() => import("../views/ui/AuctionsTables"));
+const OrderTables = lazy(() => import("../views/ui/OrdersTables"));
 
 /*****Routes******/
 const ThemeRoutes = () => {
@@ -43,6 +44,7 @@ const ThemeRoutes = () => {
         <Route path="boardaddform" element={<BoardAddFrom />} />
         <Route path="auctionaddform/:shopId" element={<AuctionAddFrom />} />
         <Route path="auctiontable" element={<AuctionTables />} />
+        <Route path="ordertable" element={<OrderTables />} />
 
         {/* /admin 경로가 아닌 경우, /admin으로 리디렉션 */}
         <Route path="*" element={<Navigate to="/admin" replace />} />

@@ -140,7 +140,7 @@ function CheckoutPage() {
       await widgets.requestPayment({
         orderId,
         orderName,
-        successUrl: `${window.location.origin}/success?orderId=${orderId}`,
+        successUrl: `${window.location.origin}/success?orderId=${orderId}&amount=${paymentAmount}&name=${orderName}`,
         failUrl: `${window.location.origin}/fail`,
         customerEmail: user.email,
         customerName: user.name,
@@ -230,9 +230,6 @@ function CheckoutPage() {
               <ProductRow>
                 <Label>수량</Label>
                 <Value>{item.quantity || 1}개</Value>
-              </ProductRow>
-              <ProductRow>
-                <Label>상점 ID</Label>
               </ProductRow>
             </ProductInfoBox>
           ))

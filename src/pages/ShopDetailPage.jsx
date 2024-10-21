@@ -52,7 +52,7 @@ const ContentWrapper = styled.div`
   margin: 0 auto;
   padding: 20px;
   gap: 40px; /* 사이드바와 메인 콘텐츠 사이의 간격 */
-  margin-top: 300px; /* 기존 margin-top 제거 */
+  margin-top: 200px; /* 기존 margin-top 제거 */
   min-height: 1200px; /* 최소 높이값 지정 */
 `;
 
@@ -66,6 +66,6 @@ const DetailContentWrapper = styled.div`
   flex-direction: column;
   gap: 20px;
   width: 100%;
-  min-height: 600px; /* 최소 높이를 지정 */
+  min-height: 600px;
 
 `;
