@@ -9,48 +9,84 @@ export function SuccessPage() {
   const navigate = useNavigate();
   const [isConfirming, setIsConfirming] = useState(true);
 
-  const paymentData = JSON.parse(sessionStorage.getItem("paymentData")) || {};
+  const paymentData = JSON.parse(sessionStorage.getItem("paymentData")) || {}; 
+  console.log("sessionStorage에서 가져온 결제 데이터:", paymentData);
 
   const {
     memberID,
     customerName = "",
     customerMobilePhone = "",
     userAddress = "",
-    totalPrice = 0,
     deliveryFee = 3000,
     orderId,
-    shopId = "" ,
-    orderName: name, 
+    shopId = "",
+    orderName: name,
+    isFunding = false, 
+    name: dogName = "", 
+    dogId = "", 
+    productNames = [] 
   } = paymentData;
 
   useEffect(() => {
     if (!orderId) {
+      console.log("orderId가 없습니다. 결제 정보가 유실되었습니다.");
       navigate(`/fail?message=결제 정보가 유실되었습니다.`);
       return;
     }
 
-    const requestData = {
+    // 공통 데이터 생성
+    const commonRequestData = {
       orderId: searchParams.get("orderId") || orderId,
       amount: searchParams.get("amount"),
       paymentKey: searchParams.get("paymentKey"),
-      shopId: shopId,       
-      orderName: name,
-      memberID: memberID, 
-      name: customerName,
-      phone: customerMobilePhone,
-      address: userAddress,
-      products: [{ shopName: "example shop", productPrice: 5000, quantity: 1 }] // 리스트로 보내기
+      isFunding, 
     };
-    console.log("결제 완료 후 백엔드로 전달할 데이터:", requestData);
+
+    // 펀딩일 경우의 데이터
+    const fundingData = isFunding ? {
+      orderName: dogName,
+      name, 
+      dogId, 
+    } : {};
+
+    // 상품일 경우의 데이터
+    const productData = !isFunding
+      ? {
+          shopId, 
+          orderName: name, 
+          memberID,
+          name: customerName,
+          phone: customerMobilePhone,
+          address: userAddress,
+          productNames: productNames.map(item => ({
+            shopName: item.shopName || item.name,
+            quantity: item.quantity || 1,
+            shopId: item.shopId,
+            totalProductPrice: (item.productPrice || 0) * (item.quantity || 1), 
+          }))
+        }
+      : {};
+
+    // 최종 요청 데이터 생성
+    const requestData = {
+      ...commonRequestData,
+      ...fundingData,
+      ...productData,
+    };
+
+    console.log("전송할 requestData:", requestData);
 
     async function confirm() {
       try {
-        const response = await apiClient.post("http://localhost:8181/api/confirm", requestData, {
+        console.log("전송할 requestData:", requestData); 
+
+        const response = await apiClient.post("/api/confirm", requestData, {
           headers: {
-            Authorization: "Basic " + btoa("test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6:"), // 시크릿 키를 인코딩하여 포함
-            "Content-Type": "application/json"
-          }
+            Authorization: "Basic " + btoa("test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6:"),
+            "Content-Type": "application/json",
+          },
         });
+        console.log("백엔드 응답:", response.data);
 
         if (response.status !== 200) {
           navigate(`/fail?message=${response.data.message}&code=${response.data.code}`);
@@ -59,14 +95,20 @@ export function SuccessPage() {
 
         setPaymentInfo(response.data);
         setIsConfirming(false);
+
+        if (isFunding) {
+          navigate(`/dog/${dogId}`, {
+            state: { successMessage: "펀딩에 성공했습니다!" },
+          });
+        }
       } catch (error) {
-        console.error(error);
+        console.error("결제 확인 중 오류 발생:", error);
         navigate(`/fail?message=결제 확인 중 오류가 발생했습니다.`);
       }
     }
 
     confirm();
-  }, [searchParams, navigate, orderId]);
+  }, [searchParams, navigate, orderId, isFunding]);
 
   if (isConfirming) {
     return <div>결제 확인 중...</div>;
@@ -76,23 +118,25 @@ export function SuccessPage() {
     return <div>결제 정보를 불러올 수 없습니다.</div>;
   }
 
-  const {
-    orderName,
-    totalAmount,
-    status,
-  } = paymentInfo;
+  const { totalAmount } = paymentInfo; 
 
-  const suppliedAmount = totalAmount - deliveryFee;
-
-  return (
+  return !isFunding ? (
     <PageContainer>
       <Title>주문완료</Title>
       <Subtitle>주문이 완료되었습니다. 감사합니다!</Subtitle>
       <Section>
         <SectionTitle>상품배송 정보</SectionTitle>
-        <InfoRow>
-          <InfoLabel>{name || "상품 정보 없음"}</InfoLabel>
-        </InfoRow>
+        {productNames.length > 0 ? (
+          productNames.map((product, index) => (
+            <InfoRow key={index}>
+              <InfoLabel>{product.shopName} ({product.quantity}개)</InfoLabel>
+            </InfoRow>
+          ))
+        ) : (
+          <InfoRow>
+            <InfoLabel>{name} (1개)</InfoLabel>
+          </InfoRow>
+        )}
       </Section>
       <InfoContainer>
         <LeftColumn>
@@ -110,7 +154,7 @@ export function SuccessPage() {
           <SectionTitle>결제 정보</SectionTitle>
           <InfoRow>
             <InfoLabel>주문금액</InfoLabel>
-            <InfoValue>{totalPrice.toLocaleString()} 원</InfoValue>
+            <InfoValue>{(totalAmount - deliveryFee).toLocaleString()}원</InfoValue>
           </InfoRow>
           <InfoRow>
             <InfoLabel>배송비</InfoLabel>
@@ -127,13 +171,11 @@ export function SuccessPage() {
         <Button primary={true}>쇼핑 계속하기</Button>
       </ButtonContainer>
     </PageContainer>
-  );
+  ) : null; 
 }
 
-// 스타일 정의는 생략
 export default SuccessPage;
 
-// 스타일 정의
 const PageContainer = styled.div`
   padding: 20px;
   max-width: 800px;
@@ -167,6 +209,9 @@ const InfoRow = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
+  &:nth-child(odd) {
+    background-color: #f1f1f1;
+  }
 `;
 
 const InfoLabel = styled.span`

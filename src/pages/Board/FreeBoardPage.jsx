@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import NavBar from "../components/Main/NavBar";
-import Banner1 from "../components/Board/FreeBoardBanner";
-import BoardSearchBox from "../components/Board/BoardSearchBox";
-import BoardList from "../components/Board/FreeBoardList";
-import MoveBoardRegisterButton from "../components/Board/MoveBoardRegisterButton";
-import "../components/Board/css/FreeBoardBanner.css";
+import NavBar from "../../components/Main/NavBar";
+import Banner1 from "../../components/Board/FreeBoardBanner";
+import BoardSearchBox from "../../components/Board/BoardSearchBox";
+import BoardList from "../../components/Board/FreeBoardList";
+import MoveBoardRegisterButton from "../../components/Board/MoveBoardRegisterButton";
+import "../../components/Board/css/FreeBoardBanner.css";
 
 function FreeBoardPage() {
   const [searchResults, setSearchResults] = useState([]); // 검색 결과 상태

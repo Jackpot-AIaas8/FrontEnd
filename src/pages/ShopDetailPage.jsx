@@ -1,36 +1,71 @@
+// ShopDetailPage.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import NavBar from "../components/Main/NavBar";
 import Sidebar from "../components/Shop/SideBar";
-import ProductInfo from "../components/Shop/ShopDetail/ProductInfo"; // 수정된 ProductInfo 파일 경로
-import { Container } from "@mui/material"; // MUI의 Container 사용
 import ProductDetail from "../components/Shop/ShopDetail/ProductDetail";
-
+import ProductInfo from "../components/Shop/ShopDetail/ProductInfo";
+import styled from "styled-components";
 
 const ShopDetailPage = () => {
-  const { shopId } = useParams(); // URL에서 shopId를 추출
-  const [loading, setLoading] = useState(true); // 로딩 상태 저장
+  const { shopId } = useParams();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(false); // 로딩 상태를 false로 설정
-  }, []);
+    setLoading(false);
+  }, [shopId]);
 
   if (loading) {
-    return null; // 로딩 중일 때 표시
+    return null;
   }
 
   return (
-    <Container className="container flex flex-column">
+    <PageContainer>
       <NavBar />
-      <Sidebar />
-      {/* 수정된 ProductInfo 컴포넌트에 shopId 전달 */}
-      <ProductInfo 
-       productId={shopId} 
-     />
-      {/* 여기에서 추가적으로 상세 정보를 다른 JSX 파일에서 가져와 표시 */}
-      <ProductDetail/>
-    </Container>
+      <ContentWrapper>
+        <SidebarContainer>
+          <Sidebar />
+        </SidebarContainer>
+        <DetailContentWrapper>
+          <ProductInfo shopId={shopId} />
+          <ProductDetail shopId={shopId} />
+        </DetailContentWrapper>
+      </ContentWrapper>
+    </PageContainer>
   );
 };
 
 export default ShopDetailPage;
+
+// 스타일 정의
+const PageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+`;
+
+const ContentWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 20px;
+  gap: 40px; /* 사이드바와 메인 콘텐츠 사이의 간격 */
+  margin-top: 300px; /* 기존 margin-top 제거 */
+  min-height: 1200px; /* 최소 높이값 지정 */
+`;
+
+const SidebarContainer = styled.div`
+  flex: 0 0 250px; /* 사이드바의 고정 너비 설정 */
+`;
+
+const DetailContentWrapper = styled.div`
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  min-height: 600px; /* 최소 높이를 지정 */
+
+`;

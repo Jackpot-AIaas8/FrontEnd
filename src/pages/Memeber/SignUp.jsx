@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
-import "../login/CSS/Login.css";
+import "../../login/CSS/Login.css";
 import { Snackbar } from "@mui/material";
-import InputField from "../login/components/InputField";
-import SocialLogin from "../login/components/SocialLogin";
+import InputField from "../../login/components/InputField";
+import SocialLogin from "../../login/components/SocialLogin";
 import { Link, useNavigate } from "react-router-dom";
-import { apiNoToken } from "../token/AxiosConfig";
-import usePasswordCheck from "../login/components/usePasswordCheck";
+import { apiNoToken } from "../../token/AxiosConfig";
+import usePasswordCheck from "../../login/components/usePasswordCheck";
 import {
   formatPhoneNumber,
+  getOnlyNumbers,
   validateEmail,
   validateName,
   validateNickname,
   validatePassword,
   validatePhoneNumber,
-} from "../login/components/Validation";
+} from "../../login/components/Validation";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -64,7 +65,7 @@ const SignUp = () => {
     const value = event.target.value;
     const formattedValue = formatPhoneNumber(value); // 포맷팅된 전화번호
     setDisplayPhone(formattedValue);
-    setFormData({ ...formData, phone: value.replace(/[^0-9]/g, "") }); // 숫자만 저장
+    setFormData({ ...formData, phone: getOnlyNumbers(value) }); // 숫자만 저장
   };
 
   const checkNickName = async (event) => {

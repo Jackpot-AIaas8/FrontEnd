@@ -20,8 +20,15 @@ const ShopAddFrom = () => {
         price: '',
         category: '',
         detail: '',
-        buy_count: 0,
-        img: null
+        buy_count: 0
+    });
+
+    const [files, setFiles] = useState({
+        mainImage : File,
+        detailImage1 : File,
+        detailImage2 : File,
+        detailImage3 : File,
+        detailImage4 : File
     });
 
     const handleInputChange = (e) => {
@@ -32,27 +39,30 @@ const ShopAddFrom = () => {
         });
     };
 
-    const handleFileChange = (e) => {
-        setShop({
-            ...shop,
-            img: e.target.files[0]
+    const handleFileChange = (e) =>{
+        const {name, files: fileList} = e.target;
+        setFiles({
+            ...files,
+            [name]: fileList[0],
         });
-    };
+    }
 
     const addShop = () => {
         const formData = new FormData();
-        formData.append('name', shop.name);
-        formData.append('price', shop.price);
-        formData.append('category', shop.category);
-        formData.append('detail', shop.detail);
-        formData.append('buy_count', shop.buy_count);
-        formData.append('img', shop.img); // 파일 전송 시 FormData에 파일 추가
-
-        apiClient.post('/admin/shop/register', formData, {
-            headers: {
-                "Content-Type": 'application/json'
+        // formData.append('name', shop.name);
+        // formData.append('price', shop.price);
+        // formData.append('category', shop.category);
+        // formData.append('detail', shop.detail);
+        // formData.append('buy_count', shop.buy_count);
+        // formData.append('img', shop.img); // 파일 전송 시 FormData에 파일 추가
+        formData.append('shopData', new Blob([JSON.stringify(shop)]));
+        for (const key in files){
+            if (files[key]){
+                formData.append('files', files[key]);
             }
-        })
+        }
+
+        apiClient.post('/admin/shop/register', formData,)
             .then(response => {
                 alert("상품이 등록 되었습니다.");
                 window.location.href = '/admin/shoptable';
@@ -126,13 +136,29 @@ const ShopAddFrom = () => {
                                 />
                             </FormGroup>
                             <FormGroup>
-                                <Label for="img">사진</Label>
-                                <Input
-                                    id="img"
-                                    name="img"
-                                    type="file"
-                                    onChange={handleFileChange} // 파일 변경 핸들러 추가
-                                />
+                                <Label for="mainImage">메인 사진</Label>
+                                <Input id="mainImage" name="mainImage" type="file"
+                                    onChange={handleFileChange}/>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="detailImage1">세부 사진1</Label>
+                                <Input id="detailImage1" name="detailImage1" type="file"
+                                    onChange={handleFileChange}/>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="detailImage2">세부 사진2</Label>
+                                <Input id="detailImage2" name="detailImage2" type="file"
+                                    onChange={handleFileChange}/>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="detailImage3">세부 사진3</Label>
+                                <Input id="detailImage3" name="detailImage3" type="file"
+                                    onChange={handleFileChange}/>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="detailImage4">세부 사진4</Label>
+                                <Input id="detailImage4" name="detailImage4" type="file"
+                                    onChange={handleFileChange}/>
                             </FormGroup>
                             <Button onClick={addShop}>등록</Button>
                         </Form>

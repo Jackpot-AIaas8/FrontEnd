@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import NavBar from "../components/Main/NavBar";
-import Banner2 from "../components/Board/OneOnOneBoardBanner";
-import BoardSearchBox from "../components/Board/BoardSearchBox";
-import BoardList from "../components/Board/OneOnOneBoardList";
-import MoveBoardRegisterButton from "../components/Board/MoveBoardRegisterButton";
+import NavBar from "../../components/Main/NavBar";
+import Banner2 from "../../components/Board/OneOnOneBoardBanner";
+import BoardSearchBox from "../../components/Board/BoardSearchBox";
+import BoardList from "../../components/Board/OneOnOneBoardList";
+import MoveBoardRegisterButton from "../../components/Board/MoveBoardRegisterButton";
 
-import "../components/Board/css/FreeBoardBanner.css";
+import "../../components/Board/css/FreeBoardBanner.css";
 
 function OneOnOneBoardPage() {
   const [searchResults, setSearchResults] = useState([]); // 검색 결과 상태
