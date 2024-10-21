@@ -59,7 +59,7 @@ const BoardFindOne = () => {
   }
 
   return (
-    <div className="board-read-container flex flex-column flex-wrap justify-center w-half">
+    <div className="board-read-container flex flex-column justify-center w-half">
       <table className="board-read-table w-full">
         <thead>
           <tr>
