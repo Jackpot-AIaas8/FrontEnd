@@ -27,7 +27,7 @@ const PageComponent = ({
       <Button
         variant="contained"
         onClick={onPrev}
-        disabled={pageInfo.page === 0}
+        disabled={pageInfo.page === 1}
       >
         Previous
       </Button>

@@ -4,7 +4,6 @@ import {
   StyledMypageWrapper,
   StyeldRightSection,
   StyledMypageSection,
-  
 } from "../../myPage/Mypage.styles";
 
 import { MockShopData } from "../../myPage/MockMypageData";
@@ -17,11 +16,9 @@ import apiClient from "../../token/AxiosConfig";
 import InquirySection from "../../myPage/InquirySection";
 import PurchaseHistorySection from "../../myPage/ShopPurchaseSection";
 import EditUserSection from "../../myPage/EditUserSection";
-import {FundHistorySection} from "../../myPage/FundHisorySection";
+import { FundHistorySection } from "../../myPage/FundHisorySection";
 import { formatPhoneNumber } from "../../login/components/Validation";
 import MypagePwModal from "../../myPage/PwdModal";
-
-
 
 const Mypage = () => {
   const [currentPage, setCurrentPage] = useState("all");
@@ -31,7 +28,8 @@ const Mypage = () => {
     name: "",
     email: "",
     phone: "",
-    grade: "기본 회원",
+    grade: "",
+    newGrade: "기본 회원",
   });
 
   const [shopData, setShopData] = useState([]);
@@ -44,7 +42,6 @@ const Mypage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림 상태
   const [targetPage, setTargetPage] = useState("all"); // 이동할 페이지
   const [isPasswordVerified, setIsPasswordVerified] = useState(false); // 비밀번호 인증 상태
-  
 
   useEffect(() => {
     const apiInfo = async () => {
@@ -55,7 +52,7 @@ const Mypage = () => {
         // 가져온 데이터를 기반으로 grade를 판별해서 상태 업데이트
         const updatedData = {
           ...response.data,
-          grade: response.data.grade === 1 ? "기본 회원" : "VIP",
+          newGrade: response.data.grade === 1 ? "기본 회원" : "VIP",
         };
         setInfoData(updatedData);
       } catch (error) {
@@ -78,8 +75,6 @@ const Mypage = () => {
 
     apiInfo();
     // apiShopData();
-    
-    
   }, []);
 
   useEffect(() => {
@@ -126,16 +121,16 @@ const Mypage = () => {
     setCurrentPage(targetPage); // 인증 성공 후 targetPage로 이동
   };
 
-
   const renderAllContent = () => (
     <>
       <InfoSection infoData={infoData} />
+      <FundHistorySection showAll={showAll[currentPage]} />
       <PurchaseHistorySection
         shopData={shopData}
         showAll={showAll[currentPage]}
       />
       <InquirySection showAll={showAll[currentPage]} />
-      <FundHistorySection showAll={showAll[currentPage]} />
+
       {/* <DogProfile/> */}
     </>
   );
@@ -144,6 +139,8 @@ const Mypage = () => {
     switch (currentPage) {
       case "info":
         return <EditUserSection infoData={infoData} />;
+      case "funding":
+        return <FundHistorySection showAll={showAll[currentPage]} />;
       case "purchase":
         return (
           <PurchaseHistorySection
@@ -152,9 +149,8 @@ const Mypage = () => {
           />
         );
       case "inquiry":
-        return <InquirySection  showAll={showAll[currentPage]} />;
-      case "funding":
-        return <FundHistorySection  showAll={showAll[currentPage]} />;
+        return <InquirySection showAll={showAll[currentPage]} />;
+
       default:
         return renderAllContent(); // 기본적으로 모든 섹션 렌더링
     }
@@ -202,7 +198,7 @@ const Mypage = () => {
               </li>
               <li key="phone">
                 <h3 className="info-title">Phone</h3>
-                <span>{formatPhoneNumber(infoData.phone) }</span>
+                <span>{formatPhoneNumber(infoData.phone)}</span>
               </li>
 
               <li key="nickName">
@@ -219,7 +215,6 @@ const Mypage = () => {
       </StyledMypageSection>
     );
   };
-
 
   const handleMypage = (e) => {
     e.preventDefault();
@@ -242,10 +237,10 @@ const Mypage = () => {
           </StyeldRightSection>
         </StyledMypageWrapper>
         <MypagePwModal
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSuccess={handlePasswordSuccess}
-      />
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSuccess={handlePasswordSuccess}
+        />
       </div>
     </>
   );
