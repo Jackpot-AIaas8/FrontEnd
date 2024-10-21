@@ -65,12 +65,11 @@ const Card = ({ name }) => {
       const response = await apiNoToken.get(endpoint, { params });
       console.log('총 상품 수:', response.data.total);
       console.log('총 페이지 수:', totalPages);
-      console.log('API 요청 파라미터:', params);
-console.log('API 응답 데이터:', response.data);
-
-console.log("현재 페이지:", currentPage);
-console.log("총 페이지 수:", totalPages);
-console.log("응답에서 받은 total 값:", response.data.total);
+      console.log('API 요청 파라미터:', params);  
+      console.log('API 응답 데이터:', response.data);
+      console.log("현재 페이지:", currentPage);
+      console.log("총 페이지 수:", totalPages);
+      console.log("응답에서 받은 total 값:", response.data.total);
 
       const fetchedProducts = response.data.dtoList || [];
       setFetchedProducts(fetchedProducts);
@@ -82,7 +81,6 @@ console.log("응답에서 받은 total 값:", response.data.total);
     }
   }, [name, selectedCategory, currentPage, sortOrder, itemsPerPage]);
   
-  console.log("상품 개수:", fetchedProducts.length);
 
   // 데이터를 가져오는 useEffect
   useEffect(() => {

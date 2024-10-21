@@ -26,7 +26,7 @@ function CheckoutPage() {
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState(null);
   const [user, setUser] = useState({});
-  const [isEditingAddress, setIsEditingAddress] = useState(false);
+  const [isEditingAddress] = useState(false);
 
   // 사용자 정보 API 호출
   useEffect(() => {
@@ -152,14 +152,8 @@ function CheckoutPage() {
     }
   };
   
-  // 주소 수정 처리
-  const handleAddressEdit = () => {
-    setIsEditingAddress(true);
-  };
-
-  const handleAddressSave = () => {
-    setIsEditingAddress(false);
-  };
+ 
+  
 
   const handleAddressChange = (e) => {
     const newAddress = e.target.value;
@@ -197,11 +191,7 @@ function CheckoutPage() {
         <Section>
           <FlexRow>
             <SectionTitle>받는 사람 정보</SectionTitle>
-            {isEditingAddress ? (
-              <SaveAddressButton onClick={handleAddressSave}>저장</SaveAddressButton>
-            ) : (
-              <EditAddressButton onClick={handleAddressEdit}>수정</EditAddressButton>
-            )}
+          
           </FlexRow>
           {isEditingAddress ? (
             <Input

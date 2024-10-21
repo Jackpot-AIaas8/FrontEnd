@@ -167,8 +167,9 @@ export function SuccessPage() {
         </RightColumn>
       </InfoContainer>
       <ButtonContainer>
-        <Button>주문 상세보기</Button>
-        <Button primary={true}>쇼핑 계속하기</Button>
+        <Button primary={true} onClick={() => navigate("/shop")}>
+          쇼핑 계속하기
+        </Button>
       </ButtonContainer>
     </PageContainer>
   ) : null; 
@@ -253,7 +254,7 @@ const TotalValue = styled.span`
 
 const ButtonContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-top: 30px;
 `;
 

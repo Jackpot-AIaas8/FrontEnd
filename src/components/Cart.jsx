@@ -208,13 +208,13 @@ const Cart = () => {
                       <div className="checkout--footer">
                         <label>합계</label>
                         <span>{(totalPrice + 3000).toLocaleString()}원</span>
-                        <Button
+                        <StyledButton
                           variant="contained"
                           color="primary"
                           onClick={handlePurchase}
                         >
                           결제하기
-                        </Button>
+                        </StyledButton>
                       </div>
                     </div>
                   </div>
@@ -356,5 +356,13 @@ const StyledWrapper = styled.div`
     padding: 15px 20px;
     background-color: #efeff3;
     border-radius: 8px;
+  }
+`
+const StyledButton = styled(Button)`
+  font-size: 12px;
+  padding: 4px 8px;
+  background-color: #ffa150 !important;
+  &:hover {
+    background-color: #ff7600 !important;
   }
 `;
