@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import apiNoToken from "../../../token/AxiosConfig"; // API 클라이언트 임포트
 
 // 전체 스타일을 하나의 컨테이너 컴포넌트로 관리
 const StyledContainer = styled.div`
@@ -53,39 +54,57 @@ const StyledContainer = styled.div`
   }
 `;
 
-// 데이터와 컴포넌트 정의
-const historyDescription = `  뽀삐는 어미에게 버림받고 거리에서 상처 입은 채 살아가던 유기견입니다. 
-  구조되었지만 <strong>보호소의 재정 부족</strong>으로 인해 <strong>충분한 치료</strong>를 받기 어려웠습니다. 
-  특히 <strong>다리 수술비가 부족</strong>해 <strong>생명에 위협</strong>을 받고 있었습니다. 
-  <strong>후원이 없으면</strong> 유기견들은 치료를 받지 못하고, 결국 죽음에 이를 수 있습니다. 
-  <strong>작은 후원이 그들의 생명을 살릴 수 있는 절실한 도움</strong>이 됩니다.
-`;
-
-const images = [
-  "https://i.ytimg.com/vi/W99uYn4qVTY/maxresdefault.jpg", // 실제 이미지 경로로 변경
-  "https://i.ytimg.com/vi/W99uYn4qVTY/maxresdefault.jpg",
-  "https://i.ytimg.com/vi/W99uYn4qVTY/maxresdefault.jpg",
-  "https://i.ytimg.com/vi/W99uYn4qVTY/maxresdefault.jpg",
-];
-
 // 컴포넌트 렌더링
-const ProductDetail = () => {
+const ProductDetail = ({ shopId }) => {
+  const [product, setProductDetails] = useState({
+    
+    detail: "",
+    detailImages: [],
+  });
+  console.log("Received shopId: ", shopId);
+
+  useEffect(() => {
+    // API를 통해 상품 정보를 가져옵니다.
+    const fetchProductDetails = async () => {
+      try {
+        const response = await apiNoToken.get(`/shop/findOne/${shopId}`);
+        const data = response.data;
+
+        // 서버에서 가져온 상품 설명과 이미지를 상태에 저장
+        setProductDetails({
+          detail: data.detail || "",
+          detailImages: [
+            data.detailImage1,
+            data.detailImage2,
+            data.detailImage3,
+            data.detailImage4,
+          ],
+        });
+      } catch (error) {
+        console.error("상품 세부 정보를 불러오는 중 오류 발생:", error);
+      }
+    };
+
+    fetchProductDetails();
+  }, [shopId]);
+
   return (
     <StyledContainer>
       <div className="box-wrapper">
-        <h2 className="title">상품정보</h2>
+        <h2 className="title">상품 정보</h2>
       </div>
       <div className="history-section">
         <div className="pictures-section">
-          {images.map((src, index) => (
-            <img key={index} src={src} alt={`image-${index}`} />
+          {product.detailImages.map((image, index) => (
+            <div key={index}>
+              <img src={image} alt={`detail-image-${index}`} />
+            </div>
           ))}
         </div>
 
         <div className="dog-info-section">
-          <h3></h3>
-          <p>나이: 1세</p>
-          <p dangerouslySetInnerHTML={{ __html: historyDescription }}></p>
+          <h3>상세 설명</h3>
+          <p>{product.detail}</p>
         </div>
       </div>
     </StyledContainer>

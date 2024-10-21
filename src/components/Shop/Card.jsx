@@ -1,105 +1,107 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
-import apiNoToken from "../../token/AxiosConfig"; // apiNoToken을 import
+import apiNoToken from "../../token/AxiosConfig";
 
-const Card = ({ category, searchResults }) => {
-  // console.log(searchResults); 여기까진 정상적으로 데이터가 들어옴
+const Card = ({ name }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [products, setProducts] = useState([]);
+  const [fetchedProducts, setFetchedProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [sortOrder, setSortOrder] = useState("latest");
   const [isLoading, setIsLoading] = useState(true);
+  const [categories] = useState([]); // 카테고리 상태 추가
+  const [selectedCategory, setSelectedCategory] = useState(null); // 선택된 카테고리 상태 추가
   const itemsPerPage = 12;
 
-  // URL의 쿼리 파라미터를 읽어와 정렬 순서와 페이지를 설정합니다.
+
+  // URL에서 현재 페이지와 정렬 순서, 선택된 카테고리 가져오기
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
-    const sortOrderFromUrl = queryParams.get("sortOrder");
-    const pageFromUrl = queryParams.get("page");
+    const sortOrderFromUrl = queryParams.get("sortOrder") || "latest";
+    const pageFromUrl = parseInt(queryParams.get("page"), 10) || 1;
+    const categoryFromUrl = queryParams.get("category");
 
-    if (sortOrderFromUrl) setSortOrder(sortOrderFromUrl);
-    if (pageFromUrl) setCurrentPage(parseInt(pageFromUrl, 10));
-  }, [location]);
+    setSortOrder(sortOrderFromUrl);
+    setCurrentPage(pageFromUrl);
+    setSelectedCategory(categoryFromUrl || null);
+  }, [location.search]);
 
-  // URL 파라미터를 업데이트하여 정렬 순서 및 페이지를 관리합니다.
-  const updateUrlParams = (sortOrder, page) => {
-    const queryParams = new URLSearchParams();
-
-    if (category !== null) queryParams.set("category", category);
-    if (sortOrder) queryParams.set("sortOrder", sortOrder);
-    if (page) queryParams.set("page", page);
-
-    navigate({
-      search: queryParams.toString(),
-    });
-  };
-
-  // 상품 데이터를 가져옵니다.
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setIsLoading(true);
-      try {
-        const endpoint = category
-          ? `/shop/category/${category}`
-          : "/shop/findList";
-
-        const response = await apiNoToken.get(endpoint, {
-          params: {
-            page: currentPage,
-            size: itemsPerPage,
-            sortOrder,
-          },
-        });
-
-
-        // API 응답 처리: dtoList가 배열인지 확인
-        const fetchedProducts = Array.isArray(response.data.dtoList)
-          ? response.data.dtoList
-          : [];
-
-        setProducts(fetchedProducts);
-        setTotalPages(Math.ceil(response.data.total / itemsPerPage));
-      } catch (error) {
-        console.error("상품 데이터를 가져오는 중 오류 발생:", error);
-      } finally {
-        setIsLoading(false);
+  const updateUrlParams = useCallback(
+    (newSortOrder, newPage, newCategory) => {
+      const queryParams = new URLSearchParams(location.search);
+      if (newCategory) {
+        queryParams.set("category", newCategory);
+      } else {
+        queryParams.delete("category");
       }
-    };
-    // console.log(searchResults); 당연하겠지만 여기서도 정상적으로 데이터가 들어옴.
-    // 검색 결과가 없으면 전체 리스트를 보여줍니다.
-    if (!searchResults || searchResults.length === 0) {
-      fetchProducts();
-    } else {
-      // 검색 결과가 있으면 검색 결과를 출력합니다.
-      // console.log(searchResults);여기서도 정상적으로 들어옴.
-      setProducts(searchResults.dtoList);
-      // setProducts([...searchResults]);
-      // const productsToSet = Array.isArray(searchResults.dtoList)
-      //   ? searchResults.dtoList
-      //   : [searchResults];
-      // console.log(productsToSet);
-      // setProducts(productsToSet);
-      // console.log(products); 여기서 이상하게 변함. 이유: searchResealt.dtoList안에 검색결과가 있어서. searchList가 아니라.
+      queryParams.set("sortOrder", newSortOrder);
+      queryParams.set("page", newPage);
+      navigate({ search: queryParams.toString() }, { replace: true });
+    },
+    [navigate, location.search]
+  );
+
+  // 상품 목록 가져오기
+  const fetchProducts = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      let endpoint;
+      const params = { page: currentPage, size: itemsPerPage, sortOrder };
+
+      if (name) {
+        // 이름이 있으면 해당 이름으로 검색
+        endpoint = `/shop/search`;
+        params.name = name;
+      } else if (selectedCategory) {
+        // 선택된 카테고리가 있으면 해당 카테고리로 검색
+        endpoint = `/shop/category/${selectedCategory}`;
+      } else {
+        // 기본 전체 상품 목록
+        endpoint = "/shop/findList";
+      }
+
+      const response = await apiNoToken.get(endpoint, { params });
+
+      const fetchedProducts = response.data.dtoList || [];
+      setFetchedProducts(fetchedProducts);
+      setTotalPages(Math.ceil(response.data.total / itemsPerPage));
+    } catch (error) {
+      console.error("상품 데이터를 가져오는 중 오류 발생:", error);
+    } finally {
+      setIsLoading(false);
     }
-  }, [category, currentPage, sortOrder, searchResults]);
+  }, [name, selectedCategory, currentPage, sortOrder, itemsPerPage]);
 
-  console.log("현재 products 상태:", products); // 상태 업데이트 후 products 확인
-
+  // 데이터를 가져오는 useEffect
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   // 페이지 변경 처리
   const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-    updateUrlParams(sortOrder, newPage);
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      updateUrlParams(sortOrder, newPage, selectedCategory);
+    }
   };
 
   // 정렬 순서 변경 처리
   const handleSortChange = (newSortOrder) => {
-    setSortOrder(newSortOrder);
-    updateUrlParams(newSortOrder, currentPage);
+    if (newSortOrder !== sortOrder) {
+      setSortOrder(newSortOrder);
+      setCurrentPage(1); // 정렬 순서 변경 시 페이지를 1로 초기화
+      updateUrlParams(newSortOrder, 1, selectedCategory);
+    }
+  };
+
+  // 카테고리 변경 처리
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    setCurrentPage(1); // 카테고리 변경 시 페이지를 1로 초기화
+    updateUrlParams(sortOrder, 1, category);
   };
 
   // 상품 클릭 시 상세 페이지로 이동
@@ -112,16 +114,11 @@ const Card = ({ category, searchResults }) => {
     return <StyledWrapper>로딩 중...</StyledWrapper>;
   }
 
-  // // 상품 데이터가 유효하지 않을 때
-  // if (!Array.isArray(products)) {
-  //   return <StyledWrapper>상품 데이터가 유효하지 않습니다.</StyledWrapper>;
-  // }
-
   // 상품이 없을 때
-  if (products.length === 0) {
+  if (fetchedProducts.length === 0) {
     return (
       <StyledWrapper>
-        <p className="no-products">해당 카테고리에 상품이 없습니다.</p>
+        <p className="no-products">해당 이름에 대한 상품이 없습니다.</p>
       </StyledWrapper>
     );
   }
@@ -129,6 +126,19 @@ const Card = ({ category, searchResults }) => {
   return (
     <StyledWrapper>
       <div className="controls">
+        {/* 카테고리 선택 버튼 추가 */}
+        <div className="category-buttons">
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              className={selectedCategory === category.id ? "active" : ""}
+              onClick={() => handleCategoryChange(category.id)}
+            >
+              {category.name}
+            </button>
+          ))}
+        </div>
+
         <div className="sort-buttons">
           <button
             className={sortOrder === "latest" ? "active" : ""}
@@ -152,25 +162,20 @@ const Card = ({ category, searchResults }) => {
       </div>
 
       <div className="products-container">
-        {products.map((product) => (
+        {fetchedProducts.map((product) => (
           <div
             className="card"
             key={product.shopId}
             onClick={() => handleProductClick(product.shopId)}
           >
             <div className="image-container">
-            {console.log("Product 이미지 URL:", product.mainImage)} {/* 이미지 URL을 확인 */}
-            <img
-              src={product.mainImage || "기본이미지경로"}
-              alt={product.name}
-            />
+              <img
+                src={product.mainImage || "기본이미지경로"}
+                alt={product.name}
+              />
             </div>
             <div className="card-content">
               <h3>{product.name}</h3>
-
-              <p>{product.detail}</p>
-              {/* <p className="price">{product.price.toLocaleString()}원</p>
-               */}{" "}
               <p>
                 {product.price
                   ? product.price.toLocaleString()
@@ -181,20 +186,74 @@ const Card = ({ category, searchResults }) => {
           </div>
         ))}
       </div>
+
+      <PaginationWrapper>
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          이전
+        </button>
+        <span>
+          {currentPage} / {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          다음
+        </button>
+      </PaginationWrapper>
     </StyledWrapper>
   );
 };
-// 스타일 정의는 그대로 유지합니다.
+
+export default Card;
+
+
+const PaginationWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  grid-column: 1 / -1; /* 전체 그리드를 차지하게 함 */
+
+  button {
+    background-color: #ff7600; /* 주황색 배경 */
+    color: white; /* 흰색 글자 */
+    border: none; /* 테두리 없애기 */
+    padding: 0.5rem 1rem; /* 패딩 추가 */
+    margin: 0 1rem; /* 버튼 사이의 간격 */
+    cursor: pointer; /* 커서 모양 변경 */
+    transition: background-color 0.3s; /* 배경색 변화 시 전환 효과 */
+    border-radius: 0.5rem; /* 모서리를 둥글게 설정 (값을 조절 가능) */
+
+    &:hover {
+      background-color: #d64229; /* 호버 시 어두운 주황색으로 변경 */
+    }
+
+    &:disabled {
+      background-color: gray;
+      cursor: not-allowed;
+    }
+  }
+
+  .active {
+    background-color: #0056b3;
+  }
+`;
+
 const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 90%;
   max-width: 1200px;
   margin: 0 auto;
   box-sizing: border-box;
   justify-content: center;
   align-items: center;
+  position: relative;
 
   .controls {
     display: flex;
@@ -216,15 +275,16 @@ const StyledWrapper = styled.div`
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 45px;
-    width: 300px;
+    width: 100%;
     max-width: 1200px;
+    margin-bottom: 20px; /* 카드 리스트 하단 여백 추가 */
 
     @media (max-width: 1200px) {
       grid-template-columns: repeat(3, 1fr);
     }
 
     @media (max-width: 768px) {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 
@@ -281,32 +341,5 @@ const StyledWrapper = styled.div`
     font-weight: bold;
     color: #333;
   }
-
-  .pagination {
-    display: flex;
-    justify-content: center; /* 버튼들을 중앙에 배치 */
-    align-items: center;
-    gap: 10px;
-    margin-top: 20px;
-    width: 100%; /* pagination 너비를 100%로 설정 */
-  }
-
-  .pagination button {
-    padding: 5px 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  .pagination button:hover {
-    background-color: #0056b3;
-  }
-
-  .pagination .active {
-    background-color: #0056b3;
-  }
 `;
 
-export default Card;

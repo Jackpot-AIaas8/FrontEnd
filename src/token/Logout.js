@@ -28,6 +28,6 @@ export const logout = async () => {
     // 세션 스토리지 초기화
     sessionStorage.clear();
     // 페이지를 새로고침하여 상태를 초기화
-    window.location.href = "/signIn";
+    window.location.href = "/";
   }
 };

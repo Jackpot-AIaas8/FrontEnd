@@ -1,8 +1,11 @@
+
 import { createChatBotMessage } from "react-chatbot-kit";
 import Header from "./Header";
 import ChatMessage from "./ChatMessage";
+import ActionProvider from "./ActionProvider"; // 추가
+import MessageParser from "./MessageParser"; // 추가
 
-const config =(onCloseChatbot) => ({
+const config = (onCloseChatbot) => ({
   initialMessages: [
     createChatBotMessage(
       "안녕하세요! 궁금한 내용을 입력해주세요."
@@ -20,6 +23,9 @@ const config =(onCloseChatbot) => ({
     // Replaces the default user chat message
     userChatMessage: (props) => <ChatMessage {...props} isbot="false"/>,
   },
+  // 추가: ActionProvider와 MessageParser를 설정
+  actionProvider: ActionProvider,
+  messageParser: MessageParser,
 });
 
 export default config;

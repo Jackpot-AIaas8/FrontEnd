@@ -1,4 +1,11 @@
-import { Button } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 import React, { useState } from "react";
 import styled from "styled-components";
 import {
@@ -10,14 +17,16 @@ import {
   formatPhoneNumber,
   getOnlyNumbers,
 } from "../login/components/Validation";
+import MypagePwModal from "./PwdModal";
+
+import { checkNickName, deleteUser, editUser } from "./api";
 
 const EditUserSection = ({ infoData }) => {
   const [formUser, setFormUser] = useState({
     ...infoData,
     phone: formatPhoneNumber(infoData.phone),
-    pwd: "***********",
+    pwd: "",
   });
-
   const [errors, setErrors] = useState({
     email: "",
     pwd: "",
@@ -27,39 +36,44 @@ const EditUserSection = ({ infoData }) => {
   });
 
   const [isEditing, setIsEditing] = useState(false); // 수정 모드 관리
+  const [isModalOpen, setIsModalOpen] = useState(false); // 비밀번호 인증 모달 상태
+  const [isPasswordVerified, setIsPasswordVerified] = useState(false); // 비밀번호 인증 상태
+  const [nextAction, setNextAction] = useState(""); // 비밀번호 인증 후 다음 작업 지정
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false); // 탈퇴 확인 모달
 
-  // 입력 변경 처리 함수
+  // ------------------------
+  // 1. 입력값 검증 및 상태 업데이트
+  // ------------------------
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     let error = "";
     let updatedValue = value;
 
     switch (name) {
       case "email":
-        if (!validateEmail(value)) error = "이메일 형식이 잘못되었습니다.";
+        error = !validateEmail(value) ? "이메일 형식이 잘못되었습니다." : "";
         break;
       case "pwd":
-        if (!validatePassword(value))
-          error = "비밀번호는 8~20자 및 특수기호가 포함되어야 합니다.";
+        error = !validatePassword(value)
+          ? "비밀번호는 8~20자 및 특수기호가 포함되어야 합니다."
+          : "";
         break;
       case "phone":
-        // 숫자만 추출
         const numericValue = getOnlyNumbers(value);
-
-        // 전화번호 포맷팅
         updatedValue = formatPhoneNumber(numericValue);
-
-        if (!validatePhoneNumber(numericValue))
-          error = "전화번호는 10~11자리 숫자만 허용됩니다.";
-
+        error = !validatePhoneNumber(numericValue)
+          ? "전화번호는 10~11자리 숫자만 허용됩니다."
+          : "";
         break;
       case "name":
-        if (!validateName(value)) error = "이름은 한글 또는 영문만 가능합니다.";
+        error = !validateName(value)
+          ? "이름은 한글 또는 영문만 가능합니다."
+          : "";
         break;
       case "nickName":
-        if (!validateNickname(value))
-          error = "닉네임은 3~10자, 영문/한글/숫자만 허용됩니다.";
+        error = !validateNickname(value)
+          ? "닉네임은 3~10자, 영문/한글/숫자만 허용됩니다."
+          : "";
         break;
       default:
         break;
@@ -69,33 +83,44 @@ const EditUserSection = ({ infoData }) => {
     setFormUser((prevState) => ({ ...prevState, [name]: updatedValue }));
   };
 
-  // 수정 모드로 전환
-  const handleEdit = () => {
-    setIsEditing(true);
+  // ------------------------
+  // 2. 수정 모드 처리 로직
+  // ------------------------
+  const handleEditMode = () => {
+    if (!isPasswordVerified) {
+      // 비밀번호 인증이 안 되어 있으면 모달 열기
+      setNextAction("edit");
+      setIsModalOpen(true);
+    } else {
+      // 인증 완료된 경우 수정 모드로 전환
+      setIsEditing(true);
+    }
   };
 
-  // 저장 처리 함수
-  const handleSave = () => {
+  const handleSave = async () => {
+    // 수정 완료 후 저장 처리
     setIsEditing(false);
 
-    // 서버로 전송할 데이터 준비 (전화번호에서 숫자만 추출)
     const dataToSend = {
       ...formUser,
-      phone: getOnlyNumbers(formUser.phone),
+      phone: getOnlyNumbers(formUser.phone), // 전화번호에서 숫자만 추출
     };
 
-    console.log("수정된 회원 정보:", dataToSend);
-    // 여기에서 API 호출 등을 통해 서버에 저장하는 로직을 추가하세요
+    try {
+      await editUser(dataToSend); // API 호출로 회원정보 수정
+    } catch (error) {
+      console.error("Error updating member:", error);
+    }
   };
 
-  // 수정 취소 처리 함수
   const handleCancelEdit = () => {
+    // 수정 취소 처리
     setIsEditing(false);
     setFormUser({
       ...infoData,
       phone: formatPhoneNumber(infoData.phone),
-      pwd: "***********",
-    }); // 초기 데이터로 복구
+      pwd: "", // 비밀번호는 별도 처리
+    });
     setErrors({
       email: "",
       pwd: "",
@@ -105,18 +130,46 @@ const EditUserSection = ({ infoData }) => {
     });
   };
 
-  // 회원 탈퇴 처리 함수
-  const handleDelete = () => {
-    console.log("회원 탈퇴");
-    // 회원 탈퇴 로직을 추가하세요
+  // ------------------------
+  // 3. 회원 탈퇴 처리 로직
+  // ------------------------
+  const handleDeleteUser = () => {
+    setIsDeleteConfirmOpen(true); // 탈퇴 확인 모달 열기
   };
 
-  // 닉네임 중복 검사 함수
-  const handleCheckNickname = () => {
-    // 닉네임 중복 검사 로직 추가
-    console.log("닉네임 중복 검사:", formUser.nickName);
+  const handleConfirmDelete = async () => {
+    // 탈퇴 확인 후 처리
+    setIsDeleteConfirmOpen(false);
+    setNextAction("delete");
+    setIsModalOpen(true); // 비밀번호 확인 후 탈퇴 처리
   };
 
+  const handlePasswordSuccess = () => {
+    // 비밀번호 인증 성공 시 처리
+    setIsPasswordVerified(true);
+    setIsModalOpen(false);
+
+    if (nextAction === "edit") {
+      setIsEditing(true); // 수정 모드로 전환
+    } else if (nextAction === "delete") {
+      deleteUser(); // 회원 탈퇴 처리
+    }
+  };
+
+  // ------------------------
+  // 4. 닉네임 중복 확인 로직
+  // ------------------------
+  const handleNicknameCheck = async () => {
+    try {
+      await checkNickName(formUser.nickName); // 닉네임 중복 확인 API 호출
+    } catch (error) {
+      console.error("Error checking nickname:", error);
+    }
+  };
+
+  // ------------------------
+  // 5. 입력 필드 및 버튼 렌더링
+  // ------------------------
   const input = [
     { label: "이메일", name: "email", type: "text", readOnly: true },
     {
@@ -154,31 +207,14 @@ const EditUserSection = ({ infoData }) => {
               placeholder={field.placeholder}
               value={formUser[field.name]}
               onChange={handleChange}
-              readOnly={field.readOnly || !isEditing} // 이메일은 항상 읽기 전용, 수정 모드 시 나머지 필드 활성화
-              style={{ flexGrow: 1 }}
+              readOnly={field.readOnly || !isEditing} // 수정 모드 여부에 따라 활성화
               className="input-text"
-              autoComplete={
-                field.name === "pwd"
-                  ? "current-password"
-                  : field.name === "email"
-                  ? "email"
-                  : field.name === "name"
-                  ? "name"
-                  : field.name === "phone"
-                  ? "tel"
-                  : undefined
-              }
             />
             {errors[field.name] && (
               <p style={{ color: "red" }}>{errors[field.name]}</p>
             )}
-            {/* 닉네임 중복 검사 버튼 추가 */}
             {field.withCheck && isEditing && (
-              <Button
-                onClick={handleCheckNickname}
-                color="primary"
-                style={{ marginLeft: "10px", whiteSpace: "nowrap" }}
-              >
+              <Button onClick={handleNicknameCheck} color="primary">
                 닉네임 중복검사
               </Button>
             )}
@@ -188,41 +224,48 @@ const EditUserSection = ({ infoData }) => {
         <div className="flex justify-end">
           {isEditing ? (
             <>
-              <Button
-                onClick={handleCancelEdit}
-                color="primary"
-                className="btn_group"
-              >
+              <Button onClick={handleCancelEdit} color="primary">
                 취소하기
               </Button>
-              <Button
-                onClick={handleSave}
-                color="primary"
-                className="btn_group"
-              >
+              <Button onClick={handleSave} color="primary">
                 저장하기
               </Button>
             </>
           ) : (
             <>
-              <Button
-                onClick={handleDelete}
-                color="primary"
-                className="btn_group"
-              >
+              <Button onClick={handleDeleteUser} color="primary">
                 탈퇴하기
               </Button>
-              <Button
-                onClick={handleEdit}
-                color="primary"
-                className="btn_group"
-              >
+              <Button onClick={handleEditMode} color="primary">
                 수정하기
               </Button>
             </>
           )}
         </div>
       </form>
+
+      <Dialog
+        open={isDeleteConfirmOpen}
+        onClose={() => setIsDeleteConfirmOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle>회원 탈퇴 확인</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            정말로 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsDeleteConfirmOpen(false)}>아니오</Button>
+          <Button onClick={handleConfirmDelete}>예</Button>
+        </DialogActions>
+      </Dialog>
+      <MypagePwModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={handlePasswordSuccess}
+      />
     </StyledEditMember>
   );
 };
@@ -232,23 +275,17 @@ export default EditUserSection;
 const StyledEditMember = styled.div`
   h4 {
     font-size: 1.8rem;
-    line-height: 1.5rem;
   }
   .section-input {
     width: 100%;
-    min-height: 80px;
-    align-items: center;
     margin-bottom: 30px;
-    padding: 0;
     > .input-title {
       width: 15%;
-      font-size: 1.2rem;
     }
     > .input-text {
       border: 1px solid ${(props) => props.theme.colors.pastelOrange};
       padding: 8px;
       border-radius: 4px;
-      outline: none;
       flex-grow: 1;
     }
   }
