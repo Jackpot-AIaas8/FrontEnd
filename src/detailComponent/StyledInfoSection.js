@@ -16,6 +16,7 @@ export const StyledInfo = styled.div`
     text-align: left;
   }
   .image-box {
+    display: flex;
     flex: 1.5;
     max-height: 500px;
     width: 100%;

@@ -14,7 +14,7 @@ const StyledIconButton = styled.button`
   top: 8px;
   right: 8px;
   color: ${(props) =>
-    props.$heart === 1 ? theme.colors.red : theme.colors.white};
+    props.$heart === 1 ? theme.colors.red : theme.colors.gray};
   background: none;
   border: none;
   padding: 0;
@@ -27,6 +27,9 @@ const StyledIconButton = styled.button`
   }
   &:focus {
     outline: none;
+  }
+  .heart {
+    color: ${(props) => props.theme.colors.red};
   }
 `;
 
@@ -85,6 +88,7 @@ const HeartButton = (props) => {
       }}
     >
       {isHeart === 1 ? <OnHeart /> : <OffHeart />}
+      <div className="heart">{dog.heart}</div>
     </StyledIconButton>
   );
 };

@@ -116,7 +116,7 @@ const FindMember = () => {
   };
 
   useEffect(() => {
-    if (isAuthCodeSent && timeLeft > 0) {
+    if (isAuthCodeSent && timeLeft > 0 && !isAuthVerified) {
       timerRef.current = setInterval(
         () => setTimeLeft((prev) => prev - 1),
         1000
@@ -124,9 +124,11 @@ const FindMember = () => {
     } else if (timeLeft === 0) {
       clearInterval(timerRef.current);
       alert("인증 시간이 만료되었습니다. 다시 시도해주세요.");
+    } else if (isAuthVerified) {
+      clearInterval(timerRef.current); // 인증 완료 시 타이머 종료
     }
     return () => clearInterval(timerRef.current);
-  }, [isAuthCodeSent, timeLeft]);
+  }, [isAuthCodeSent, timeLeft, isAuthVerified]);
 
   const formatTime = (seconds) => {
     const min = Math.floor(seconds / 60);
@@ -139,11 +141,13 @@ const FindMember = () => {
       alert("인증 코드 전송 시도 횟수를 초과했습니다.");
       return;
     }
-    await sendAuthCode(user.email);
     alert("인증 코드가 이메일로 전송되었습니다.");
-    setIsAuthCodeSent(true);
+
     setSendAttempts((prev) => prev + 1);
+    setIsAuthCodeSent(true);
+
     setTimeLeft(180); // 타이머 초기화
+    await sendAuthCode(user.email);
   };
 
   const handleVerifyAuthCode = async () => {
@@ -255,6 +259,7 @@ const FindMember = () => {
                 name="name"
                 value={user.name}
                 onChange={handleChange}
+                disabled={isAuthVerified}
                 fullWidth
               />
               <TextField
@@ -265,7 +270,7 @@ const FindMember = () => {
                 value={user.email}
                 onChange={handleChange}
                 fullWidth
-                disabled={isAuthCodeSent || isAuthVerified}
+                disabled={isAuthVerified}
               />
               <Button
                 onClick={handleSendAuthCode}
