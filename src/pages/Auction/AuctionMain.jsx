@@ -1,15 +1,14 @@
-import React, { useState, useEffect, useCallback } from "react";
-import Sidebar from "../../components/Shop/SideBar";
+import React, {useCallback, useEffect, useState} from "react";
 import Grid from "@mui/material/Grid2";
 import Container from "@mui/material/Container";
 import AuctionCarousel from "../../components/Auction/AuctionCarousel";
 import Button from "../../components/Auction/AuctionButton";
 import apiClient from "../../token/AxiosConfig";
-import AuctionWebSocket from "../../config/AuctionWebSocket";  // WebSocket 컴포넌트
-import styled from "styled-components";
-import NavBar from "../../components/Main/NavBar";
+import AuctionWebSocket from "../../config/AuctionWebSocket"; // WebSocket 컴포넌트
+import {useNavigate} from "react-router-dom";
 
 const AuctionMain = () => {
+  const navigate = useNavigate();
   const [auction, setAuction] = useState(null);
   const [remainingTime, setRemainingTime] = useState("");
   const [status, setStatus] = useState(0); // 0: 대기, 1: 진행 중, 2: 종료
@@ -91,6 +90,20 @@ const AuctionMain = () => {
     [auction]
   );
 
+  const handleEnterClick = () => {
+    const currentTime = new Date();
+    const auctionStartTime = new Date(auction.startTime);
+
+    if (currentTime >= auctionStartTime) {
+      // 입장 가능, 경매 시작
+      console.log("경매 입장 성공");
+      navigate("/auction/bid");
+    } else {
+      // 경매 시작 전이면 alert 메시지 출력
+      alert("경매 시작 전입니다.");
+    }
+  };
+
 
   useEffect(() => {
     if (auction && auction.auctionStatus === 1) {
@@ -105,7 +118,7 @@ const AuctionMain = () => {
   }, [auction]);
 
   if (!auction) {
-    return <div>경매 정보를 불러오는 중...</div>;
+    return <div style={{marginTop:"400px", marginBottom:"400px"}}><span style={{fontSize:"30px", fontWeight:"bold"}}>진행 예정인 경매가 없습니다!</span></div>;
   }
 
   return (
@@ -163,7 +176,8 @@ const AuctionMain = () => {
             <Button text="뒤로가기" />
           </Grid>
           <Grid size={6}>
-            <Button text="입장하기"></Button>
+            {/*<Button text="입장하기"></Button>*/}
+            <Button text="입장하기" onClick={handleEnterClick}/>
           </Grid>
           <Grid size={12}>
             <strong style={{ fontSize: "20px" }}>
