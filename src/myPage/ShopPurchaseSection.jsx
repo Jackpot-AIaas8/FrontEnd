@@ -12,7 +12,11 @@ const PurchaseHistorySection = ({ showAll }) => {
     const fetchOrderData = async () => {
       try {
         const response = await apiClient.get("/order/findAll");
-        setShopData(response.data);
+
+        // ID 기준으로 내림차순 정렬하여 최신 항목이 위로 오도록 처리
+        const sortedData = response.data.sort((a, b) => b.id - a.id);
+
+        setShopData(sortedData);
       } catch (error) {
         console.error("Failed to fetch order data:", error);
       } finally {
