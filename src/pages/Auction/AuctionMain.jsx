@@ -105,7 +105,7 @@ const AuctionMain = () => {
   }, [auction]);
 
   if (!auction) {
-    return <div>경매 정보를 불러오는 중...</div>;
+    return <div style={{marginTop:"400px", marginBottom:"400px"}}><span style={{fontSize:"30px", fontWeight:"bold"}}>진행 예정인 경매가 없습니다!</span></div>;
   }
 
   return (
