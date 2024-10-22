@@ -6,6 +6,8 @@ import AuctionCarousel from "../../components/Auction/AuctionCarousel";
 import Button from "../../components/Auction/AuctionButton";
 import apiClient from "../../token/AxiosConfig";
 import AuctionWebSocket from "../../config/AuctionWebSocket";  // WebSocket 컴포넌트
+import styled from "styled-components";
+import NavBar from "../../components/Main/NavBar";
 
 const AuctionMain = () => {
   const [auction, setAuction] = useState(null);
@@ -170,7 +172,6 @@ const AuctionMain = () => {
           </Grid>
         </Grid>
       </Container>
-      <Sidebar />
       {/* WebSocket 이벤트 리스너 설정 */}
       <AuctionWebSocket onAuctionUpdate={handleAuctionUpdate} />
     </>
