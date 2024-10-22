@@ -1,15 +1,19 @@
 import React, {useEffect} from 'react';
 import io from 'socket.io-client';  // socket.io-client import
 
-const socket = io('http://223.130.158.97/socket.io/',
-    {
-        transports: ['websocket'],  // WebSocket으로만 연결 시도
-        upgrade: false, // Long Polling으로 업그레이드 방지
-        query: {
-            path: window.location.pathname // 현재 경로를 서버에 전송
-        }
-    }
-);  // Node.js WebSocket 서버에 연결
+// const socket = io('http://223.130.158.97/socket.io/',
+//     {
+//         transports: ['websocket'],  // WebSocket으로만 연결 시도
+//         upgrade: false, // Long Polling으로 업그레이드 방지
+//         query: {
+//             path: window.location.pathname // 현재 경로를 서버에 전송
+//         }
+//     }
+// );  // Node.js WebSocket 서버에 연결
+
+const socket = io({
+    path: "/socket.io/"
+});
 
 const AuctionWebSocket = ({
                               onBidUpdate,
