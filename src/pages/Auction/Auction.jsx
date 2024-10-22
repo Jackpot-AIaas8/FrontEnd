@@ -16,7 +16,7 @@ const Auction = () => {
     const [bidPrice, setBidPrice] = useState(0);
     const [highestBidPrice, setHighestBidPrice] = useState(0); // 현재 최고 입찰가
     const [user, setUser] = useState([]);
-    const [timeLeft, setTimeLeft] = useState(30); // 초기 남은 시간: 240초 (4분)
+    const [timeLeft, setTimeLeft] = useState(60); // 초기 남은 시간: 240초 (4분)
     const [isAuctionEnded, setIsAuctionEnded] = useState(false); // 경매 종료 상태
     const biddingData = {
         bidPrice: bidPrice,
@@ -70,6 +70,7 @@ const Auction = () => {
         (data) => {
             if (data.auctionStatus === 1 || new Date(data.startTime) < new Date(auction.startTime)) {
                 setAuction(data);  // WebSocket에서 받은 경매 데이터를 상태로 업데이트
+                setHighestBidPrice(auction.startPrice);
                 console.log("경매 바뀜 : " , auction)
                 return auction;
             }
@@ -201,7 +202,7 @@ const Auction = () => {
                 <Container>
                     <Grid container spacing={6} columns={16} style={{marginTop: "200px", height: "600px"}}>
                         <Grid size={9}>
-                            <AuctionCarousel style={{height: "100%"}}/>
+                            <AuctionCarousel style={{height: "100%"}} shopId={auction.shopId}/>
                             <Typography variant="h6" component="h2">{auction.shopDetail}</Typography>
                         </Grid>
                         <Grid size={7}>
