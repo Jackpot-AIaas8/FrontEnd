@@ -162,8 +162,7 @@ export function SuccessPage() {
         </RightColumn>
       </InfoContainer>
       <ButtonContainer>
-        <Button>주문 상세보기</Button>
-        <Button primary={true}>쇼핑 계속하기</Button>
+        <Button primary={true} onClick={() => navigate("/shop")}>쇼핑 계속하기</Button>
       </ButtonContainer>
     </PageContainer>
   ) : null; 
@@ -248,15 +247,16 @@ const TotalValue = styled.span`
 
 const ButtonContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-top: 30px;
 `;
 
 const Button = styled.button`
   padding: 10px 20px;
   border: none;
-  background-color: ${({ primary }) => (primary ? '#0066cc' : '#ddd')};
-  color: ${({ primary }) => (primary ? '#fff' : '#333')};
+  background-color: #ffa150;
+  color: #fff;
   font-size: 16px;
   cursor: pointer;
+  border-radius: 5px;
 `;

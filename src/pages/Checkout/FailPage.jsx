@@ -1,16 +1,12 @@
 // FailPage.jsx
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 export function FailPage() {
-  const location = useLocation();
   const navigate = useNavigate();
   
-  // URL에서 전달된 실패 메시지 및 코드 추출
-  const searchParams = new URLSearchParams(location.search);
-  const message = searchParams.get("message") || "결제가 실패했습니다.";
-  const code = searchParams.get("code") || "오류 코드 없음";
+
 
   const handleRetry = () => {
     navigate(-1); // 이전 페이지로 이동 (재시도)
@@ -24,11 +20,7 @@ export function FailPage() {
     <PageWrapper>
       <PageContainer>
         <Title>결제 실패</Title>
-        <Subtitle>아래의 오류로 인해 결제가 실패하였습니다:</Subtitle>
-        <MessageBox>
-          <ErrorMessage>오류 메시지: {message}</ErrorMessage>
-          <ErrorCode>오류 코드: {code}</ErrorCode>
-        </MessageBox>
+        <Subtitle>오류로 인해 결제가 실패하였습니다:</Subtitle>
         <ButtonContainer>
           <Button onClick={handleGoHome} primary>쇼핑몰로 돌아가기</Button>
         </ButtonContainer>
@@ -65,21 +57,6 @@ const Subtitle = styled.p`
   margin-bottom: 20px;
 `;
 
-const MessageBox = styled.div`
-  padding: 20px;
-  margin-bottom: 20px;
-`;
-
-const ErrorMessage = styled.p`
-  font-size: 16px;
-  color: #f00;
-  margin-bottom: 10px;
-`;
-
-const ErrorCode = styled.p`
-  font-size: 14px;
-  color: #999;
-`;
 
 const ButtonContainer = styled.div`
   display: flex;

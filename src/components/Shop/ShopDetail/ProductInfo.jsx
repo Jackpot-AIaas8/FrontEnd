@@ -43,28 +43,24 @@ const ProductInfo = ({ shopId }) => {
     setErrorMessage(null);
   
     try {
-      // 장바구니의 기존 항목 확인
       const cartResponse = await apiClient.get("cart/findAll");
       const existingItem = cartResponse.data.find(
         (item) => item.shopId === product.shopId
       );
   
       if (existingItem) {
-        // 기존 아이템이 있다면 수량을 더해서 업데이트
         const updatedQuantity = existingItem.quantity + quantity;
         await apiClient.post(`/cart/update`, {
-          quantity: updatedQuantity, // 누적된 수량
+          quantity: updatedQuantity, 
         });
       } else {
-        // 기존 아이템이 없다면 새로 등록
         await apiClient.post("/cart/register", {
           shopId: product.shopId,
-          quantity: quantity, // 현재 선택된 수량
-          totalPrice: product.price * quantity, // 상품 가격과 수량을 곱한 총 가격
+          quantity: quantity, 
+          totalPrice: product.price * quantity, 
         });
       }
   
-      // 로그 확인
       console.log("장바구니 등록 상태:", {
         shopId: product.shopId,
         quantity: quantity,

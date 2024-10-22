@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import apiClient from "../token/AxiosConfig";
-import { NoneContent } from "../pages/Memeber/Mypage";
 import OrderDetails from "./OrderDetails";
 
 const PurchaseHistorySection = ({ showAll }) => {
   const [shopData, setShopData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedOrder, setSelectedOrder] = useState(null); // 선택된 주문 상태 추가
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
     const fetchOrderData = async () => {
@@ -24,7 +23,6 @@ const PurchaseHistorySection = ({ showAll }) => {
     fetchOrderData();
   }, []);
 
-  // 주문 번호(order_id)를 기준으로 데이터를 그룹화
   const groupedOrders = shopData.reduce((acc, item) => {
     const orderId = item.orderId;
     if (!acc[orderId]) {
@@ -39,107 +37,93 @@ const PurchaseHistorySection = ({ showAll }) => {
     : Object.keys(groupedOrders).slice(0, 3);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading>Loading...</Loading>;
   }
 
-  // 선택된 주문의 데이터를 필터링하여 전달
   const selectedOrderData = selectedOrder ? groupedOrders[selectedOrder] : null;
 
+  const handleCancelProduct = (orderId, shopId) => {
+    const ordersDTO = {
+      orderId,
+      deliveryState: 4,
+      shopId,
+    };
+
+    apiClient.post(`/order/edit`, ordersDTO)
+      .then(() => {
+        alert("해당 상품이 취소되었습니다.");
+        setShopData((prevData) =>
+          prevData.map((item) =>
+            item.orderId === orderId && item.shopId === shopId
+              ? { ...item, deliveryState: 4 }
+              : item
+          )
+        );
+      })
+      .catch((error) => {
+        console.error("상품 취소 실패:", error);
+      });
+  };
+
   return (
-    <div>
-      <h4 className="text-left p-0 m-0">구매내역</h4>
+    <Container>
+      <Title>구매내역</Title>
       {shopData.length ? (
         <>
-          {/* 선택된 주문이 있을 때만 해당 주문 표시 */}
           {selectedOrder ? (
             <OrderGroup
               key={selectedOrder}
               orderId={selectedOrder}
-              orderDate={
-                groupedOrders[selectedOrder]?.[0]?.orderDate || "알 수 없음"
-              }
+              orderDate={groupedOrders[selectedOrder]?.[0]?.orderDate || "알 수 없음"}
               shopData={groupedOrders[selectedOrder]}
               setSelectedOrder={setSelectedOrder}
+              handleCancelProduct={handleCancelProduct}
             />
           ) : (
-            // 선택된 주문이 없을 때만 전체 목록 표시
             displayedOrderKeys.map((orderId) => (
               <OrderGroup
                 key={orderId}
                 orderId={orderId}
-                orderDate={
-                  groupedOrders[orderId]?.[0]?.orderDate || "알 수 없음"
-                }
+                orderDate={groupedOrders[orderId]?.[0]?.orderDate || "알 수 없음"}
                 shopData={groupedOrders[orderId]}
                 setSelectedOrder={setSelectedOrder}
+                handleCancelProduct={handleCancelProduct}
               />
             ))
           )}
         </>
       ) : (
-        <NoneContent />
+        <EmptyContent>구매 내역이 없습니다.</EmptyContent>
       )}
-
-      {/* 선택된 주문이 있을 때만 상세 정보 컴포넌트 렌더링 */}
       {selectedOrderData && <OrderDetails orderData={selectedOrderData} />}
-    </div>
+    </Container>
   );
 };
 
-const OrderGroup = ({ orderId, orderDate, shopData, setSelectedOrder }) => {
+const OrderGroup = ({ orderId, created_at, shopData, setSelectedOrder, handleCancelProduct }) => {
   const handleViewDetails = () => {
-    // 선택된 주문 번호를 설정
     setSelectedOrder(orderId);
   };
 
   return (
     <OrderGroupContainer>
-      <ViewDetailsButton onClick={handleViewDetails}>
-        상세보기
-      </ViewDetailsButton>
-      <OrderDateHeader>{orderDate} 주문</OrderDateHeader>
+      <OrderDateHeader>주문</OrderDateHeader>
+      <OrderGroupActions>
+        <ViewDetailsButton onClick={handleViewDetails}>상세보기</ViewDetailsButton>
+      </OrderGroupActions>
       {shopData.map((item) => (
-        <PurchaseHistory key={item.id} shopData={item} />
+        <PurchaseHistory
+          key={item.id}
+          shopData={item}
+          handleCancelProduct={handleCancelProduct}
+          orderId={orderId}
+        />
       ))}
     </OrderGroupContainer>
   );
 };
 
-const OrderDateHeader = styled.div`
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #333;
-`;
-
-const OrderGroupContainer = styled.div`
-  position: relative;
-  margin-bottom: 30px;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-`;
-
-const ViewDetailsButton = styled.button`
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  padding: 8px 16px;
-  background-color: #f0f0f0;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  border-radius: 4px;
-  text-align: center;
-
-  &:hover {
-    background-color: #ddd;
-  }
-`;
-
-export const PurchaseHistory = ({ shopData }) => {
+const PurchaseHistory = ({ shopData, handleCancelProduct, orderId }) => {
   const stateInfo = (() => {
     switch (shopData.deliveryState) {
       case 0:
@@ -155,49 +139,102 @@ export const PurchaseHistory = ({ shopData }) => {
     }
   })();
 
-  const cancelOrder = (order) => {
-    const ordersDTO = {
-      orderId : shopData.orderId,
-      deliveryState: 4, // 새로운 배송 상태
-      shopId: shopData.shopId
-    };
-
-    apiClient
-        .post(`/order/edit`, ordersDTO)
-        .then((response) => {
-          console.log("배송 상태 업데이트 성공:", response.data);
-          alert("배송상태가 변경되었습니다.");
-          window.location.reload();
-        })
-        .catch((error) => {
-          console.error("배송 상태 업데이트 실패:", error);
-        });
-  };
-
+  const isCanceled = shopData.deliveryState === 4;
 
   return (
     <StyledPurchaseSection $statecolor={stateInfo.color}>
-      <div className="section-left flex">
+      <div className="section-left">
         <h5 className="status">{stateInfo.text}</h5>
         <img
           src={shopData.imageUrl || "https://via.placeholder.com/64"}
           className="thumbnail"
           alt="품목"
         />
-        <div className="product-section align-center">
+        <div className="product-section">
           <p className="productTitle">{shopData.name}</p>
-          <span className="productPrice">{shopData.totalPrice}</span>
-          <span>*</span>
-          <span className="quantity">{shopData.quantity}개</span>
+          <span className="productPrice">{shopData.totalPrice}원</span>
+          <span className="quantity">x {shopData.quantity}개</span>
         </div>
-        <button className="btn_detailed" onClick={cancelOrder}>주문 취소</button>
-        <button className="btn_detailed">장바구니 담기</button>
+        {!isCanceled && (
+          <CancelButton onClick={() => handleCancelProduct(orderId, shopData.shopId)}>
+            구매 취소
+          </CancelButton>
+        )}
       </div>
     </StyledPurchaseSection>
   );
 };
 
-export const StyledPurchaseSection = styled.div`
+const Container = styled.div`
+  padding: 20px;
+`;
+
+const Title = styled.h4`
+  text-align: left;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+`;
+
+const OrderGroupContainer = styled.div`
+  position: relative;
+  margin-bottom: 30px;
+  padding: 15px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+`;
+
+const OrderDateHeader = styled.div`
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+`;
+
+const OrderGroupActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+`;
+
+const ViewDetailsButton = styled.button`
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-radius: 4px;
+  text-align: center;
+
+  &:hover {
+    background-color: #ddd;
+  }
+`;
+
+const CancelButton = styled(ViewDetailsButton)`
+  background-color: #ff6b6b;
+  color: white;
+
+  &:hover {
+    background-color: #d9534f;
+  }
+`;
+
+const EmptyContent = styled.div`
+  text-align: center;
+  color: #666;
+  font-size: 1.2rem;
+  margin-top: 20px;
+`;
+
+const Loading = styled.div`
+  text-align: center;
+  font-size: 1.2rem;
+  margin-top: 20px;
+`;
+
+const StyledPurchaseSection = styled.div`
   .section-left {
     display: flex;
     align-items: center;
@@ -209,45 +246,38 @@ export const StyledPurchaseSection = styled.div`
     border: 1px solid #ddd;
     border-radius: 8px;
     background: #fff;
-
-    > h5 {
-      width: 100%;
-      font-size: 1.2rem;
-      color: ${(props) => props.$statecolor};
-      margin-bottom: 10px;
-    }
-
-    > .thumbnail {
-      width: 64px;
-      height: 64px;
-      margin-right: 20px;
-    }
-
-    > .product-section {
-      display: flex;
-      flex-direction: column;
-      margin-left: 20px;
-      flex-grow: 1;
-    }
-  }
-  .section-left > *:last-child {
-    margin-bottom: 0;
-  }
-  .btn_detailed {
-    flex: 1;
-    align-self: center;
-    height: 30%;
   }
 
-  .productInfo {
-    margin: 20px 0;
+  .status {
+    width: 100%;
+    font-size: 1.2rem;
+    color: ${(props) => props.$statecolor};
+    margin-bottom: 10px;
   }
 
-  .product-section span {
-    margin-right: 5px;
+  .thumbnail {
+    width: 64px;
+    height: 64px;
+    margin-right: 20px;
   }
-  .div {
-    margin: 0 5px;
+
+  .product-section {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    margin-left: 20px;
+  }
+
+  .productTitle {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .productPrice,
+  .quantity {
+    font-size: 0.9rem;
+    color: #666;
   }
 `;
 
