@@ -3,18 +3,17 @@ import {
   CardActionArea,
   CardContent,
   CardMedia,
-  Container,
   Skeleton,
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
-import Grid from "@mui/material/Grid2";
 
 import { useNavigate } from "react-router-dom";
 import HeartButton from "./HeartButton";
 import getTimeAgo from "../detailComponent/GetTImeAgo";
 import styled from "styled-components";
+import { ProgressBar } from "../myPage/ProgressBar";
 
-const Dog = ({ dog, onHeartToggle }) => {
+const Dog = ({ dog, onHeartToggle = 0 }) => {
   const [checkImage, setCheckImage] = useState(false);
   const [thumbNail, setThumbNail] = useState("");
 
@@ -69,6 +68,8 @@ const Dog = ({ dog, onHeartToggle }) => {
             ></Skeleton>
           )}
           <CardContent className="card-content flex flex-row justify-between">
+            <h5 className="dogTitle">{dog.title}</h5>
+            <ProgressBar value={dog.totalFund} />
             <div className="categories">
               {categories.map((category, index) => (
                 <p key={index} className="category">
@@ -94,6 +95,13 @@ const StyledDogContainer = styled.div`
   .card-content {
     min-height: 100px;
     align-items: center;
+    flex-wrap: wrap;
+    > .dogTitle {
+      font-size: 1.5rem;
+      font-weight: bold;
+      width: 100%;
+      text-shadow: 1px 5px 3px rgba(0, 0, 0, 0.5);
+    }
     > .categories {
       font-size: 1rem;
     }

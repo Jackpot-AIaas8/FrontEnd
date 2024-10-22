@@ -15,6 +15,7 @@ import {
   validatePassword,
   validatePhoneNumber,
 } from "../../login/components/Validation";
+import { useEmailVerification } from "../../login/components/EmailVerification";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -37,6 +38,24 @@ const SignUp = () => {
     address: "",
   });
 
+  const { checkMessage, messageColor } = usePasswordCheck(
+    formData.pwd,
+    confirmPassword
+  );
+
+  const {
+    sendVerificationCode,
+    verifyCode,
+    isEmailVerified,
+    verificationCode,
+    setVerificationCode,
+  } = useEmailVerification(
+    formData.email,
+
+    setDuplicateMessage,
+    setOpen
+  );
+
   // 유효성 검사 상태
   const [validations, setValidations] = useState({
     email: false,
@@ -54,11 +73,6 @@ const SignUp = () => {
   const handlePasswordChange = (event) => {
     setConfirmPassword(event.target.value);
   };
-
-  const { checkMessage, messageColor } = usePasswordCheck(
-    formData.pwd,
-    confirmPassword
-  );
 
   // 핸드폰 번호 입력 시 자동 포맷팅 함수
   const handlePhoneChange = (event) => {
@@ -80,15 +94,13 @@ const SignUp = () => {
 
       const nickNameIsDuplicate = response.data.isDuplicate;
       setIsNickNameChecked(!nickNameIsDuplicate);
-      setDuplicateMessage(
-        nickNameIsDuplicate
-          ? "이미 사용 중인 닉네임입니다."
-          : "사용 가능한 닉네임입니다."
-      );
+      if (isNickNameChecked) {
+        setDuplicateMessage("사용 가능한 닉네임입니다.");
+      }
       setOpen(true);
     } catch (error) {
       console.error("닉네임 중복 확인 오류:", error);
-      setDuplicateMessage("서버에 문제가 발생했습니다. 다시 시도해주세요.");
+      setDuplicateMessage("이미 사용 중인 닉네임입니다.");
       setOpen(true);
     }
   };
@@ -106,15 +118,14 @@ const SignUp = () => {
 
       const emailIsDuplicate = response.data.isDuplicate;
       setIsEmailChecked(!emailIsDuplicate);
-      setDuplicateMessage(
-        emailIsDuplicate
-          ? "이미 사용 중인 이메일입니다."
-          : "사용 가능한 이메일입니다."
-      );
+      if (!emailIsDuplicate) {
+        sendVerificationCode();
+      } else {
+        setDuplicateMessage("이미 사용중인 이메일입니다.");
+      }
       setOpen(true);
     } catch (error) {
-      console.error("이메일 중복 확인 오류:", error);
-      setDuplicateMessage("서버에 문제가 발생했습니다. 다시 시도해주세요.");
+      setDuplicateMessage("이미 사용 중인 이메일입니다.");
       setOpen(true);
     }
   };
@@ -160,16 +171,37 @@ const SignUp = () => {
               placeholder="E-mail"
               value={formData.email}
               onChange={handleChange}
+              disabled={isEmailVerified}
             />
-            <input
-              className="button"
-              type="button"
-              value="이메일 중복검사"
-              onClick={checkEmail}
-            />
+            {!isEmailVerified && (
+              <input
+                className="button"
+                type="button"
+                value="이메일 중복검사"
+                onClick={checkEmail}
+                disabled={isEmailVerified}
+              />
+            )}
           </div>
           {!validations.email && formData.email && (
             <p style={{ color: "red" }}>이메일 중복 검사를 해주세요.</p>
+          )}
+          {isEmailChecked && !isEmailVerified && (
+            <div className="check-container">
+              <InputField
+                type="text"
+                name="verificationCode"
+                placeholder="인증 코드 입력"
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+              />
+              <input
+                className="button"
+                type="button"
+                value="인증 코드 확인"
+                onClick={verifyCode}
+              />
+            </div>
           )}
           <InputField
             type="password"
@@ -214,6 +246,8 @@ const SignUp = () => {
           {!validations.name && formData.name && (
             <p style={{ color: "red" }}>이름은 글자만 입력 가능합니다.</p>
           )}
+
+          {/* 닉네임 중복 검사 */}
           <div className="check-container">
             <InputField
               type="text"
@@ -221,13 +255,16 @@ const SignUp = () => {
               placeholder="닉네임"
               value={formData.nickName}
               onChange={handleChange}
+              disabled={isNickNameChecked} // 닉네임 중복 확인 완료 시 비활성화
             />
-            <input
-              className="button"
-              type="button"
-              value="닉네임 중복검사"
-              onClick={checkNickName}
-            />
+            {!isNickNameChecked && (
+              <input
+                className="button"
+                type="button"
+                value="닉네임 중복검사"
+                onClick={checkNickName}
+              />
+            )}
           </div>
           {!validations.nickName && formData.nickName && (
             <p style={{ color: "red" }}>닉네임 중복 검사를 해주세요.</p>

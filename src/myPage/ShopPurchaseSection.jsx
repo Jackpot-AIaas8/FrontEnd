@@ -155,6 +155,26 @@ export const PurchaseHistory = ({ shopData }) => {
     }
   })();
 
+  const cancelOrder = (order) => {
+    const ordersDTO = {
+      orderId : shopData.orderId,
+      deliveryState: 4, // 새로운 배송 상태
+      shopId: shopData.shopId
+    };
+
+    apiClient
+        .post(`/order/edit`, ordersDTO)
+        .then((response) => {
+          console.log("배송 상태 업데이트 성공:", response.data);
+          alert("배송상태가 변경되었습니다.");
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.error("배송 상태 업데이트 실패:", error);
+        });
+  };
+
+
   return (
     <StyledPurchaseSection $statecolor={stateInfo.color}>
       <div className="section-left flex">
@@ -170,6 +190,7 @@ export const PurchaseHistory = ({ shopData }) => {
           <span>*</span>
           <span className="quantity">{shopData.quantity}개</span>
         </div>
+        <button className="btn_detailed" onClick={cancelOrder}>주문 취소</button>
         <button className="btn_detailed">장바구니 담기</button>
       </div>
     </StyledPurchaseSection>

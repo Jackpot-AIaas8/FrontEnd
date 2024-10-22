@@ -20,7 +20,6 @@ const ProductInfo = ({ shopId }) => {
     try {
       const response = await apiNoToken.get(`/shop/findOne/${shopId}`);
       setProduct(response.data);
-      console.log("상품 정보:", response.data); // 데이터 확인
 
     } catch (error) {
       console.error("상품 정보를 불러오는 중 오류 발생:", error);
@@ -32,7 +31,7 @@ const ProductInfo = ({ shopId }) => {
   }, [shopId]);
 
   if (!product) {
-    return <div>상품 정보를 불러오는 중입니다...</div>;
+    return <div></div>;
   }
 
   const handleIncrement = () => setQuantity(quantity + 1);
@@ -53,7 +52,7 @@ const ProductInfo = ({ shopId }) => {
       if (existingItem) {
         // 기존 아이템이 있다면 수량을 더해서 업데이트
         const updatedQuantity = existingItem.quantity + quantity;
-        await apiClient.put(`/cart/update/${existingItem.cartId}`, {
+        await apiClient.post(`/cart/update`, {
           quantity: updatedQuantity, // 누적된 수량
         });
       } else {
@@ -64,10 +63,6 @@ const ProductInfo = ({ shopId }) => {
           totalPrice: product.price * quantity, // 상품 가격과 수량을 곱한 총 가격
         });
       }
-      console.log("상품 정보:", product); // 전체 데이터 확인
-      console.log("상품 ID:", product.shopId); // 특정 값 확인
-      console.log("상품 가격:", product.price); // 특정 값 확인
-
   
       // 로그 확인
       console.log("장바구니 등록 상태:", {
