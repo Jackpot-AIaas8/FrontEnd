@@ -6,7 +6,6 @@ import {
   Skeleton,
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
-import Grid from "@mui/material/Grid2";
 
 import { useNavigate } from "react-router-dom";
 import HeartButton from "./HeartButton";
@@ -14,7 +13,7 @@ import getTimeAgo from "../detailComponent/GetTImeAgo";
 import styled from "styled-components";
 import { ProgressBar } from "../myPage/ProgressBar";
 
-const Dog = ({ dog, onHeartToggle }) => {
+const Dog = ({ dog, onHeartToggle = 0 }) => {
   const [checkImage, setCheckImage] = useState(false);
   const [thumbNail, setThumbNail] = useState("");
 
