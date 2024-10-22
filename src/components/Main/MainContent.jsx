@@ -7,6 +7,7 @@ import {useState, useEffect} from "react";
 import apiClient from "../../token/AxiosConfig";
 import {useNavigate} from "react-router-dom";
 import DogCarousel from "./DogCarousel";
+import AuctionCarousel from "../Auction/AuctionCarousel";
 
 function MainContent() {
     const navigate = useNavigate();
@@ -139,7 +140,6 @@ function MainContent() {
                             </Typography>
                         </StyledBox>
                     </FixedLeftSidebar>
-
                     <CardContainer container size={{xs: 6, md: 9}}>
                         {shops?.length > 0 &&
                             shops.map((shop, index) => (
@@ -150,7 +150,7 @@ function MainContent() {
                                     >
                                         <StyledBox>
                                             <StyledImg
-                                                src="https://img.29cm.co.kr/item/202402/11eec0d158bd69388377bffeae35630c.jpg?width=700"
+                                                src={shop.mainImage}
                                                 alt={shop.name}
                                             />
                                             <Typography variant="h6">{shop.name}</Typography>
@@ -160,17 +160,6 @@ function MainContent() {
                                 </Grid2>
                             ))}
                     </CardContainer>
-                </Grid2>
-                {/*경매*/}
-                <Grid2 container spacing={1} sx={{marginBottom: "150px"}}>
-                    <FixedLeftSidebar size={{xs: 6, md: 3}}>
-                        <StyledBox>
-                            <Typography variant="h4">Auction</Typography>
-                            <Typography variant="body2">
-                                실시간 경매
-                            </Typography>
-                        </StyledBox>
-                    </FixedLeftSidebar>
                 </Grid2>
             </Container>
         </>
