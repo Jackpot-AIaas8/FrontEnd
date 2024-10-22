@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import io from 'socket.io-client';  // socket.io-client import
 
-const socket = io('http://223.130.158.97/socket.io/',
+const socket = io('http://223.130.158.97/socket.io/socket.io',
     {
         transports: ['websocket'],  // WebSocket으로만 연결 시도
         upgrade: false, // Long Polling으로 업그레이드 방지
