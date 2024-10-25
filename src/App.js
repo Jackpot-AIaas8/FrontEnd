@@ -15,7 +15,7 @@ import ShopPage from "./pages/ShopPage";
 import ShopDetailPage from "./pages/ShopDetailPage";
 import SuccessPage from "./pages/Checkout/SuccessPage";
 import FailPage from "./pages/Checkout/FailPage";
-import OrderDetails from "./myPage/OrderDetails"; 
+import OrderDetails from "./myPage/OrderDetails";
 
 import { Routes, Route, useLocation } from "react-router-dom";
 
@@ -29,21 +29,13 @@ import Auction from "./pages/Auction/Auction";
 
 import Mypage from "./pages/Memeber/Mypage";
 
-import { useEffect } from "react";
 import ProtectedRoute from "./token/ProtectedRoute";
 import AdminRoutes from "./admin/routes/Router";
 
 import CheckoutPage from "./pages/Checkout/CheckoutPage";
 import GlobalLoading from "./config/GlobalLoading";
-import {
-  setupInterceptors,
-  setupNoTokenInterceptors,
-} from "./token/AxiosConfig";
-import { useLoading } from "./config/LodingContext";
-let interceptorsInitialized = false;
 
 function App() {
-  const { setLoading } = useLoading();
   const location = useLocation();
   const hideNavAndFotter = location.pathname.startsWith("/admin");
 
@@ -61,10 +53,6 @@ function App() {
           {/* 쇼핑몰Page */}
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/shop/:shopId" element={<ShopDetailPage />} />
-
-          {/* 결제 Page */}
-          <Route path="/success" element={<SuccessPage />} />
-          <Route path="/fail" element={<FailPage />} />
 
           {/* 강아지 사이트 */}
           <Route path="/dogList" element={<DogList />} />
@@ -87,11 +75,14 @@ function App() {
               <ProtectedRoute allowedRoles={["ROLE_USER", "ROLE_PREMIUM"]} />
             }
           >
-            <Route path="/order/findOne/:orderId" element={<OrderDetails />} /> {/* OrderDetails 경로 설정 */}
-
+            <Route path="/order/findOne/:orderId" element={<OrderDetails />} />{" "}
+            {/* OrderDetails 경로 설정 */}
             <Route path="/cart" element={<Cart />} />
             <Route path="/mypage" element={<Mypage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            {/* 결제 Page */}
+            <Route path="/success" element={<SuccessPage />} />
+            <Route path="/fail" element={<FailPage />} />
             <Route path="/board/:boardId" element={<BoardFindOnePage />} />
           </Route>
 
@@ -102,9 +93,7 @@ function App() {
           </Route>
 
           {/* Admin Route */}
-          <Route
-            element={<ProtectedRoute allowedRoles={["ROLE_ADMIN"]} />}
-          >
+          <Route element={<ProtectedRoute allowedRoles={["ROLE_ADMIN"]} />}>
             <Route path="/admin/*" element={<AdminRoutes />} />
           </Route>
         </Routes>
